@@ -8,7 +8,7 @@ module.exports = {
       center: true,
       padding: {
         DEFAULT: '1.5rem',
-      },
+      }
     },
     extend: {
       fontFamily: {
@@ -28,9 +28,13 @@ module.exports = {
           ' linear-gradient(180deg, #FFFFFF 0%, #FF00E1 42.76%, #950183 87.41%)',
         window:
           'linear-gradient(152.73deg, rgba(255, 255, 255, 0.0688) 7.82%, rgba(255, 255, 255, 0.0736) 94.08%)',
+        wall: "url('~/assets/img/layout-bg.png')",
+        modal: "url('~/assets/img/modal-bg.svg')",
       },
       colors: {
         magenta: '#FF0097',
+        white: '#FFFFFF',
+        border: '#46414F',
         'desaturated-cyan': '#73979C',
         'maastricht-blue': '#001A34',
       },

@@ -29,12 +29,12 @@ export const state = () => ({
     ],
     navigation: [
       {
-        route: 'logs',
-        label: 'Logs',
+        route: 'about',
+        label: 'About',
       },
       {
-        route: 'transfer',
-        label: 'Transfer',
+        route: 'swap',
+        label: 'Swap',
       },
     ],
     partners: [
