@@ -1,6 +1,6 @@
 <template>
   <header class="flex-shrink-0 py-4 xl:py-[30px]">
-    <div class="px-[40px] grid grid-cols-12 block items-center">
+    <div class="grid grid-cols-12 block items-center">
       <div class="col-span-5 flex sm:block justify-between">
         <nuxt-link to="/" class="text-[46px] sm:text-[66px]">
           <img src="~/assets/img/logo.svg" class="w-[1em] h-[1em]" alt="Susy" width="62" height="37">
