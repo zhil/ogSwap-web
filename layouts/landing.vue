@@ -1,11 +1,11 @@
 <template>
   <div
-    class="min-h-screen font-sans bg-index relative flex flex-col text-white"
+    class="relative flex flex-col min-h-screen font-poppins text-white bg-dark"
   >
     <landing-vue-header />
     <mobile-menu is-landing />
 
-    <main class="flex-grow relative z-[1]">
+    <main class="flex-grow">
       <nuxt />
     </main>
 

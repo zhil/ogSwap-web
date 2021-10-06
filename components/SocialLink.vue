@@ -1,7 +1,10 @@
 <template>
   <a :href="href" target="_blank" class="inline-block">
-    <icon :name="icon" class="fill-current stroke-current"
-          :class="{'scale-150': icon === 'mono/medium'}" />
+    <icon
+      :name="icon"
+      class="fill-current stroke-current"
+      :class="{ 'scale-150': icon === 'mono/medium' }"
+    />
   </a>
 </template>
 
@@ -12,12 +15,12 @@ export default Vue.extend({
   props: {
     href: {
       type: String,
-      default: ''
+      default: '',
     },
     icon: {
       type: String,
-      default: ''
-    }
-  }
+      default: '',
+    },
+  },
 })
 </script>

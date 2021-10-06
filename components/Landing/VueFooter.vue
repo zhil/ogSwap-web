@@ -1,39 +1,9 @@
 <template>
-  <footer
-    class="
-      relative
-      pt-[52px]
-      pb-[36px]
-      lg:pt-[140px] lg:pb-[70px]
-      overflow-hidden
-    "
-  >
-    <img
-      src="~/assets/img/landing/footer-bg.png"
-      alt=""
-      class="
-        hidden
-        lg:block
-        absolute
-        left-[50%]
-        top-[13px]
-        translate-x-[-50%]
-        max-w-none
-      "
-    />
-
-    <div class="relative container flex flex-col items-center">
-      <nuxt-link to="/">
-        <img
-          src="~/assets/img/logo.svg"
-          class="w-[229px] h-[135px] lg:w-[282px] lg:h-[166px]"
-          alt="Candy Shop"
-          width="229"
-          height="135"
-        />
-      </nuxt-link>
-
-      <div class="hidden xl:flex mt-[38px]">
+  <footer class="pt-[40px] pb-[28px] md:py-[70px] bg-dark">
+    <div
+      class="container text-center md:flex md:justify-center md:items-center"
+    >
+      <nav class="flex flex-col md:flex-row">
         <component-link
           v-for="(item, key) in navigation"
           :key="key"
@@ -42,15 +12,31 @@
           :class="{
             'no-underline hover:underline': $route.name !== item.route,
           }"
-          class="px-[31px] font-bold"
+          class="
+            mb-[23px]
+            text-[14px]
+            leading-[16px]
+            font-light
+            md:mb-0 md:px-[17px] md:first:pl-0 md:first:pr-[28px]
+          "
         >
           {{ item.label }}
         </component-link>
-      </div>
+      </nav>
 
-      <p class="mt-[13px] xl:mt-[31px] text-[13px] leading-[21px]">
-        ©2021 Candyshop
-      </p>
+      <div class="flex flex-col md:flex-row">
+        <div
+          v-for="(social, socialKey) in socials"
+          :key="socialKey"
+          class="mb-[23px] md:mx-[17px] last:mb-0 md:mb-0 last:mr-0"
+        >
+          <social-link
+            :href="social.href"
+            :icon="social.icon"
+            class="text-[20px] text-secondary"
+          />
+        </div>
+      </div>
     </div>
   </footer>
 </template>
@@ -64,6 +50,9 @@ export default Vue.extend({
   computed: {
     navigation() {
       return this.$store.getters['app/menu'].landingNavigation
+    },
+    socials() {
+      return this.$store.getters['app/menu'].socials
     },
   },
 })

@@ -8,23 +8,15 @@ export const state = () => ({
       },
       {
         href: '/',
+        label: 'About',
+      },
+      {
+        href: '/',
         label: 'Docs',
       },
       {
         href: '/',
-        label: 'Github',
-      },
-      {
-        href: '/',
-        label: 'Medium',
-      },
-      {
-        href: '/',
-        label: 'Twitter',
-      },
-      {
-        href: '/',
-        label: 'Telegram',
+        label: 'Blog',
       },
     ],
     navigation: [
@@ -52,10 +44,10 @@ export const state = () => ({
         href: '/',
         icon: 'mono/twitter',
       },
-      {
-        href: '/',
-        icon: 'mono/medium',
-      },
+      // {
+      //   href: '/',
+      //   icon: 'mono/medium',
+      // },
       {
         href: '/',
         icon: 'mono/github',

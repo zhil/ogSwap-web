@@ -20,16 +20,15 @@ module.exports = {
         body: 'linear-gradient(180deg, #FFFFFF 0%, #F3FFFB 90.48%)',
         solana2: 'linear-gradient(269.45deg, #00FFA3 10.33%, #DC1FFF 97.14%)',
         solana: 'linear-gradient(181.16deg, #FFA9DC 1.06%, #FF0097 98.05%)',
-        index:
-          'linear-gradient(180deg, #5800AF -3.87%, #A442EA 62.96%, #5800AF 100%)',
-        button:
-          'linear-gradient(180deg, #FFFFFF 0%, #FFDA16 14.99%, #FF00E1 78.27%, #D100B8 87.41%)',
-        'button-hover':
-          ' linear-gradient(180deg, #FFFFFF 0%, #FF00E1 42.76%, #950183 87.41%)',
-        window:
-          'linear-gradient(152.73deg, rgba(255, 255, 255, 0.0688) 7.82%, rgba(255, 255, 255, 0.0736) 94.08%)',
+        'section-shadow':
+          'linear-gradient(90deg, #0A0A0A 25.49%, rgba(10, 10, 10, 0) 57.31%)',
+        'btn-bg-left': 'url(~/assets/img/btn-bg-left.svg)',
+        'btn-bg-right': 'url(~/assets/img/btn-bg-right.svg)',
       },
       colors: {
+        dark: '#0A0A0A',
+        secondary: '#A6A3A3',
+        primary: '#FF1405',
         magenta: '#FF0097',
         'desaturated-cyan': '#73979C',
         'maastricht-blue': '#001A34',

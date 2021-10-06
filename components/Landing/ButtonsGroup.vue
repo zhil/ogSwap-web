@@ -1,91 +1,98 @@
 <template>
-  <div class="flex justify-center">
-    <div
-      class="
-        relative
-        flex
-        justify-center
-        items-center
-        mr-[31px]
-        lg:mr-[39px]
-        p-[14px]
-        lg:p-[16px]
-        min-w-[140px]
-        lg:min-w-[158px]
-        border-white border
-        rounded-[26px]
-      "
-    >
-      <img
-        src="~/assets/img/landing/coming-soon.svg"
-        alt="coming soon"
-        class="
-          absolute
-          left-[50%]
-          top-0
-          translate-x-[-50%] translate-y-[-50%]
-          w-[72px]
-          h-[18px]
-        "
-      />
-      <span
-        class="
-          text-[13px]
-          lg:text-base
-          leading-[15px]
-          lg:leading-[19px]
-          font-bold
-          opacity-50
-        "
-        >LAUNCH APP</span
-      >
-    </div>
-
+  <div
+    class="flex flex-col items-center md:flex-row md:items-end"
+    :class="{ 'justify-end': isRight }"
+  >
     <button
       class="
-        relative
-        flex
-        justify-center
-        items-center
-        p-[14px]
-        lg:p-[16px]
-        min-w-[140px]
-        lg:min-w-[158px]
-        bg-button
-        hover:bg-button-hover
-        rounded-[26px]
+        inline-flex
+        text-lg
+        leading-[27px]
+        tracking-[1px]
+        font-bold
+        bg-btn-bg-left bg-no-repeat bg-left-bottom
+        border border-primary
+        rounded-[6px]
+        group
       "
     >
       <span
         class="
-          absolute
-          left-[50%]
-          top-[-2px]
-          lg:top-[-4px]
-          translate-x-[-50%] translate-y-[-100%]
-          w-[72px]
-          h-[18px]
-          text-[12px]
-          whitespace-nowrap
+          p-[14px]
+          pb-[21px]
+          min-w-[288px]
+          md:min-w-[232px]
+          transition
+          group-hover:bg-primary
         "
       >
-        Candy waitlist
+        Try
       </span>
-      <span
-        class="
-          text-[13px]
-          lg:text-base
-          leading-[15px]
-          lg:leading-[19px]
-          font-bold
-        "
-        >SIGN UP</span
-      >
     </button>
+
+    <div
+      class="mt-[36px] md:mt-0"
+      :class="isRight ? 'md:ml-[28px]' : 'md:ml-[100px]'"
+    >
+      <nuxt-link
+        to="/"
+        class="flex justify-center items-center mb-[13px] text-sm md:text-lg"
+      >
+        <span
+          class="
+            flex
+            justify-center
+            items-center
+            mr-[13px]
+            w-[34px]
+            h-[34px]
+            bg-white
+            rounded-full
+          "
+        >
+          <icon name="sogs" />
+        </span>
+        <span>$OGS waitlist</span>
+      </nuxt-link>
+
+      <button
+        class="
+          inline-flex
+          text-lg
+          leading-[27px]
+          tracking-[1px]
+          font-bold
+          bg-btn-bg-right bg-no-repeat bg-right-top
+          border border-primary
+          rounded-[6px]
+          group
+        "
+      >
+        <span
+          class="
+            p-[14px]
+            pb-[21px]
+            min-w-[288px]
+            md:min-w-[232px]
+            transition
+            group-hover:bg-primary
+          "
+        >
+          Sign up
+        </span>
+      </button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-export default Vue.extend({})
+import Icon from '~/components/Icon.vue'
+
+export default Vue.extend({
+  components: { Icon },
+  props: {
+    isRight: { type: Boolean, default: false },
+  },
+})
 </script>

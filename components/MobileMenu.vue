@@ -32,7 +32,7 @@
       :class="{
         'opacity-0': !open,
         'bg-solana2': !isLanding,
-        'bg-magenta': isLanding,
+        'bg-primary': isLanding,
       }"
       aria-label="Close"
       @click="toggleMenu"
@@ -47,9 +47,9 @@
         top-0
         bottom-0
         h-full
-        bg-[#490191]
+        bg-dark
         container
-        pt-4
+        p-6
         transition-transform
       "
       :class="{
@@ -60,10 +60,10 @@
         <nuxt-link to="/" class="text-[46px]" @click.native="toggleMenu">
           <img
             src="~/assets/img/logo.svg"
-            class="w-[133px] h-[79px]"
-            alt="Susy"
-            width="133"
-            height="79"
+            class="w-[62px] h-[38px]"
+            alt="OG Swap"
+            width="62"
+            height="38"
           />
         </nuxt-link>
         <button
@@ -88,20 +88,18 @@
         </button>
       </div>
 
-      <div
-        class="flex-shrink-0 h-[1px] w-full my-[13px]"
-        :class="{
-          'bg-solana2': !isLanding,
-          'bg-[#8C50C9]': isLanding,
-        }"
-      ></div>
-
       <div class="flex-grow flex flex-col overflow-auto">
-        <div class="mb-auto w-full pt-[20px]">
-          <div v-for="(item, key) in navigation" :key="key" class="mb-[23px]">
+        <div class="mb-auto w-full pt-[54px]">
+          <div v-for="(item, key) in navigation" :key="key" class="mb-[42px]">
             <nuxt-link
               :to="item.route ? { name: item.route } : item.href"
-              class="font-sans leading-none no-underline hover:underline"
+              class="
+                font-poppins
+                text-[20px]
+                leading-[32px]
+                no-underline
+                hover:underline
+              "
               @click.native="toggleMenu"
             >
               {{ item.label }}
@@ -109,8 +107,16 @@
           </div>
         </div>
 
-        <div class="w-full text-[13px] font-sans text-sm pb-[22px]">
-          ©2021 Candyshop
+        <div
+          v-for="(social, socialKey) in socials"
+          :key="socialKey"
+          class="mb-[28px]"
+        >
+          <social-link
+            :href="social.href"
+            :icon="social.icon"
+            class="text-[36px] text-secondary"
+          />
         </div>
       </div>
     </nav>
