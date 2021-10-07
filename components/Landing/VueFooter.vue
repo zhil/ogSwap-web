@@ -33,7 +33,7 @@
           <social-link
             :href="social.href"
             :icon="social.icon"
-            class="text-[20px] text-secondary"
+            class="text-[20px] text-secondary hover:text-primary"
           />
         </div>
       </div>

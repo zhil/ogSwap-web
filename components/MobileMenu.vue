@@ -115,7 +115,7 @@
           <social-link
             :href="social.href"
             :icon="social.icon"
-            class="text-[36px] text-secondary"
+            class="text-[36px] text-secondary hover:text-primary"
           />
         </div>
       </div>
@@ -181,7 +181,7 @@ export default Vue.extend({
 }
 
 .mobile-menu__close {
-  @apply hover:text-magenta;
+  @apply hover:text-primary;
 }
 
 @media (min-width: 360px) {
@@ -194,9 +194,9 @@ export default Vue.extend({
   }
 }
 
-@media (min-width: 430px) {
+@media (min-width: 320px) {
   .mobile-menu__backdrop {
-    @apply opacity-70 bg-black bg-none;
+    @apply opacity-70 bg-primary bg-none;
   }
 }
 </style>
