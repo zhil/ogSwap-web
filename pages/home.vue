@@ -1,7 +1,8 @@
 <template>
   <div class="flex-grow flex flex-col justify-center">
-    <div
-      class="rounded-[18px] bg-black w-full max-w-[645px] h-[600px] mx-auto pt-[20px] pb-[24px] px-[40px] ring-[#9A9A9A] ring-1 ring-inset">
+    <angle-card
+      class="w-full max-w-[645px] mx-auto pt-[20px] pb-[24px] px-[40px]">
+
       <div class="font-red-rose text-center text-[22px] mb-[19px]">
         Swap
       </div>
@@ -127,10 +128,10 @@
       </div>
 
       <btn class="mt-4" block :disabled="isError || Number(amount || 0) === 0"
-      @click="$router.push('/review')">
+           @click="$router.push('/review')">
         Next
       </btn>
-    </div>
+    </angle-card>
   </div>
 </template>
 

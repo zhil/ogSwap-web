@@ -1,7 +1,7 @@
 <template>
   <modal name="connect-wallet"
   @close="$store.commit('app/CLOSE_MODAL')">
-    <div class="relative h-full w-full bg-[#1C1C1C] rounded-[8px] min-h-[307px] py-[24px] px-[40px] w-[540px]">
+    <div class="relative h-full bg-[#1C1C1C] rounded-[8px] min-h-[307px] py-[24px] px-[40px] w-[540px]">
 
       <button
         class="absolute z-10 right-[12px] top-[12px] bg-ghost-white text-vampire-black hover:text-white hover:bg-candy-apple-red text-[12px] p-0 rounded-full w-[27px] h-[27px] flex items-center justify-center"

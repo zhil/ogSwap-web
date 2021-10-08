@@ -1,8 +1,7 @@
 <template>
   <div class="flex-grow flex flex-col justify-center">
-    <div
-      class="rounded-[18px] bg-black w-full max-w-[645px] h-[600px] mx-auto pt-[20px] pb-[24px] px-[40px] ring-[#9A9A9A] ring-1 ring-inset">
-
+    <angle-card
+      class="w-full max-w-[645px] mx-auto pt-[20px] pb-[24px] px-[40px]">
       <div class="-mb-7 pt-2">
         <nuxt-link to="/home" class="underline hover:no-underline text-xs"><icon name="mono/arrow-back" class="fill-current w-[19px] h-[8px] mr-[4px] relative top-[-1px]" />Back</nuxt-link>
       </div>
@@ -56,29 +55,29 @@
       </div>
 
       <div class="mt-4 text-[11px]">
-          <div class="flex justify-between">
-            <div class="">
-              Estemated transaction time:
-            </div>
-            <div class="">
-              ~ 5 minutes
-            </div>
+        <div class="flex justify-between">
+          <div class="">
+            Estemated transaction time:
           </div>
-          <div class="flex justify-between mt-[8px]">
-            <div class="">
-              Estemated transaction fee:
-            </div>
-            <div class="">
-              the standard fee of the outbound network
-            </div>
+          <div class="">
+            ~ 5 minutes
           </div>
+        </div>
+        <div class="flex justify-between mt-[8px]">
+          <div class="">
+            Estemated transaction fee:
+          </div>
+          <div class="">
+            the standard fee of the outbound network
+          </div>
+        </div>
       </div>
 
       <btn class="mt-4" block :disabled="isError || Number(amount || 0) === 0"
            @click="$router.push('/review')">
         Approve
       </btn>
-    </div>
+    </angle-card>
   </div>
 </template>
 
