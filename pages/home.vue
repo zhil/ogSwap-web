@@ -126,7 +126,8 @@
         </div>
       </div>
 
-      <btn class="mt-4" block :disabled="isError || Number(amount || 0) === 0">
+      <btn class="mt-4" block :disabled="isError || Number(amount || 0) === 0"
+      @click="$router.push('/review')">
         Next
       </btn>
     </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="w-[167px] relative">
-    <btn variant="black" block class="h-[40px] leading-[40px] relative"
+    <btn variant="black" block :readonly="signed" class="h-[40px] leading-[40px] relative"
          @click="signed ? $emit('click') : $emit('login')">
       <img v-if="img"
            :src="img"
