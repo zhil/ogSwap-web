@@ -31,8 +31,8 @@
       "
       :class="{
         'opacity-0': !open,
-        'bg-solana2': !isLanding,
-        'bg-primary': isLanding,
+        'bg-black': !isLanding,
+        'bg-candy-apple-red': isLanding,
       }"
       aria-label="Close"
       @click="toggleMenu"
@@ -47,7 +47,7 @@
         top-0
         bottom-0
         h-full
-        bg-dark
+        bg-vampire-black
         container
         p-6
         transition-transform
@@ -115,7 +115,7 @@
           <social-link
             :href="social.href"
             :icon="social.icon"
-            class="text-[36px] text-secondary hover:text-primary"
+            class="text-[36px] text-quick-silver hover:text-candy-apple-red"
           />
         </div>
       </div>
@@ -141,10 +141,6 @@ export default Vue.extend({
     navigation() {
       // @ts-ignore
       return this.$store.getters['app/menu'].landingNavigation
-    },
-    partners() {
-      // @ts-ignore
-      return this.$store.getters['app/menu'].partners
     },
     socials() {
       // @ts-ignore
@@ -181,7 +177,7 @@ export default Vue.extend({
 }
 
 .mobile-menu__close {
-  @apply hover:text-primary;
+  @apply hover:text-candy-apple-red;
 }
 
 @media (min-width: 360px) {
@@ -196,7 +192,7 @@ export default Vue.extend({
 
 @media (min-width: 320px) {
   .mobile-menu__backdrop {
-    @apply opacity-70 bg-primary bg-none;
+    @apply opacity-70 bg-candy-apple-red bg-none;
   }
 }
 </style>

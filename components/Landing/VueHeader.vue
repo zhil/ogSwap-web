@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header class="pt-[25px] pb-[28px] lg:pt-[31px] bg-dark">
+    <header class="pt-[25px] pb-[28px] lg:pt-[31px] bg-vampire-black">
       <div
         class="
           container
@@ -81,7 +81,7 @@
             <social-link
               :href="social.href"
               :icon="social.icon"
-              class="text-[20px] text-secondary hover:text-primary"
+              class="text-[20px] text-quick-silver hover:text-candy-apple-red"
             />
           </div>
         </div>

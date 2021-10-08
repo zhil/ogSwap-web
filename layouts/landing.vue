@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative flex flex-col min-h-screen font-poppins text-white bg-dark"
+    class="relative flex flex-col min-h-screen font-poppins text-white bg-vampire-black"
   >
     <landing-vue-header />
     <mobile-menu is-landing />

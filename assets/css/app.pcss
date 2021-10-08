@@ -1,8 +1,17 @@
-@import './components/index.pcss';
 
 .container {
   @media (min-width: theme('screens.xl')) {
     max-width: 1143px;
+  }
+}
+
+.container-1440 {
+  @apply container;
+
+  @media (min-width: theme('screens.xl')) {
+    max-width: 1440px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }
 
@@ -15,4 +24,25 @@
 .underline-thickness-0.5 {
   text-decoration-thickness: 0.5px;
   text-underline-offset: 2px;
+}
+
+
+
+@media (hover: hover) {
+  ::-webkit-scrollbar-track {
+    border-radius: 0;
+
+    @apply bg-dark-charcoal bg-opacity-50;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+
+    @apply bg-dark-charcoal;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 }

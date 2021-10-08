@@ -3,7 +3,7 @@ export const state = () => ({
     open: false,
     landingNavigation: [
       {
-        route: 'logs',
+        route: 'home',
         label: 'Launch APP',
       },
       {
@@ -21,22 +21,12 @@ export const state = () => ({
     ],
     navigation: [
       {
-        route: 'logs',
-        label: 'Logs',
-      },
-      {
-        route: 'transfer',
-        label: 'Transfer',
-      },
-    ],
-    partners: [
-      {
         href: '/',
-        label: 'Graviton',
+        label: 'About',
       },
       {
         href: '/',
-        label: 'Gravity',
+        label: 'Swap',
       },
     ],
     socials: [

@@ -1,5 +1,5 @@
 <template>
-  <footer class="pt-[40px] pb-[28px] md:py-[70px] bg-dark">
+  <footer class="pt-[40px] pb-[28px] md:py-[70px] bg-vampire-black">
     <div
       class="container text-center md:flex md:justify-center md:items-center"
     >
@@ -33,7 +33,7 @@
           <social-link
             :href="social.href"
             :icon="social.icon"
-            class="text-[20px] text-secondary hover:text-primary"
+            class="text-[20px] text-quick-silver hover:text-candy-apple-red"
           />
         </div>
       </div>

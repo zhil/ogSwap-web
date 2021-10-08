@@ -10,8 +10,8 @@
         leading-[27px]
         tracking-[1px]
         font-bold
-        bg-btn-bg-left bg-no-repeat bg-left-bottom
-        border border-primary
+        bg-blood-left-bottom bg-no-repeat bg-left-bottom
+        border border-candy-apple-red
         rounded-[6px]
         group
       "
@@ -23,7 +23,7 @@
           min-w-[288px]
           md:min-w-[232px]
           transition
-          group-hover:bg-primary
+          group-hover:bg-candy-apple-red
         "
       >
         Try
@@ -62,8 +62,8 @@
           leading-[27px]
           tracking-[1px]
           font-bold
-          bg-btn-bg-right bg-no-repeat bg-right-top
-          border border-primary
+          bg-blood-top-right bg-no-repeat bg-right-top
+          border border-candy-apple-red
           rounded-[6px]
           group
         "
@@ -75,7 +75,7 @@
             min-w-[288px]
             md:min-w-[232px]
             transition
-            group-hover:bg-primary
+            group-hover:bg-candy-apple-red
           "
         >
           Sign up
