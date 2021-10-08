@@ -63,7 +63,7 @@
               @click="connected ? false : handleConnectWallet()">
               <span v-if="connected" class="font-medium">
               <icon name="mono/check"
-                    class="fill-current text-[#00FFA3] ring-1 ring-inset ring-current text-[24px] rounded-full mr-[6px] relative top-[5px]"/>
+                    class="fill-current text-medium-spring-green ring-1 ring-inset ring-current text-[24px] rounded-full mr-[6px] relative top-[5px]"/>
                 Connected
               </span>
               <span v-else>

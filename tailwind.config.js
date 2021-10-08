@@ -30,6 +30,7 @@ module.exports = {
         'quick-silver': '#A6A3A3',
         'candy-apple-red': '#FF1405',
         'electric-red': '#DF1205',
+        'medium-spring-green': '#00FFA3',
       },
       transitionProperty: {
         visibility: 'visibility',

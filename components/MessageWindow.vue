@@ -2,10 +2,11 @@
   <div class="message-window">
     <div class="h-[40px] flex items-center px-[20px]">
       <div class="w-[40px] flex items-center justify-start">
-        <icon v-show="completed" name="mono/check-2" class="fill-current stroke-current text-[20px] text-[#00FFA3]" />
+        <icon v-show="completed" name="mono/check-2" class="fill-current stroke-current text-[20px] text-medium-spring-green" />
         <icon v-show="!completed" name="mono/clock" class="fill-current stroke-current text-[18px] relative left-[1px]" />
       </div>
-      <div class="flex-grow text-[13px] font-medium text-center">
+      <div class="flex-grow text-[13px] font-medium text-center"
+      :class="{'text-medium-spring-green':completed}">
         Transaction is processing
       </div>
       <div class="w-[40px] flex items-center justify-end">

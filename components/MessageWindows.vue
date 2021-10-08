@@ -47,7 +47,7 @@
       </div>
 
       <div class="bg-dark-charcoal rounded-[10px] text-center text-[10px] min-h-[24px] mb-[10px] flex flex-col justify-center px-[42px] py-[4px] relative">
-        <icon name="mono/check-2" class="absolute top-[3px] left-[18px] fill-current stroke-current text-[20px] text-[#00FFA3]" />
+        <icon name="mono/check-2" class="absolute top-[3px] left-[18px] fill-current stroke-current text-[20px] text-medium-spring-green" />
 
         Deposit transaction is complete
 
