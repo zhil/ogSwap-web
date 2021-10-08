@@ -17,15 +17,25 @@
         </component-link>
       </div>
 
-      <div class="flex lg:w-[350px]">
-        <btn variant="black" class="w-[167px] h-[40px] leading-[40px] relative">
-          <img class="w-[24px] h-[24px] object-contain object-center absolute left-[10px] top-[8px]" src="~/assets/img/icons/phantom.svg" alt="">
-          Connect
-        </btn>
-        <btn variant="black" class="w-[167px] h-[40px] leading-[40px] relative ml-[12px]">
-          <img class="w-[24px] h-[24px] object-contain object-center absolute left-[10px] top-[8px]" src="~/assets/img/icons/metamask.svg" alt="">
-          Connect
-        </btn>
+      <div class="flex lg:w-[350px] justify-end">
+        <coin-account class="ml-[12px]" :img="require('~/assets/img/icons/phantom.svg')"
+                      address="0xtest...test"
+                      network=""
+                      :signed="signed1"
+                      :connected="connected1"
+                      @click="connected1 = !connected1"
+                      @login="signed1 = true"
+                      @logout="signed1 = false"
+        />
+        <coin-account class="ml-[12px]" :img="require('~/assets/img/icons/metamask.svg')"
+                      network="Mainnet"
+                      address="0xtest...test"
+                      :signed="signed2"
+                      :connected="connected2"
+                      @click="connected2 = !connected2"
+                      @login="signed2 = true"
+                      @logout="signed2 = false"
+        />
       </div>
     </div>
   </header>
@@ -35,6 +45,12 @@
 import Vue from 'vue'
 
 export default Vue.extend({
+  data: () => ({
+    connected1: false,
+    connected2: true,
+    signed1: false,
+    signed2: false,
+  }),
   computed: {
     open(){
       return this.$store.getters["app/menu"].open;

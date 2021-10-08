@@ -39,6 +39,10 @@ export const state = () => ({
         href: '/',
         label: 'Swap',
       },
+      {
+        href: '/',
+        label: 'Logs',
+      },
     ],
     socials: [
       {
