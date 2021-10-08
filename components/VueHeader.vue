@@ -1,5 +1,5 @@
 <template>
-  <header class="flex-shrink-0 pt-[30px] pb-[4px]">
+  <header class="flex-shrink-0 py-[30px]">
     <div class="container-1440 flex flex-row items-center justify-between">
       <div class="lg:w-[350px]">
         <nuxt-link to="/">
