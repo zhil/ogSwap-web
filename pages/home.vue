@@ -60,7 +60,7 @@
             <btn
               :variant="connected ? 'dark-charcoal' : 'blood'" block
               :readonly="connected"
-            @click="connected = true">
+              @click="connected ? false : handleConnectWallet()">
               <span v-if="connected" class="font-medium">
               <icon name="mono/check"
                     class="fill-current text-[#00FFA3] ring-1 ring-inset ring-current text-[24px] rounded-full mr-[6px] relative top-[5px]"/>
@@ -145,6 +145,18 @@ export default Vue.extend({
   computed: {
     isError() {
       return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0;
+    }
+  },
+  methods: {
+    handleConnectWallet() {
+      // Deep copy object
+      const modal = JSON.parse(JSON.stringify(this.$store.getters["app/exampleModals"].connectWallet));
+
+      modal.data.callbackConnect = () => {
+        this.connected = true
+        this.$store.commit('app/CLOSE_MODAL')
+      }
+      this.$store.commit('app/PUSH_MODAL', modal)
     }
   }
 })

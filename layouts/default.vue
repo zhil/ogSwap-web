@@ -11,6 +11,8 @@
     </main>
 
     <vue-footer />
+
+    <modals-connect-wallet />
   </div>
 </template>
 
