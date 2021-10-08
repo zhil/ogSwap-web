@@ -3,6 +3,8 @@
          :value="value"
          :placeholder="placeholder"
          :type="type"
+         :disabled="disabled"
+         :readonly="readonly"
          :class="{
               'field-input--lg': size === 'large',
               'field-input--md': size === 'medium',
@@ -11,6 +13,7 @@
               'field-input--rounded': rounded,
               'field-input--square': square,
               'field-input--error': error,
+              'field-input--disabled': disabled,
              }"
          @input="$emit('input', $event.target.value)"
   />
@@ -43,6 +46,14 @@ export default Vue.extend({
       default: false
     },
     square: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
       type: Boolean,
       default: false
     },
@@ -101,6 +112,10 @@ export default Vue.extend({
 
 .field-input--error {
   @apply ring-1 ring-inset ring-electric-red;
+}
+
+.field-input--disabled {
+  @apply pointer-events-none opacity-50;
 }
 
 /* Chrome, Safari, Edge, Opera */

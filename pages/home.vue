@@ -34,11 +34,13 @@
             </field-label>
             <div class="relative">
               <label class="block">
-                <field-input v-model="amount" :error="isError" size="large" class="font-medium pb-[22px]" type="number"/>
+                <field-input v-model="amount" :error="isError" size="large" class="font-medium pb-[22px]"
+                             type="number"/>
               </label>
-              <div class="absolute left-[12px] top-[31px] text-xs">${{ Number(amount||0)*79 }}</div>
-              <btn square variant="black" class="absolute right-[12px] top-[8px] font-red-rose underline hover:no-underline"
-              @click="amount = '1000'">
+              <div class="absolute left-[12px] top-[31px] text-xs">${{ Number(amount || 0) * 79 }}</div>
+              <btn square variant="black"
+                   class="absolute right-[12px] top-[8px] font-red-rose underline hover:no-underline"
+                   @click="amount = '1000'">
                 MAX
               </btn>
             </div>
@@ -55,16 +57,28 @@
             </label>
           </div>
           <div class="px-[6px] w-[162px] flex items-end">
-            <btn variant="blood" block>
-              Connect wallet
+            <btn
+              :variant="connected ? 'dark-charcoal' : 'blood'" block
+              :readonly="connected"
+            @click="connected = true">
+              <span v-if="connected" class="font-medium">
+              <icon name="mono/check"
+                    class="fill-current text-[#00FFA3] ring-1 ring-inset ring-current text-[24px] rounded-full mr-[6px] relative top-[5px]"/>
+                Connected
+              </span>
+              <span v-else>
+                Connect wallet
+              </span>
             </btn>
           </div>
         </div>
 
       </div>
+
       <div class="h-[18px] w-full text-[18px] text-[#8D9EB5] text-center">
         <icon name="mono/arrow-wide-2" class="fill-current"/>
       </div>
+
       <div class="bg-[#1C1C1C] py-4 px-[28px] rounded-[4px]">
 
         <div class="-mx-[6px] flex mb-[14px]">
@@ -87,9 +101,10 @@
           <div class="px-[6px] flex-grow flex flex-col justify-end">
             <div class="relative">
               <label class="block">
-                <field-input v-model="amount" :error="isError" size="large" class="font-medium pb-[22px]" type="number"/>
+                <field-input v-model="amount" :error="isError" size="large" class="font-medium pb-[22px]"
+                             type="number"/>
               </label>
-              <div class="absolute left-[12px] top-[31px] text-xs">${{ Number(amount||0)*79 }}</div>
+              <div class="absolute left-[12px] top-[31px] text-xs">${{ Number(amount || 0) * 79 }}</div>
             </div>
           </div>
         </div>
@@ -111,7 +126,7 @@
         </div>
       </div>
 
-      <btn class="mt-4" block>
+      <btn class="mt-4" block :disabled="isError || Number(amount || 0) === 0">
         Next
       </btn>
     </div>
@@ -125,9 +140,10 @@ export default Vue.extend({
   data: () => ({
     address: '',
     amount: '0',
+    connected: false,
   }),
   computed: {
-    isError(){
+    isError() {
       return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0;
     }
   }

@@ -1,15 +1,19 @@
 <template>
   <component :is="tag"
              class="btn"
+             :disabled="disabled"
              :class="{
               'btn--lg': size === 'large',
               'btn--md': size === 'medium',
               'btn--sm': size === 'small',
               'btn--blood': variant === 'blood',
               'btn--black': variant === 'black',
+              'btn--dark-charcoal': variant === 'dark-charcoal',
               'btn--rounded': rounded,
               'btn--square': square,
               'btn--block': block,
+              'btn--disabled': disabled,
+              'btn--readonly': readonly,
              }"
              @click="$emit('click', $event)"
   >
@@ -38,6 +42,14 @@ export default Vue.extend({
       type: Boolean,
       default: false
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
+      type: Boolean,
+      default: false
+    },
     size: {
       type: String,
       validator: (value) => ['large', 'medium', 'small'].includes(value),
@@ -45,7 +57,7 @@ export default Vue.extend({
     },
     variant: {
       type: String,
-      validator: (value) => ['blood', 'black'].includes(value),
+      validator: (value) => ['blood', 'black', 'dark-charcoal'].includes(value),
       default: 'blood'
     },
   }
@@ -86,7 +98,7 @@ export default Vue.extend({
 
   background-size: auto 30px;
 
-  &:hover{
+  &:not(.btn--readonly):hover{
     @apply ring-candy-apple-red bg-candy-apple-red bg-none;
   }
 }
@@ -94,7 +106,15 @@ export default Vue.extend({
 .btn--black {
   @apply text-white bg-vampire-black ring-[#EBE4E4];
 
-  &:hover{
+  &:not(.btn--readonly):hover{
+    @apply ring-candy-apple-red bg-candy-apple-red bg-none;
+  }
+}
+
+.btn--dark-charcoal {
+  @apply text-white bg-dark-charcoal ring-dark-charcoal;
+
+  &:not(.btn--readonly):hover {
     @apply ring-candy-apple-red bg-candy-apple-red bg-none;
   }
 }
@@ -105,6 +125,14 @@ export default Vue.extend({
 
 .btn--block {
   @apply w-full block;
+}
+
+.btn--disabled {
+  @apply pointer-events-none opacity-50;
+}
+
+.btn--readonly{
+  @apply cursor-default;
 }
 
 </style>
