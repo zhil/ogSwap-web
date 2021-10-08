@@ -12,6 +12,7 @@
 
     <vue-footer />
 
+    <message-windows />
     <modals-connect-wallet />
   </div>
 </template>
