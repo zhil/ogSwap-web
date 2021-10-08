@@ -7,12 +7,11 @@
               'btn--sm': size === 'small',
               'btn--blood': variant === 'blood',
               'btn--black': variant === 'black',
-              'btn--underline': variant === 'underline',
-              'btn--text': variant === 'text',
               'btn--rounded': rounded,
               'btn--square': square,
               'btn--block': block,
              }"
+             @click="$emit('click', $event)"
   >
     <slot/>
   </component>
@@ -46,7 +45,7 @@ export default Vue.extend({
     },
     variant: {
       type: String,
-      validator: (value) => ['blood', 'black', 'underline', 'text'].includes(value),
+      validator: (value) => ['blood', 'black'].includes(value),
       default: 'blood'
     },
   }
@@ -56,7 +55,6 @@ export default Vue.extend({
 <style lang="postcss">
 .btn {
   @apply inline-block text-center rounded-[6px] ring-1 ring-inset text-xs align-middle transition-all;
-
 }
 
 .btn--lg {
@@ -94,15 +92,11 @@ export default Vue.extend({
 }
 
 .btn--black {
-  @apply text-white bg-vampire-black;
-}
+  @apply text-white bg-vampire-black ring-[#EBE4E4];
 
-.btn--underline {
-  @apply text-white underline hover:no-underline;
-}
-
-.btn--text {
-  @apply no-underline hover:underline;
+  &:hover{
+    @apply ring-candy-apple-red bg-candy-apple-red bg-none;
+  }
 }
 
 .btn--rounded {

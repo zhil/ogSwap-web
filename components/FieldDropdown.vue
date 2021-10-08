@@ -8,6 +8,7 @@
               'field-dropdown--rounded': rounded,
               'field-dropdown--square': square,
               'field-dropdown--block': block,
+              'field-dropdown--error': error,
              }">
     <div class="group-hover:block hidden absolute z-20 top-full pt-[6px] left-0 min-w-full max-w-[280px]">
       <div class="field-dropdown__list"
@@ -44,6 +45,10 @@ export default Vue.extend({
       default: false
     },
     block: {
+      type: Boolean,
+      default: false
+    },
+    error: {
       type: Boolean,
       default: false
     },
@@ -163,5 +168,9 @@ export default Vue.extend({
       @apply min-h-[26px] px-[12px];
     }
   }
+}
+
+.field-dropdown--error {
+  @apply ring-1 ring-inset ring-electric-red;
 }
 </style>

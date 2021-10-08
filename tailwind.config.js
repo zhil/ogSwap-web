@@ -29,6 +29,7 @@ module.exports = {
         'vampire-black': '#0A0A0A',
         'quick-silver': '#A6A3A3',
         'candy-apple-red': '#FF1405',
+        'electric-red': '#DF1205',
       },
       transitionProperty: {
         visibility: 'visibility',
