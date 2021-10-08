@@ -1,7 +1,19 @@
 <template>
-  <div class="flex items-center">
-    <div class="min-w-[30px] w-[30px] h-[30px] rounded-full bg-ghost-white flex justify-center items-center mr-[6px]">
+  <div class="flex items-center"
+       :class="{
+      'text-[13px]': size === 'medium',
+      'text-[12px]': size === 'small',
+    }">
+    <div class="rounded-full bg-ghost-white flex justify-center items-center mr-[6px]"
+    :class="{
+      'min-w-[30px] w-[30px] h-[30px]': size === 'medium',
+      'min-w-[20px] w-[20px] h-[20px]': size === 'small',
+    }">
       <img v-if="img" class="h-[22px] w-[22px] object-center object-contain"
+           :class="{
+      'h-[22px] w-[22px]': size === 'medium',
+      'h-[11px] w-[11px]': size === 'small'
+    }"
            :src="img" alt="">
     </div>
     {{ label }}
@@ -14,6 +26,11 @@ import Vue from 'vue'
 
 export default Vue.extend({
   props: {
+    size: {
+      type: String,
+      validator: (value) => ['medium', 'small'].includes(value),
+      default: 'medium'
+    },
     img: {
       type: String,
       default: ''

@@ -15,15 +15,15 @@
 
         <div class="mb-[10px] flex justify-center">
           <div class="w-[140px] flex justify-end items-center">
-            <img class="max-w-full h-auto" src="~/assets/img/logotypes/fantom.svg" alt="">
+            <img class="max-w-full h-auto max-h-[27px]" src="~/assets/img/logotypes/fantom.svg" alt="">
           </div>
           <div class="w-[70px] flex justify-center items-center">
             <div class="text-black bg-ghost-white rounded-full w-[33px] h-[33px] flex justify-center items-center">
-              <icon name="mono/arrow-back" class="fill-current w-[15px] rotate-180 mr-[4px] relative left-[1px]" />
+              <icon name="mono/arrow-back" class="fill-current w-[15px] h-[15px] rotate-180 mr-[4px] relative left-[1px]" />
             </div>
           </div>
           <div class="w-[140px] flex justify-start items-center">
-            <img class="max-w-full h-auto" src="~/assets/img/logotypes/binance.svg" alt="">
+            <img class="max-w-full h-auto max-h-[27px]" src="~/assets/img/logotypes/binance.svg" alt="">
           </div>
         </div>
 
