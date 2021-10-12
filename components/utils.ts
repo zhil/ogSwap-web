@@ -23,6 +23,10 @@ export enum ChainTypes {
   Solana,
 }
 
+export interface Token {
+  
+}
+
 /**
  * Functions to operate basic convertion operations from 18dec and back
  */
