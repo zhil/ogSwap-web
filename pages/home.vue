@@ -17,12 +17,12 @@
                 <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')"/>
               </template>
               <template #list>
+                <coin-item v-for="item of arrayOfTokens" v-bind:key="item.id" label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
+                <!-- <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
                 <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
                 <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
                 <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
+                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/> -->
               </template>
             </field-dropdown>
           </div>
@@ -160,6 +160,10 @@ export default Vue.extend({
       }
       this.$store.commit('app/PUSH_MODAL', modal)
     }
+  },
+  async mounted() {
+    // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
+    
   }
 })
 </script>
