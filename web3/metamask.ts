@@ -7,15 +7,11 @@ import { relayAddresses, contractsABI } from './constants'
 declare global {
   interface Window {
     ethereum: any
+    solana: any
     web3: any
   }
 }
 const { HttpProvider } = Web3.providers
-
-export const WalletProvider = {
-  Metamask: 'Metamask',
-  ConnectWallet: 'ConnectWallet',
-}
 
 class Invoker {
   // async switchMetamaskNetwork(chain: MetamaskChain) {
@@ -137,13 +133,35 @@ export class Web3Invoker extends Invoker {
   }
 }
 
+export class Web3WalletConnector {
+  ethEnabled(): boolean {
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum)
+      window.ethereum.enable()
+      return true
+    }
+    return false
+  }
+  async solEnabled(): Promise<boolean> {
+    if (window.solana) {
+      if (window.solana.isPhantom) {
+        await window.solana.connect()
+        return true
+      }
+    }
+    return false
+  }
+}
+
 export function formatETHBalance(amount: string): string {
   const web3 = new Web3()
   return web3.utils.fromWei(amount, 'ether')
 }
 
-export function numberWithCommas(x: string): string {
-  var parts = x.split('.')
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-  return parts.join('.')
+export function formatAmountToPrecision(
+  value: string,
+  precision: number
+): string {
+  let dotAt = value.indexOf('.')
+  return dotAt !== -1 ? value.slice(0, ++dotAt + precision) : value
 }

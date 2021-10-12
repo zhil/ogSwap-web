@@ -1,4 +1,5 @@
-import { Chains } from '~/components/utils'
+import { EvmChains } from '~/components/utils'
+import { Chains } from '~/components/constants'
 
 interface NativeCurrency {
   name: string
@@ -7,8 +8,8 @@ interface NativeCurrency {
 }
 
 export type MetamaskChain = {
-  chainId: string | number
-  chainIdHex: string
+  chainId: string | number | null
+  chainIdHex: string | null
   chainName: string
   rpcUrls: Array<string>
   nativeCurrency: NativeCurrency
@@ -17,7 +18,7 @@ export type MetamaskChain = {
 }
 
 export const availableChains: { [key in Chains]: MetamaskChain } = {
-  [Chains.Ethereum]: {
+  [Chains.Eth]: {
     chainId: 1,
     chainIdHex: '0x1',
     chainName: 'Ethereum',
@@ -26,7 +27,7 @@ export const availableChains: { [key in Chains]: MetamaskChain } = {
     img: '/img/bridge/chains/ethereum.svg',
     blockExplorerUrls: ['https://etherscan.io'],
   },
-  [Chains.Polygon]: {
+  [Chains.Pol]: {
     chainId: 137,
     chainIdHex: '0x89',
     chainName: 'Polygon',
@@ -35,7 +36,7 @@ export const availableChains: { [key in Chains]: MetamaskChain } = {
     img: '/img/bridge/chains/ethereum.svg',
     blockExplorerUrls: ['https://explorer.matic.network/'],
   },
-  [Chains.Binance]: {
+  [Chains.Bsc]: {
     chainId: 56,
     chainIdHex: '0x38',
     chainName: 'BSC',
@@ -44,7 +45,7 @@ export const availableChains: { [key in Chains]: MetamaskChain } = {
     nativeCurrency: { name: 'BNB', decimals: 18, symbol: 'BNB' },
     blockExplorerUrls: ['https://bscscan.com'],
   },
-  [Chains.Fantom]: {
+  [Chains.Ftm]: {
     chainId: 250,
     chainIdHex: '0xFA',
     chainName: 'Fantom',
@@ -75,6 +76,15 @@ export const availableChains: { [key in Chains]: MetamaskChain } = {
     chainName: 'Avalanche',
     chainId: 43114,
     chainIdHex: '0xA86A',
+    img: '',
+    rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+    nativeCurrency: { name: 'AVAX', decimals: 18, symbol: 'AVAX' },
+    blockExplorerUrls: ['https://cchain.explorer.avax.network'],
+  },
+  [Chains.Sol]: {
+    chainName: 'Solana',
+    chainId: null,
+    chainIdHex: null,
     img: '',
     rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
     nativeCurrency: { name: 'AVAX', decimals: 18, symbol: 'AVAX' },

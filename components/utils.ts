@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 /**
  * We need to estimate all evm chains we can use in project
  */
-export enum Chains {
+export enum EvmChains {
   Fantom,
   Ethereum,
   Polygon,
@@ -12,6 +12,17 @@ export enum Chains {
   Heco,
   Avax,
 }
+
+export enum WalletProvider {
+  Metamask,
+  Phantom,
+}
+
+export enum ChainTypes {
+  Evm,
+  Solana,
+}
+
 /**
  * Functions to operate basic convertion operations from 18dec and back
  */
@@ -39,4 +50,10 @@ export function toPlainString(num: string): string {
         : b + c + d + Array(e - d.length + 1).join('0')
     }
   )
+}
+
+export function numberWithCommas(x: string): string {
+  var parts = x.split('.')
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return parts.join('.')
 }

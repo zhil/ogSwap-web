@@ -1,5 +1,5 @@
-import RelayContract from '~/web3/abi/relay_contract.json'
-import ERC20ABI from '~/web3/abi/erc20.json'
+import RelayContract from './abi/relay_contract.json'
+import ERC20ABI from './abi/erc20.json'
 
 export const treasuryAddress = '0x953555e0Af401Bd031a5a53c72EFa81fae464276'
 
@@ -36,32 +36,32 @@ export const gtonAddresses = [
   '0x64D5BaF5ac030e2b7c435aDD967f787ae94D0205',
 ]
 
-export const treasuryERC20Tokens: { title: string; address: string }[] = [
-  {
-    title: 'usdt',
-    address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
-  },
-  {
-    title: 'usdc',
-    address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-  },
-  {
-    title: 'dai',
-    address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-  },
-  {
-    title: 'busd',
-    address: '0x4fabb145d64652a948d72533023f6e7a623c7c53',
-  },
-  {
-    title: 'husd',
-    address: '0xdf574c24545e5ffecb9a659c229253d4111d87e1',
-  },
-  {
-    title: 'susd',
-    address: '0x57ab1ec28d129707052df4df418d58a2d46d5f51',
-  },
-]
+// export const treasuryERC20Tokens: { title: string; address: string }[] = [
+//   {
+//     title: "usdt",
+//     address: "0xdac17f958d2ee523a2206206994597c13d831ec7"
+//   },
+//   {
+//     title: "usdc",
+//     address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+//   },
+//   {
+//     title: "dai",
+//     address: "0x6b175474e89094c44da98b954eedeac495271d0f"
+//   },
+//   {
+//     title: "busd",
+//     address: "0x4fabb145d64652a948d72533023f6e7a623c7c53"
+//   },
+//   {
+//     title: "husd",
+//     address: "0xdf574c24545e5ffecb9a659c229253d4111d87e1"
+//   },
+//   {
+//     title: "susd",
+//     address: "0x57ab1ec28d129707052df4df418d58a2d46d5f51"
+//   }
+// ];
 
 export const INFURA_PROVIDER_IDS = [
   'ec6afadb1810471dbb600f24b86391d2',
