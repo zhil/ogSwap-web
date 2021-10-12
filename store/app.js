@@ -3,11 +3,17 @@ export const state = () => ({
     connectWallet: {
       index: '1', // Индекс для перерисовки одного и того же модального окна
       name: 'connect-wallet', // Уникальное название модального окна
-      data: {
-        label: 'MetaMask',
-        img: require('~/assets/img/icons/metamask.svg'),
-      }, // Данные помещаемые в модальное окно
-    }
+      data: [
+        {
+          label: 'MetaMask',
+          img: require('~/assets/img/icons/metamask.svg'),
+        }, // Данные помещаемые в модальное окно
+        {
+          label: 'Phantom',
+          img: require('~/assets/img/icons/metamask.svg'),
+        },
+      ],
+    },
   },
   modals: [],
   menu: {
@@ -67,29 +73,29 @@ export const state = () => ({
 
 export const mutations = {
   TOGGLE_MENU(state) {
-    state.menu.open = !state.menu.open;
+    state.menu.open = !state.menu.open
   },
   PUSH_MODAL(state, modal) {
-    state.modals.push(modal);
+    state.modals.push(modal)
   },
   PUSH_MODALS(state, modals) {
-    state.modals = [...state.modals, ...modals];
+    state.modals = [...state.modals, ...modals]
   },
   CLOSE_ALL_MODALS(state) {
-    state.modals = [];
+    state.modals = []
   },
   CLOSE_MODAL(state) {
-    state.modals.pop();
+    state.modals.pop()
   },
-  SET_DATA_MODAL(state, {name, index, data}) {
-    const modals = state.modals;
+  SET_DATA_MODAL(state, { name, index, data }) {
+    const modals = state.modals
     for (let i = 0; i < modals.length; i++) {
       const modal = modals[i]
-      if(modal.name === name && modal.index === index){
+      if (modal.name === name && modal.index === index) {
         modal.data = data
       }
     }
-  }
+  },
 }
 
 export const getters = {

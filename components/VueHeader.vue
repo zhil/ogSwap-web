@@ -35,7 +35,7 @@
       </div>
 
       <div class="flex lg:w-[350px] justify-end">
-        <coin-account
+        <!-- <coin-account
           class="ml-[12px]"
           :img="require('~/assets/img/icons/phantom.svg')"
           address="0xtest...test"
@@ -56,6 +56,15 @@
           @click="connectMetamask()"
           @login="signed2 = true"
           @logout="signed2 = false"
+        /> -->
+        <!-- <div>1</div> -->
+        <wallet
+          :img="require('~/assets/img/icons/metamask.svg')"
+          :val="metamask"
+        />
+        <wallet
+          :img="require('~/assets/img/icons/phantom.svg')"
+          :val="phantom"
         />
       </div>
     </div>
@@ -64,8 +73,11 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import ConnectWallet from './Modals/ConnectWallet.vue'
+import { WalletProvider } from './utils'
 
 export default Vue.extend({
+  components: { ConnectWallet },
   data: () => ({
     connected1: false,
     connected2: true,
@@ -78,6 +90,12 @@ export default Vue.extend({
     },
     navigation() {
       return this.$store.getters['app/menu'].navigation
+    },
+    metamask() {
+      return WalletProvider.Metamask
+    },
+    phantom() {
+      return WalletProvider.Phantom
     },
   },
   methods: {

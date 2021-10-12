@@ -1,10 +1,9 @@
 <template>
   <coin-account
     class="ml-[12px]"
-    :img="require('~/assets/img/icons/phantom.svg')"
     address="0xtest...test"
+    :img="img"
     :network="currentChainName"
-    :signed="signed1"
     :connected="connected"
     @login="handleConnectWallet()"
     @logout="handleLogout"
@@ -16,7 +15,7 @@ import Vue from 'vue'
 import { WalletBody } from '~/store/types'
 
 export default Vue.extend({
-  props: ['val'],
+  props: ['val', 'img'],
   data: () => ({
     connected: false,
     metamaskBus: new Vue(),

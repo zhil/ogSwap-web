@@ -6,8 +6,8 @@ import {
   MAINNET_INFURA_URL,
   POLYGON_PROVIDER_URL,
   XDAI_PROVIDER_URL,
-} from '~/components/web3/constants'
-import { ChainTypes } from '../utils'
+} from '~/web3/constants'
+import { ChainTypes } from '~/components/utils'
 
 // при изменении сломается только механика получения чейн айди от провайдера
 export enum Chains { // Надо заменить айдишники на названия по типу и добавить солану
