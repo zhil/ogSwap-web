@@ -19,7 +19,7 @@ import { WalletBody } from '~/store/types'
 export default Vue.extend({
   props: {
     val: {
-      type: Object as PropType<WalletProvider>,
+      type: Number as PropType<WalletProvider>,
       default: WalletProvider.Metamask,
     },
     img: {
