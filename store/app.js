@@ -1,18 +1,26 @@
+import { WalletProvider } from '~/components/utils'
+
 export const state = () => ({
-  exampleModals: {
-    connectWallet: {
+  modalData: {
+    [WalletProvider.Phantom]: {
       index: '1', // Индекс для перерисовки одного и того же модального окна
       name: 'connect-wallet', // Уникальное название модального окна
-      data: [
+      data: 
         {
-          label: 'MetaMask',
-          img: require('~/assets/img/icons/metamask.svg'),
-        }, // Данные помещаемые в модальное окно
-        {
-          label: 'Phantom',
-          img: require('~/assets/img/icons/metamask.svg'),
+          label: 'Connect to Phantom',
+          img: require('~/assets/img/icons/phantom.svg'),
+          provider: WalletProvider.Phantom
         },
-      ],
+    },
+    [WalletProvider.Metamask]: {
+      index: '1', // Индекс для перерисовки одного и того же модального окна
+      name: 'connect-wallet', // Уникальное название модального окна
+      data: 
+        {
+          label: 'Connect to MetaMask',
+          img: require('~/assets/img/icons/metamask.svg'),
+          provider: WalletProvider.Metamask
+        }, // Данные помещаемые в модальное окно
     },
   },
   modals: [],
@@ -99,7 +107,7 @@ export const mutations = {
 }
 
 export const getters = {
-  exampleModals: (state) => state.exampleModals,
+  getModal: (state) => (provider) => state.modalData[provider],
   modals: (state) => state.modals,
   menu: (state) => state.menu,
 }

@@ -46,7 +46,7 @@
           text-center
         "
       >
-        Connect to {{ label }}
+        {{ label }}
       </div>
       <div
         class="
@@ -67,33 +67,9 @@
           v-show="!connected"
           variant="blood"
           class="w-[150px]"
-          @click="onClickMetamaskConnect"
+          @click="onClickConnect(provider)"
         >
-          Connect to MetaMask
-        </btn>
-      </div>
-      <div
-        class="
-          bg-dark-charcoal
-          rounded-[10px]
-          min-h-[215px]
-          flex flex-col
-          justify-center
-          items-center
-        "
-      >
-        <img
-          class="w-[80px] h-[80px] object-center object-contain mb-[30px]"
-          :src="img"
-          :alt="label"
-        />
-        <btn
-          v-show="!connected"
-          variant="blood"
-          class="w-[150px]"
-          @click="onClickPhantomConnect"
-        >
-          Connect to Phantom
+          {{ label }}
         </btn>
       </div>
     </div>
@@ -109,7 +85,7 @@ import { availableChains } from '~/web3/evm_chain'
 import { WalletBody } from '~/store/types'
 import { Chains } from '~/components/constants'
 import logger from '~/utils/logger'
-import {metamaskBus} from "~/components/metamaskBus"
+import { metamaskBus } from '~/components/metamaskBus'
 
 interface State {
   userConnectOccured: boolean
@@ -145,6 +121,9 @@ export default Vue.extend({
     label(): string {
       return this.data?.label
     },
+    provider(): string {
+      return this.data?.provider
+    },
     img(): String {
       return this.data?.img
     },
@@ -173,8 +152,8 @@ export default Vue.extend({
       setTimeout(connect, 3000)
     }
     metamaskBus.$on('logout', (data: WalletProvider) => {
-          this.logWalletOut(data)
-      })
+      this.logWalletOut(data)
+    })
   },
   created() {
     const fn = () => {
@@ -193,6 +172,7 @@ export default Vue.extend({
     //   this.data.callbackConnect && this.data.callbackConnect()
     //   this.connected = false
     // },
+
     async buildWalletBody(
       provider: WalletProvider
     ): Promise<Array<WalletBody>> {
@@ -269,6 +249,11 @@ export default Vue.extend({
       await this.checkWalletData(WalletProvider.Phantom) // Phantom (DONE)
       this.userConnectOccured = true
       window.localStorage.setItem('logged_once_phantom', 'true') // change to wallet name logged_once_phantom (DONE)
+    },
+    async onClickConnect(provider: WalletProvider) {
+      return provider === WalletProvider.Metamask
+        ? await this.onClickMetamaskConnect()
+        : await this.onClickPhantomConnect()
     },
     async onClickMetamaskConnect() {
       try {

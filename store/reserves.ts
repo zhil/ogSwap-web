@@ -36,6 +36,7 @@ export const actions: ActionTree<State, any> = {
         pool.provider,
         pool.stablePoolContract
       )
+      console.log(stablePool);
       const gtonPool = await getPoolReserves(
         pool.provider,
         pool.mainPoolContract
@@ -46,7 +47,7 @@ export const actions: ActionTree<State, any> = {
       )
       commit('updatePrice', {
         chain: pool.chain,
-        body: { gtonPool, dexGtonPrice: price },
+        body: { ...gtonPool, dexGtonPrice: price },
       })
     }
   },

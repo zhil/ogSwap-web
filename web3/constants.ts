@@ -29,7 +29,7 @@ export enum ProvidersUrl {
   FANTOM_PROVIDER_URL = 'https://rpc.ftm.tools',
   BSC_PROVIDER_URL = 'https://bsc-dataseed.binance.org',
   POLYGON_PROVIDER_URL =
-  'https://target.nodes.gravityhub.org/polygon',
+  'https://polygon-rpc.com/',
   HECO_PROVIDER_URL = 'https://http-mainnet.hecochain.com',
   AVAX_PROVIDER_URL = 'https://api.avax.network/ext/bc/C/rpc',
   XDAI_PROVIDER_URL = 'https://dai.poa.network',

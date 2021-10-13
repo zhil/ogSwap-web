@@ -22,8 +22,10 @@
                   :key="token.title"
                   :label="token.title"
                   :img="token.img"
+                  :index="index"
+                  :chain="token.chain"
                   class="hover:font-bold"
-                  @click="() => chooseCurrentChainSend(index, token.chain)"
+                  @select="chooseCurrentChainSend"
                 />
               </template>
             </field-dropdown>
@@ -44,10 +46,11 @@
                   size="large"
                   class="font-medium pb-[22px]"
                   type="number"
+                  @input="inputChange"
                 />
               </label>
               <div class="absolute left-[12px] top-[31px] text-xs">
-                ${{ Number(amount || 0) * 79 }}
+                ${{ fromTokenPrice }}
               </div>
               <btn
                 square
@@ -125,8 +128,8 @@
             <field-dropdown size="large" block :error="isError">
               <template #default>
                 <coin-item
-                  :label="currentTokenSend.title"
-                  :img="currentTokenSend.img"
+                  :label="currentTokenReceive.title"
+                  :img="currentTokenReceive.img"
                   class="hover:font-bold"
                 />
               </template>
@@ -136,8 +139,10 @@
                   :key="token.title"
                   :label="token.title"
                   :img="token.img"
+                  :index="index"
+                  :chain="token.chain"
                   class="hover:font-bold"
-                  @click="chooseDestChain(index, token.chain)"
+                  @select="chooseCurrentChainReceive"
                 />
               </template>
             </field-dropdown>
@@ -150,10 +155,11 @@
                   size="large"
                   class="font-medium pb-[22px]"
                   type="number"
+                  readonly
                 />
               </label>
               <div class="absolute left-[12px] top-[31px] text-xs">
-                ${{ Number(amount || 0) }}
+                ${{ toTokenPrice }}
               </div>
             </div>
           </div>
@@ -205,7 +211,9 @@ import {
   Chains,
 } from '~/components/constants'
 import { WalletBody } from '~/store/types'
-import { WalletProvider } from '~/components/utils'
+import { EvmChains, WalletProvider } from '~/components/utils'
+import { PriceData } from '~/utils/reserves'
+
 const chainToTokenName: { [key in Chains]: string } = {
   [Chains.Eth]: 'ETH',
   [Chains.Pol]: 'MATIC',
@@ -220,7 +228,7 @@ export default Vue.extend({
   data: () => ({
     amount: '0',
     addressTo: '',
-    amountReceive: '',
+    amountReceive: '0',
     connected: false,
     originTokens,
     destinationTokens,
@@ -229,11 +237,40 @@ export default Vue.extend({
     receiveTokenIndex: 3,
     receiveTokenChain: Chains.Bsc as Chains,
     isSelecting: false,
-    sendIndex: 2,
-    receiveIndex: 1,
     balances: {} as { [key in Chains]: TokenAmount },
   }),
   computed: {
+    fromTokenPrice(): string {
+      // if(!this.amount || this.reservesFrom == null) return "0";
+      // console.log(this.reservesFrom);
+      // const currentChainTokenPrice = 12
+      //   Number(this.reservesFrom.dexGtonPrice) *
+      //   this.reservesFrom.gtonReserve
+      //     .toEther()
+      //     .dividedBy(this.reservesFrom.nativeReserve.toEther())
+      //     .toNumber()
+      // return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
+      return '0'
+    },
+    toTokenPrice(): string {
+      // if(!this.amountReceive || this.reservesTo == null ) return "0";
+      // console.log(this.reservesTo);
+
+      // const currentChainTokenPrice = 12
+      //   Number(this.reservesTo.dexGtonPrice) *
+      //   this.reservesTo.gtonReserve
+      //     .toEther()
+      //     .dividedBy(this.reservesTo.nativeReserve.toEther())
+      //     .toNumber()
+      // return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
+      return '0'
+    },
+    reservesFrom(): PriceData {
+      return this.$store.getters['reserves/getReserveData'](EvmChains.Fantom) // should be passed evm chain
+    },
+    reservesTo(): PriceData {
+      return this.$store.getters['reserves/getReserveData'](EvmChains.Polygon)
+    },
     currentChainTokenBalance(): string {
       if (!this.balances[this.sendTokenChain]) return '0.0000'
       return this.balances[this.sendTokenChain].toEther().toFixed(4)
@@ -245,10 +282,10 @@ export default Vue.extend({
       return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0
     },
     currentTokenSend(): RelayToken {
-      return this.originTokens[this.sendIndex]
+      return originTokens[this.sendTokenIndex]
     },
     currentTokenReceive(): RelayToken {
-      return this.destinationTokens[this.receiveIndex]
+      return destinationTokens[this.receiveTokenIndex]
     },
     isFromSolana(): boolean {
       return this.currentTokenSend.chain === Chains.Sol
@@ -260,26 +297,41 @@ export default Vue.extend({
       return this.$store.getters['wallet/walletByName'](WalletProvider.Phantom)
     },
     currentWallet(): WalletBody {
-      return this.isFromSolana
-        ? this.metamaskWallet
-        : this.phantomWallet
+      return this.isFromSolana ? this.metamaskWallet : this.phantomWallet
     },
     addressFrom(): string | null {
-      if(!this.currentWallet) return null;
-      return this.currentWallet.address;
-    }
+      if (!this.currentWallet) return null
+      return this.currentWallet.address
+    },
   },
-  mounted() {
+  async mounted() {
+    await this.$store.dispatch('reserves/setReserves')
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   methods: {
+    inputChange() {
+      const gtonAmount =
+        this.reservesFrom.gtonReserve
+          .toEther()
+          .dividedBy(this.reservesFrom.nativeReserve.toEther())
+          .toNumber() * Number(this.amount)
+      this.amountReceive = (
+        this.reservesTo.nativeReserve
+          .toEther()
+          .dividedBy(this.reservesTo.gtonReserve.toEther())
+          .toNumber() * gtonAmount
+      ).toFixed(2)
+    },
     setMax() {
       this.amount = this.currentChainTokenBalance
     },
     handleConnectWallet() {
+      const provider = this.isFromSolana
+        ? WalletProvider.Phantom
+        : WalletProvider.Metamask
       // Deep copy object
       const modal = JSON.parse(
-        JSON.stringify(this.$store.getters['app/exampleModals'].connectWallet)
+        JSON.stringify(this.$store.getters['app/getModal'](provider))
       )
 
       modal.data.callbackConnect = () => {
@@ -290,6 +342,7 @@ export default Vue.extend({
       this.connected = true
     },
     chooseCurrentChainSend(index: number, chain: any) {
+
       this.sendTokenIndex = index
       this.sendTokenChain = chain
       // this.isSelecting = false
