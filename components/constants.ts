@@ -56,7 +56,7 @@ export const originTokens = [
     type: ChainTypes.Evm, // Добавить тип для всех чейнов
     relayTokenIndex: 1,
     chain: Chains.Pol,
-    img: '/img/tokens/matic.svg',
+    img: '/assets/img/icons/bsc.svg',
     title: 'MATIC',
   },
   // {

@@ -18,18 +18,13 @@
               </template>
               <template #list>
                 <coin-item
-                  v-for="(token, index) of originTokens"
+                  v-for="(token, index) in originTokens"
                   v-bind:key="token.title"
                   :label="token.title"
                   :img="token.img"
                   class="hover:font-bold"
-                  @click="chooseCurrentChain(index, token.chain)"
+                  @click="() => chooseCurrentChainSend(index, token.chain)"
                 />
-                <!-- <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/> -->
               </template>
             </field-dropdown>
           </div>
@@ -128,18 +123,21 @@
             <field-dropdown size="large" block :error="isError">
               <template #default>
                 <coin-item
-                  label="MATIC"
-                  :img="require('~/assets/img/icons/matik.svg')"
+                  :label="urrentTokenReceive.title"
+                  :img="urrentTokenReceive.img"
                   class="hover:font-bold"
                 />
               </template>
               <template #list>
                 <coin-item
-                  label="ETH"
-                  :img="require('~/assets/img/icons/ethereum.svg')"
+                  v-for="token in destinationTokens"
+                  :key="token.title"
+                  :img="token.img"
+                  :label="token.title"
                   class="hover:font-bold"
+                  @click="() => chooseCurrentChainReceive(index, token.chain)"
                 />
-                <coin-item
+                <!-- <coin-item
                   label="MATIC"
                   :img="require('~/assets/img/icons/matik.svg')"
                   class="hover:font-bold"
@@ -163,7 +161,7 @@
                   label="MATIC"
                   :img="require('~/assets/img/icons/matik.svg')"
                   class="hover:font-bold"
-                />
+                /> -->
               </template>
             </field-dropdown>
           </div>
@@ -230,21 +228,23 @@ export default Vue.extend({
     connected: false,
     originTokens,
     destinationTokens,
-    relayTokenIndex: 1,
-    relayTokenChain: Chains.Eth as Chains,
+    sendTokenIndex: 1,
+    sendTokenChain: Chains.Eth as Chains,
+    receiveTokenIndex: 3,
+    receiveTokenChain: Chains.Bsc as Chains,
     isSelecting: false,
-    sendIndex: 2,
-    receiveIndex: 1,
   }),
   computed: {
     isError() {
       return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0
     },
     currentTokenSend() {
-      return this.originTokens[this.sendIndex]
+      console.log(this.originTokens[this.sendTokenIndex])
+
+      return this.originTokens[this.sendTokenIndex]
     },
     currentTokenReceive() {
-      return this.destinationTokens[this.receiveIndex]
+      return this.destinationTokens[this.receiveTokenIndex]
     },
   },
   methods: {
@@ -260,11 +260,21 @@ export default Vue.extend({
       }
       this.$store.commit('app/PUSH_MODAL', modal)
     },
-    chooseCurrentChain(index: number, chain: any) {
-      this.relayTokenIndex = index
-      this.relayTokenChain = chain
-      this.isSelecting = false
-      this.$emit('chain', this.relayTokenIndex, this.relayTokenChain)
+    chooseCurrentChainSend(index: number, chain: any) {
+      console.log(11111)
+
+      this.sendTokenIndex = index
+      this.sendTokenChain = chain
+      // this.isSelecting = false
+      this.$emit('chain', this.sendTokenIndex, this.sendTokenChain)
+    },
+    chooseCurrentChainReceive(index: number, chain: any) {
+      console.log(11111)
+
+      this.receiveTokenIndex = index
+      this.receiveTokenChain = chain
+      // this.isSelecting = false
+      this.$emit('chain', this.receiveTokenIndex, this.receiveTokenChain)
     },
   },
   async mounted() {
