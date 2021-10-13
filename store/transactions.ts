@@ -50,9 +50,9 @@ export default new Vuex.Store({
       state.transactions.push(txn);
     },
   },
-  getters: {
-    getTransactionHistory: (state: State) => {
-      return state.transactions;
-    },
-  },
+  // getters: {
+  //   getTransactionHistory(state: State) {
+  //     return state.transactions;
+  //   },
+  // },
 })

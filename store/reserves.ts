@@ -63,9 +63,9 @@ export default new Vuex.Store({
       state.prices[chain] = cloneDeep(body) // I'am not sure this is necessary
     },
   },
-  getters: {
-    getReserveData: (state: State) => (chain: EvmChains) => {
-      return isEmpty(state.prices[chain]) ? state.prices[chain] : null
-    },
-  },
+  // getters: {
+  //   getReserveData: (state: State) => (chain: EvmChains) => {
+  //     return isEmpty(state.prices[chain]) ? state.prices[chain] : null
+  //   },
+  // },
 })
