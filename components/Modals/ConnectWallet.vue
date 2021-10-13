@@ -106,9 +106,9 @@ import { ChainTypes, WalletProvider } from '~/components/utils'
 import { Web3WalletConnector } from '~/web3/metamask'
 import { isWalletEqual } from '~/store/wallet'
 import { availableChains } from '~/web3/evm_chain'
-import { Wallet, WalletBody } from '~/store/types'
+import { WalletBody } from '~/store/types'
 import { Chains } from '~/components/constants'
-import { chainProviderUrls } from '~/components/constants'
+import logger from '~/utils/logger'
 
 interface State {
   userConnectOccured: boolean
@@ -122,18 +122,15 @@ const providerToChain: { [key in WalletProvider]: ChainTypes } = {
 }
 const connector = new Web3WalletConnector()
 export default Vue.extend({
-  data: function (): State {
-    return {
-      connected: false,
-      userConnectOccured: false,
-      //@ts-ignore
-      balanceWatchInterval: 0,
-      WalletProvider,
-      userLoggedOnce: [false, false],
-      userLoggedOncePhantom: false,
-    }
-  },
-
+  data: (): State => ({
+    connected: false,
+    userConnectOccured: false,
+    // @ts-ignore
+    balanceWatchInterval: 0,
+    WalletProvider,
+    userLoggedOnce: [false, false],
+    userLoggedOncePhantom: false,
+  }),
   computed: {
     modals() {
       return this.$store.getters['app/modals']
@@ -159,114 +156,7 @@ export default Vue.extend({
       )
     },
   },
-  methods: {
-    // handleConnectMetatmask() {
-    //   this.data.callbackConnect && this.data.callbackConnect()
-    //   this.connected = false
-    // },
-    async buildWalletBody(
-      provider: WalletProvider
-    ): Promise<Array<WalletBody>> {
-      console.log(provider, 'is-provider')
-
-      const address = await this.$web3
-        .resolveCurrentAddress(providerToChain[provider])
-        .call(this) // надо передавать enum
-      console.log(providerToChain, 'providertochain')
-      const id: Chains = await this.$web3
-        .getNetworkVersion(providerToChain[provider])
-        .call(this) // надо передавать enum
-      console.log(id, 'is-chain-id')
-      const label: string = availableChains[id]
-        ? availableChains[id].chainName
-        : 'Unknown'
-
-      const oldWalletData = this.$store.getters['wallet/walletByName'](provider) // поменять геттер на получение кошелька по имени
-      const updatedWalletBody = {
-        isConnected: true,
-        address,
-        checked: true,
-        wallet: { id, label },
-        provider,
-      }
-      return [updatedWalletBody, oldWalletData]
-    },
-    async walletDataUpdate() {
-      if (!this.isWalletUpdateAllowed) return
-      for (let key in WalletProvider) {
-        if (!this.$store.getters['wallet/isWalletAvailableByName'](key)) return
-        //@ts-ignore
-        await this.checkWalletData(providerToChain[key])
-      }
-    },
-    async checkWalletData(provider: WalletProvider): Promise<void> {
-      const [updatedWalletBody, oldWalletData] = await this.buildWalletBody(
-        provider
-      )
-      if (isWalletEqual(oldWalletData, updatedWalletBody)) {
-        console.log('Wallets are equal')
-        return
-      }
-      console.log(updatedWalletBody)
-      this.$store.commit('wallet/updateWalletData', {
-        provider: provider,
-        body: updatedWalletBody,
-      })
-    },
-    dispatch() {
-      const wallet = this.$store.getters['wallet/walletByName'](this.val)
-      console.log(wallet)
-      const provider = wallet.provider
-      this.userConnectOccured = false
-      this.$store.dispatch('wallet/disconnectWallet', { provider }) // передавать кошелек для разлогина
-    },
-    async logWalletOut() {
-      // добавил строку кошелька который разлогиниваем
-      // необходимо передавать какой кошелек мы разлогиниваем
-      window.localStorage.removeItem('logged_once')
-      window.localStorage.removeItem('logged_once_phantom')
-      clearInterval(this.balanceWatchInterval)
-      setTimeout(this.dispatch.bind(this), 1000)
-      console.log('diaconnected')
-    },
-    async connectMetamask() {
-      const isConnected = connector.ethEnabled() // возвращает тру и подлкючает аддресс
-      if (!isConnected) {
-        return
-      }
-      await this.checkWalletData(WalletProvider.Metamask)
-      this.userConnectOccured = true
-      window.localStorage.setItem('logged_once', 'true') // change to wallet name logged_once_phantom (DONE)
-    },
-    async connectPhantom() {
-      const isConnected = await connector.solEnabled()
-      if (!isConnected) {
-        return
-      }
-      await this.checkWalletData(WalletProvider.Phantom) // Phantom (DONE)
-      this.userConnectOccured = true
-      window.localStorage.setItem('logged_once_phantom', 'true') // change to wallet name logged_once_phantom (DONE)
-    },
-    async onClickMetamaskConnect() {
-      try {
-        await this.connectMetamask()
-      } catch (err) {
-        console.log({ err })
-      } finally {
-        this.$emit('close')
-      }
-    },
-    async onClickPhantomConnect() {
-      try {
-        await this.connectPhantom()
-      } catch (err) {
-        console.log({ err })
-      } finally {
-        this.$emit('close')
-      }
-    },
-  },
-  async mounted() {
+  mounted() {
     this.userLoggedOnce[WalletProvider.Metamask] = Boolean(
       window.localStorage.getItem('logged_once')
     )
@@ -294,6 +184,106 @@ export default Vue.extend({
   },
   beforeDestroy() {
     clearInterval(this.balanceWatchInterval)
+  },
+  methods: {
+    // handleConnectMetatmask() {
+    //   this.data.callbackConnect && this.data.callbackConnect()
+    //   this.connected = false
+    // },
+    async buildWalletBody(
+      provider: WalletProvider
+    ): Promise<Array<WalletBody>> {
+      const address = await this.$web3
+        .resolveCurrentAddress(providerToChain[provider])
+        .call(this) // надо передавать enum
+      const id: Chains = await this.$web3
+        .getNetworkVersion(providerToChain[provider])
+        .call(this) // надо передавать enum
+      const label: string = availableChains[id]
+        ? availableChains[id].chainName
+        : 'Unknown'
+
+      const oldWalletData = this.$store.getters['wallet/walletByName'](provider) // поменять геттер на получение кошелька по имени
+      const updatedWalletBody = {
+        isConnected: true,
+        address,
+        checked: true,
+        wallet: { id, label },
+        provider,
+      }
+      return [updatedWalletBody, oldWalletData]
+    },
+    async walletDataUpdate() {
+      if (!this.isWalletUpdateAllowed) return
+      for (const key in WalletProvider) {
+        if (!this.$store.getters['wallet/isWalletAvailableByName'](key)) return
+        // @ts-ignore
+        await this.checkWalletData(providerToChain[key])
+      }
+    },
+    async checkWalletData(provider: WalletProvider): Promise<void> {
+      const [updatedWalletBody, oldWalletData] = await this.buildWalletBody(
+        provider
+      )
+      if (isWalletEqual(oldWalletData, updatedWalletBody)) {
+        return
+      }
+      this.$store.commit('wallet/updateWalletData', {
+        // eslint-disable-next-line
+        provider: provider,
+        body: updatedWalletBody,
+      })
+    },
+    dispatch(walletName: WalletProvider) {
+      const wallet = this.$store.getters['wallet/walletByName'](walletName)
+      const provider = wallet.provider
+      this.userConnectOccured = false
+      this.$store.dispatch('wallet/disconnectWallet', { provider }) // передавать кошелек для разлогина
+    },
+    logWalletOut(walletName: WalletProvider) {
+      // добавил строку кошелька который разлогиниваем
+      // необходимо передавать какой кошелек мы разлогиниваем
+      window.localStorage.removeItem('logged_once')
+      window.localStorage.removeItem('logged_once_phantom')
+      clearInterval(this.balanceWatchInterval)
+      setTimeout(this.dispatch.bind(this, walletName), 1000)
+    },
+    async connectMetamask() {
+      const isConnected = connector.ethEnabled() // возвращает тру и подлкючает аддресс
+      if (!isConnected) {
+        return
+      }
+      await this.checkWalletData(WalletProvider.Metamask)
+      this.userConnectOccured = true
+      window.localStorage.setItem('logged_once', 'true') // change to wallet name logged_once_phantom (DONE)
+    },
+    async connectPhantom() {
+      const isConnected = await connector.solEnabled()
+      if (!isConnected) {
+        return
+      }
+      await this.checkWalletData(WalletProvider.Phantom) // Phantom (DONE)
+      this.userConnectOccured = true
+      window.localStorage.setItem('logged_once_phantom', 'true') // change to wallet name logged_once_phantom (DONE)
+    },
+    async onClickMetamaskConnect() {
+      try {
+        await this.connectMetamask()
+      } catch (err) {
+        logger({ err })
+      } finally {
+        this.$emit('close')
+      }
+    },
+    async onClickPhantomConnect() {
+      try {
+        await this.connectPhantom()
+      } catch (err) {
+        logger({ err })
+      } finally {
+        this.$emit('close')
+      }
+    },
   },
 })
 </script>

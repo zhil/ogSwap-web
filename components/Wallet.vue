@@ -15,16 +15,25 @@ import Vue from 'vue'
 import { WalletBody } from '~/store/types'
 
 export default Vue.extend({
-  props: ['val', 'img'],
+  props: {
+    val: {
+      type: String,
+      default: ""
+    },
+    img: {
+      type: String,
+      default: ""
+    }
+  },
   data: () => ({
     connected: false,
     metamaskBus: new Vue(),
   }),
   computed: {
-    open() {
+    open(): boolean {
       return this.$store.getters['app/menu'].open
     },
-    navigation() {
+    navigation(): Array<{href: string, label: string}> {
       return this.$store.getters['app/menu'].navigation
     },
     currentWallet(): WalletBody {

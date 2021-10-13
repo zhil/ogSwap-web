@@ -1,6 +1,6 @@
-export interface Balance {
-  dollarValue: number
-}
+import { WalletProvider } from '~/components/utils'
+
+
 
 export interface Wallet {
   label: string
@@ -8,9 +8,9 @@ export interface Wallet {
 }
 
 export interface WalletBody {
-  provider: string
+  provider: WalletProvider | null
   isConnected: boolean
+  checked: boolean
   label: string
-  balance: Balance
   wallet: Wallet
 }
