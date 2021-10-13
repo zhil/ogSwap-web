@@ -96,16 +96,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    handleConnectWallet() {
-      // Deep copy object
-      const modal = JSON.parse(JSON.stringify(this.$store.getters["app/exampleModals"].connectWallet));
 
-      modal.data.callbackConnect = () => {
-        this.connected = true
-        this.$store.commit('app/CLOSE_MODAL')
-      }
-      this.$store.commit('app/PUSH_MODAL', modal)
-    }
   }
 })
 </script>

@@ -56,11 +56,14 @@ export default Vue.extend({
       return this.$store.getters['wallet/walletByName'](this.val).address
     },
   },
+  mounted() {
+
+  },
   methods: {
     handleConnectWallet() {
       // Deep copy object
       const modal = JSON.parse(
-        JSON.stringify(this.$store.getters['app/exampleModals'].connectWallet)
+        JSON.stringify(this.$store.getters['app/getModal'](this.val))
       )
 
       modal.data.callbackConnect = () => {
@@ -71,6 +74,7 @@ export default Vue.extend({
       this.signed = true
     },
     handleLogout() {
+      this.signed = false;
       metamaskBus.$emit('logout', this.val)
     },
   },

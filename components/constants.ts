@@ -18,7 +18,7 @@ export enum Chains { // Надо заменить айдишники на наз
   Heco = '128',
   Avax = '43114',
   Pol = '137',
-  Sol = 'solana',
+  Sol = '-1',
 }
 
 export const limits: Record<string, number> = {
@@ -67,13 +67,13 @@ export const originTokens: RelayToken[] = [
     img: require('~/assets/img/icons/matic.svg'),
     title: 'MATIC',
   },
-  // {
-  //     type: ChainTypes.Evm,
-  //   relayTokenIndex: 2,
-  //   chain: Chains.Ftm,
-  //   img: "~/assets/img/icons/ftm.svg",
-  //   title: "FTM"
-  // },
+  {
+    type: ChainTypes.Evm,
+    relayTokenIndex: 2,
+    chain: Chains.Ftm,
+    img: require("~/assets/img/icons/ftm.svg"),
+    title: "FTM"
+  },
   {
     type: ChainTypes.Evm,
     relayTokenIndex: 3,
@@ -88,20 +88,20 @@ export const originTokens: RelayToken[] = [
     img: require('~/assets/img/icons/ethereum.svg'),
     title: 'ETH',
   },
-  // {
-  //type: ChainTypes.Evm,
-  //   relayTokenIndex: 5,
-  //   chain: Chains.Xdai,
-  //   img: "~/assets/img/icons/xdai.svg",
-  //   title: "XDAI"
-  // },
   {
     type: ChainTypes.Evm,
-    relayTokenIndex: 6,
-    chain: Chains.Heco,
-    img: require('~/assets/img/icons/heco.svg'),
-    title: 'HT',
+    relayTokenIndex: 5,
+    chain: Chains.Xdai,
+    img: require("~/assets/img/icons/xdai.svg"),
+    title: "XDAI"
   },
+  // {
+  //   type: ChainTypes.Evm,
+  //   relayTokenIndex: 6,
+  //   chain: Chains.Heco,
+  //   img: require('~/assets/img/icons/heco.svg'),
+  //   title: 'HT',
+  // },
   // {
   //  type: ChainTypes.Evm,
   //   relayTokenIndex: 7,
@@ -126,13 +126,13 @@ export const destinationTokens = [
     img: require('~/assets/img/icons/matic.svg'),
     title: 'MATIC',
   },
-  // {
-  //type: ChainTypes.Evm,
-  //   relayTokenIndex: 2,
-  //   chain: Chains.Ftm,
-  //   img: "~/assets/img/icons/ftm.svg",
-  //   title: "FTM"
-  // },
+  {
+    type: ChainTypes.Evm,
+    relayTokenIndex: 2,
+    chain: Chains.Ftm,
+    img: require("~/assets/img/icons/ftm.svg"),
+    title: "FTM"
+  },
   {
     type: ChainTypes.Evm,
     relayTokenIndex: 3,
@@ -140,20 +140,20 @@ export const destinationTokens = [
     img: require('~/assets/img/icons/bsc.svg'),
     title: 'BNB',
   },
-  // {
-  //type: ChainTypes.Evm,
-  //   relayTokenIndex: 5,
-  //   chain: Chains.Xdai,
-  //   img: "~/assets/img/icons/xdai.svg",
-  //   title: "XDAI"
-  // },
   {
     type: ChainTypes.Evm,
-    relayTokenIndex: 6,
-    chain: Chains.Heco,
-    img: require('~/assets/img/icons/heco.svg'),
-    title: 'HT',
+    relayTokenIndex: 5,
+    chain: Chains.Xdai,
+    img: require("~/assets/img/icons/xdai.svg"),
+    title: "XDAI"
   },
+  // {
+  //   type: ChainTypes.Evm,
+  //   relayTokenIndex: 6,
+  //   chain: Chains.Heco,
+  //   img: require('~/assets/img/icons/heco.svg'),
+  //   title: 'HT',
+  // },
   // {
   //  type: ChainTypes.Evm,
   //   relayTokenIndex: 7,

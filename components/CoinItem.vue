@@ -3,7 +3,8 @@
        :class="{
       'text-[13px]': size === 'medium',
       'text-[12px]': size === 'small',
-    }">
+    }"
+    @click="$emit('select', index, chain)">
     <div class="rounded-full bg-ghost-white flex justify-center items-center mr-[6px]"
     :class="{
       'min-w-[30px] w-[30px] h-[30px]': size === 'medium',
@@ -22,7 +23,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+// eslint-disable-next-line
+import Vue, {PropType} from 'vue'
+import { Chains } from './constants'
 
 export default Vue.extend({
   props: {
@@ -38,6 +41,14 @@ export default Vue.extend({
     label: {
       type: String,
       default: ''
+    },
+    index: {
+      type: Number,
+      default: 0
+    },
+    chain: {
+      type: String as PropType<Chains>,
+      default: ""
     }
   }
 })
