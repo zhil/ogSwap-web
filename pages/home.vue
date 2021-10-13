@@ -24,6 +24,8 @@
                   :img="token.img"
                   :index="index"
                   :chain="token.chain"
+                  :blocking="false"
+                  :selected="receiveTokenChain"
                   class="hover:font-bold"
                   @select="chooseCurrentChainSend"
                 />
@@ -141,6 +143,8 @@
                   :img="token.img"
                   :index="index"
                   :chain="token.chain"
+                  :selected="sendTokenChain"
+                  :blocking="true"
                   class="hover:font-bold"
                   @select="chooseCurrentChainReceive"
                 />
@@ -309,6 +313,21 @@ export default Vue.extend({
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   methods: {
+    setReceived(index: number, chain: any) {
+      this.receiveTokenChain = chain
+      this.receiveTokenIndex = index
+      this.amountReceive = '0'
+    },
+    setSend(index: number, chain: any) {
+      if (this.sendTokenChain == chain) {
+        //@ts-ignore
+        this.sendTokenIndex = 137 == Number(chain) ? Chains.Bsc : Chains.Pol
+        this.receiveTokenIndex = 137 == Number(chain) ? 1 : 0
+      }
+      this.sendTokenChain = chain
+      this.sendTokenIndex = index
+      this.amountReceive = '0'
+    },
     inputChange() {
       const gtonAmount =
         this.reservesFrom.gtonReserve
@@ -342,17 +361,16 @@ export default Vue.extend({
       this.connected = true
     },
     chooseCurrentChainSend(index: number, chain: any) {
-
       this.sendTokenIndex = index
       this.sendTokenChain = chain
       // this.isSelecting = false
-      this.$emit('chain', this.sendTokenIndex, this.sendTokenChain)
+      this.setSend(this.sendTokenIndex, this.sendTokenChain)
     },
     chooseCurrentChainReceive(index: number, chain: any) {
       this.receiveTokenIndex = index
       this.receiveTokenChain = chain
       // this.isSelecting = false
-      this.$emit('chain', this.receiveTokenIndex, this.receiveTokenChain)
+      this.setReceived(this.receiveTokenIndex, this.receiveTokenChain)
     },
   },
 })
