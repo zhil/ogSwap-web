@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { cloneDeep, isEmpty } from 'lodash-es'
+import _ from 'lodash'
 import Vuex from 'vuex'
 import { EvmChains } from '~/components/utils'
 import {
@@ -54,13 +54,13 @@ export default new Vuex.Store({
   },
   mutations: {
     setPrices(state: State, body: Prices) {
-      state.prices = cloneDeep(body) // I'am not sure this is necessary
+      state.prices = _.cloneDeep(body) // I'am not sure this is necessary
     },
     updatePrice(
       state: State,
       { chain, body }: { chain: EvmChains; body: PriceData }
     ) {
-      state.prices[chain] = cloneDeep(body) // I'am not sure this is necessary
+      state.prices[chain] = _.cloneDeep(body) // I'am not sure this is necessary
     },
   },
   // getters: {

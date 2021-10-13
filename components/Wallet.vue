@@ -11,29 +11,32 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+// eslint-disable-next-line
+import Vue, { PropType } from 'vue'
+import { WalletProvider } from './utils'
 import { WalletBody } from '~/store/types'
 
 export default Vue.extend({
   props: {
     val: {
-      type: String,
-      default: ""
+      type: Object as PropType<WalletProvider>,
+      default: WalletProvider.Metamask,
     },
     img: {
       type: String,
-      default: ""
-    }
+      default: '',
+    },
   },
   data: () => ({
     connected: false,
+    WalletProvider,
     metamaskBus: new Vue(),
   }),
   computed: {
     open(): boolean {
       return this.$store.getters['app/menu'].open
     },
-    navigation(): Array<{href: string, label: string}> {
+    navigation(): Array<{ href: string; label: string }> {
       return this.$store.getters['app/menu'].navigation
     },
     currentWallet(): WalletBody {
