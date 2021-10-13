@@ -1,13 +1,14 @@
 <template>
   <coin-account
     class="ml-[12px]"
-    :address="123"
+    :address="currentAddress"
     :img="img"
     :signed="signed"
     :network="currentChainName"
     :connected="connected"
+    :bus="metamaskBus"
     @login="handleConnectWallet()"
-    @logout="handleLogout"
+    @logout="handleLogout()"
   />
 </template>
 
@@ -35,12 +36,6 @@ export default Vue.extend({
     signed: false,
   }),
   computed: {
-    open(): boolean {
-      return this.$store.getters['app/menu'].open
-    },
-    navigation(): Array<{ href: string; label: string }> {
-      return this.$store.getters['app/menu'].navigation
-    },
     currentWallet(): WalletBody {
       const wallet = this.$store.getters['wallet/walletByName'](this.val)
       this.$emit('getdata', wallet)
@@ -50,8 +45,11 @@ export default Vue.extend({
       if (!this.currentWallet) return ''
       return String(this.currentWallet.wallet.label)
     },
-    currentAddress() {
-      return this.currentWallet.address
+    currentAddress(): string {
+      return `${this.currentWallet.address.slice(
+        0,
+        3
+      )}...${this.currentWallet.address.slice(-6)}`
     },
   },
   methods: {

@@ -153,7 +153,7 @@
                 />
               </label>
               <div class="absolute left-[12px] top-[31px] text-xs">
-                ${{ Number(amount || 0)  }}
+                ${{ Number(amount || 0) }}
               </div>
             </div>
           </div>
@@ -176,7 +176,9 @@
             </label>
           </div>
           <div class="px-[6px] w-[162px] flex items-end">
-            <btn variant="blood" block @click="addressTo = addressFrom" > Use the same address </btn>
+            <btn variant="blood" block @click="addressTo = addressFrom">
+              Use the same address
+            </btn>
           </div>
         </div>
       </div>
@@ -200,7 +202,7 @@ import {
   originTokens,
   destinationTokens,
   RelayToken,
-  Chains
+  Chains,
 } from '~/components/constants'
 import { WalletBody } from '~/store/types'
 import { WalletProvider } from '~/components/utils'
@@ -217,8 +219,8 @@ const chainToTokenName: { [key in Chains]: string } = {
 export default Vue.extend({
   data: () => ({
     amount: '0',
-    addressTo: "",
-    amountReceive: "",
+    addressTo: '',
+    amountReceive: '',
     connected: false,
     originTokens,
     destinationTokens,
@@ -233,7 +235,7 @@ export default Vue.extend({
   }),
   computed: {
     currentChainTokenBalance(): string {
-      if(!this.balances[this.sendTokenChain]) return "0.0000";
+      if (!this.balances[this.sendTokenChain]) return '0.0000'
       return this.balances[this.sendTokenChain].toEther().toFixed(4)
     },
     currentChainTokenName(): string {
@@ -278,6 +280,7 @@ export default Vue.extend({
         this.$store.commit('app/CLOSE_MODAL')
       }
       this.$store.commit('app/PUSH_MODAL', modal)
+      this.connected = true
     },
     chooseCurrentChainSend(index: number, chain: any) {
       console.log(11111)

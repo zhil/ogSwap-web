@@ -122,6 +122,7 @@ const providerToChain: { [key in WalletProvider]: ChainTypes } = {
 }
 const connector = new Web3WalletConnector()
 export default Vue.extend({
+  props: ['bus'],
   data: (): State => ({
     connected: false,
     userConnectOccured: false,
@@ -132,7 +133,7 @@ export default Vue.extend({
     userLoggedOncePhantom: false,
   }),
   computed: {
-    modals() {
+    modals(): any {
       return this.$store.getters['app/modals']
     },
     modal(): any {
@@ -144,7 +145,7 @@ export default Vue.extend({
     label(): string {
       return this.data?.label
     },
-    img(): string {
+    img(): String {
       return this.data?.img
     },
     // импортированный код
@@ -171,7 +172,7 @@ export default Vue.extend({
       const connect = this.connectPhantom.bind(this)
       setTimeout(connect, 3000)
     }
-    // this.bus.$on('logout', this.logWalletOut)
+    this.bus.$on('logout', this.logWalletOut)
   },
   created() {
     const fn = () => {
