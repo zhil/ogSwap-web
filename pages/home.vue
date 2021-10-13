@@ -92,12 +92,13 @@
           </div>
           <div class="px-[6px] w-[162px] flex items-end">
             <btn
+              v-if="currentTokenSend.chain == isFromSolana"
               :variant="connected ? 'dark-charcoal' : 'blood'"
               block
               :readonly="connected"
               @click="connected ? false : handleConnectWallet()"
             >
-              <span v-if="connected" class="font-medium">
+              <span v-if="connected && isMetamaskAvailable" class="font-medium">
                 <icon
                   name="mono/check"
                   class="
@@ -113,7 +114,32 @@
                 />
                 Connected
               </span>
-              <span v-else> Connect wallet </span>
+              <span v-else> Connect Metamask </span>
+            </btn>
+            <btn
+              v-else-if="currentTokenSend.chain == !isFromSolana"
+              :variant="connected ? 'dark-charcoal' : 'blood'"
+              block
+              :readonly="connected"
+              @click="connected ? false : handleConnectWallet()"
+            >
+              <span v-if="connected && isPhantomAvailable" class="font-medium">
+                <icon
+                  name="mono/check"
+                  class="
+                    fill-current
+                    text-medium-spring-green
+                    ring-1 ring-inset ring-current
+                    text-[24px]
+                    rounded-full
+                    mr-[6px]
+                    relative
+                    top-[5px]
+                  "
+                />
+                Connected
+              </span>
+              <span v-else> Connect Phantom </span>
             </btn>
           </div>
         </div>
@@ -306,6 +332,16 @@ export default Vue.extend({
     addressFrom(): string | null {
       if (!this.currentWallet) return null
       return this.currentWallet.address
+    },
+    isPhantomAvailable(): boolean {
+      return this.$store.getters['wallet/isWalletAvailableByName'](
+        WalletProvider.Phantom
+      )
+    },
+    isMetamaskAvailable(): boolean {
+      return this.$store.getters['wallet/isWalletAvailableByName'](
+        WalletProvider.Metamask
+      )
     },
   },
   async mounted() {
