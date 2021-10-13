@@ -19,7 +19,7 @@
               <template #list>
                 <coin-item
                   v-for="(token, index) of originTokens"
-                  :key="token.title"
+                  v-bind:key="token.title"
                   :label="token.title"
                   :img="token.img"
                   class="hover:font-bold"
@@ -125,15 +125,15 @@
             <field-dropdown size="large" block :error="isError">
               <template #default>
                 <coin-item
-                  :label="currentTokenSend.title"
-                  :img="currentTokenSend.img"
+                  :label="currentTokenReceive.title"
+                  :img="currentTokenReceive.img"
                   class="hover:font-bold"
                 />
               </template>
               <template #list>
                 <coin-item
                   v-for="(token, index) of destinationTokens"
-                  :key="token.title"
+                  v-bind:key="token.title"
                   :label="token.title"
                   :img="token.img"
                   class="hover:font-bold"
@@ -243,10 +243,11 @@ export default Vue.extend({
       return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0
     },
     currentTokenSend(): RelayToken {
-      return this.originTokens[this.sendIndex]
+      console.log(originTokens[this.sendTokenIndex]);
+      return originTokens[this.sendTokenIndex]
     },
     currentTokenReceive(): RelayToken {
-      return this.destinationTokens[this.receiveIndex]
+      return this.destinationTokens[this.receiveTokenIndex]
     },
     isFromSolana(): boolean {
       return this.currentTokenSend.chain === Chains.Sol
