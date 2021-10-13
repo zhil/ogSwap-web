@@ -1,8 +1,9 @@
 <template>
   <coin-account
     class="ml-[12px]"
-    address="0xtest...test"
+    :address="123"
     :img="img"
+    :signed="signed"
     :network="currentChainName"
     :connected="connected"
     @login="handleConnectWallet()"
@@ -31,6 +32,7 @@ export default Vue.extend({
     connected: false,
     WalletProvider,
     metamaskBus: new Vue(),
+    signed: false,
   }),
   computed: {
     open(): boolean {
@@ -48,6 +50,9 @@ export default Vue.extend({
       if (!this.currentWallet) return ''
       return String(this.currentWallet.wallet.label)
     },
+    currentAddress() {
+      return this.currentWallet.address
+    },
   },
   methods: {
     handleConnectWallet() {
@@ -61,6 +66,7 @@ export default Vue.extend({
         this.$store.commit('app/CLOSE_MODAL')
       }
       this.$store.commit('app/PUSH_MODAL', modal)
+      this.signed = true
     },
     handleLogout() {
       this.metamaskBus.$emit('logout')

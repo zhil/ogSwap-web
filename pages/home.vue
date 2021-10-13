@@ -23,7 +23,7 @@
                   :label="token.title"
                   :img="token.img"
                   class="hover:font-bold"
-                  @click="chooseCurrentChain(index, token.chain)"
+                  @click="() => chooseCurrentChainSend(index, token.chain)"
                 />
               </template>
             </field-dropdown>
@@ -222,8 +222,10 @@ export default Vue.extend({
     connected: false,
     originTokens,
     destinationTokens,
-    relayTokenIndex: 1,
-    relayTokenChain: Chains.Eth as Chains,
+    sendTokenIndex: 1,
+    sendTokenChain: Chains.Eth as Chains,
+    receiveTokenIndex: 3,
+    receiveTokenChain: Chains.Bsc as Chains,
     isSelecting: false,
     sendIndex: 2,
     receiveIndex: 1,
@@ -231,11 +233,11 @@ export default Vue.extend({
   }),
   computed: {
     currentChainTokenBalance(): string {
-      if(!this.balances[this.relayTokenChain]) return "0.0000";
-      return this.balances[this.relayTokenChain].toEther().toFixed(4)
+      if(!this.balances[this.sendTokenChain]) return "0.0000";
+      return this.balances[this.sendTokenChain].toEther().toFixed(4)
     },
     currentChainTokenName(): string {
-      return chainToTokenName[this.relayTokenChain]
+      return chainToTokenName[this.sendTokenChain]
     },
     isError(): boolean {
       return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0
@@ -277,11 +279,21 @@ export default Vue.extend({
       }
       this.$store.commit('app/PUSH_MODAL', modal)
     },
-    chooseCurrentChain(index: number, chain: any) {
-      this.relayTokenIndex = index
-      this.relayTokenChain = chain
-      this.isSelecting = false
-      this.$emit('chain', this.relayTokenIndex, this.relayTokenChain)
+    chooseCurrentChainSend(index: number, chain: any) {
+      console.log(11111)
+
+      this.sendTokenIndex = index
+      this.sendTokenChain = chain
+      // this.isSelecting = false
+      this.$emit('chain', this.sendTokenIndex, this.sendTokenChain)
+    },
+    chooseCurrentChainReceive(index: number, chain: any) {
+      console.log(11111)
+
+      this.receiveTokenIndex = index
+      this.receiveTokenChain = chain
+      // this.isSelecting = false
+      this.$emit('chain', this.receiveTokenIndex, this.receiveTokenChain)
     },
   },
   mounted() {

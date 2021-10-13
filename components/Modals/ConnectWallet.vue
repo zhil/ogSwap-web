@@ -196,12 +196,15 @@ export default Vue.extend({
       const address = await this.$web3
         .resolveCurrentAddress(providerToChain[provider])
         .call(this) // надо передавать enum
+      console.log(address) // аддресс отображается 13/10/21
+
       const id: Chains = await this.$web3
         .getNetworkVersion(providerToChain[provider])
         .call(this) // надо передавать enum
       const label: string = availableChains[id]
         ? availableChains[id].chainName
         : 'Unknown'
+      console.log(label)
 
       const oldWalletData = this.$store.getters['wallet/walletByName'](provider) // поменять геттер на получение кошелька по имени
       const updatedWalletBody = {
@@ -250,6 +253,8 @@ export default Vue.extend({
     },
     async connectMetamask() {
       const isConnected = connector.ethEnabled() // возвращает тру и подлкючает аддресс
+      console.log(isConnected)
+
       if (!isConnected) {
         return
       }
@@ -272,7 +277,7 @@ export default Vue.extend({
       } catch (err) {
         logger({ err })
       } finally {
-        this.$emit('close')
+        this.$store.commit('app/CLOSE_MODAL')
       }
     },
     async onClickPhantomConnect() {
@@ -281,7 +286,7 @@ export default Vue.extend({
       } catch (err) {
         logger({ err })
       } finally {
-        this.$emit('close')
+        this.$store.commit('app/CLOSE_MODAL')
       }
     },
   },
