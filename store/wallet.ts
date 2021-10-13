@@ -70,13 +70,13 @@ export const mutations = {
 
 export const getters: GetterTree<State, any> = {
   walletByName: (state: State) => (name: WalletProvider) => {
-    return state[name] ? state[name] : null
+    return state[name] && state[name].checked ? state[name] : null
   },
   currentWallet: (state: State) => {
     // we look through available wallets and take the first one that is logged
     for (const wallet of Object.keys(state)) {
        //@ts-ignore
-      if (state[wallet]) {
+      if (state[wallet] && state[wallet].checked) {
        //@ts-ignore
         return state[wallet]
       }

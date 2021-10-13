@@ -28,7 +28,7 @@
           'left-10 font-semibold top-3.5': signed && !network,
           'left-[57px] top-3.5': !signed,
         }"
-        >{{ signed ? address : 'Connect' }}</span
+        >{{ address ? address : 'Connect' }}</span
       >
       <span
         v-show="network"
@@ -91,9 +91,6 @@ export default Vue.extend({
     signed: {
       type: Boolean,
       default: false,
-    },
-    bus: {
-      type: Function,
     },
   },
 })

@@ -109,6 +109,7 @@ import { availableChains } from '~/web3/evm_chain'
 import { WalletBody } from '~/store/types'
 import { Chains } from '~/components/constants'
 import logger from '~/utils/logger'
+import {metamaskBus} from "~/components/metamaskBus"
 
 interface State {
   userConnectOccured: boolean
@@ -122,7 +123,6 @@ const providerToChain: { [key in WalletProvider]: ChainTypes } = {
 }
 const connector = new Web3WalletConnector()
 export default Vue.extend({
-  props: ['bus'],
   data: (): State => ({
     connected: false,
     userConnectOccured: false,
@@ -172,7 +172,9 @@ export default Vue.extend({
       const connect = this.connectPhantom.bind(this)
       setTimeout(connect, 3000)
     }
-    this.bus.$on('logout', this.logWalletOut)
+    metamaskBus.$on('logout', (data: WalletProvider) => {
+          this.logWalletOut(data)
+      })
   },
   created() {
     const fn = () => {
@@ -197,7 +199,6 @@ export default Vue.extend({
       const address = await this.$web3
         .resolveCurrentAddress(providerToChain[provider])
         .call(this) // надо передавать enum
-      console.log(address) // аддресс отображается 13/10/21
 
       const id: Chains = await this.$web3
         .getNetworkVersion(providerToChain[provider])
@@ -205,7 +206,6 @@ export default Vue.extend({
       const label: string = availableChains[id]
         ? availableChains[id].chainName
         : 'Unknown'
-      console.log(label)
 
       const oldWalletData = this.$store.getters['wallet/walletByName'](provider) // поменять геттер на получение кошелька по имени
       const updatedWalletBody = {
@@ -254,8 +254,6 @@ export default Vue.extend({
     },
     async connectMetamask() {
       const isConnected = connector.ethEnabled() // возвращает тру и подлкючает аддресс
-      console.log(isConnected)
-
       if (!isConnected) {
         return
       }

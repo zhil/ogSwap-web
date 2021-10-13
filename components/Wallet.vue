@@ -6,7 +6,6 @@
     :signed="signed"
     :network="currentChainName"
     :connected="connected"
-    :bus="metamaskBus"
     @login="handleConnectWallet()"
     @logout="handleLogout()"
   />
@@ -16,6 +15,7 @@
 // eslint-disable-next-line
 import Vue, { PropType } from 'vue'
 import { WalletProvider } from './utils'
+import { metamaskBus } from './metamaskBus'
 import { WalletBody } from '~/store/types'
 
 export default Vue.extend({
@@ -36,6 +36,12 @@ export default Vue.extend({
     signed: false,
   }),
   computed: {
+    open(): boolean {
+      return this.$store.getters['app/menu'].open
+    },
+    navigation(): Array<{ href: string; label: string }> {
+      return this.$store.getters['app/menu'].navigation
+    },
     currentWallet(): WalletBody {
       const wallet = this.$store.getters['wallet/walletByName'](this.val)
       this.$emit('getdata', wallet)
@@ -45,11 +51,9 @@ export default Vue.extend({
       if (!this.currentWallet) return ''
       return String(this.currentWallet.wallet.label)
     },
-    currentAddress(): string {
-      return `${this.currentWallet.address.slice(
-        0,
-        3
-      )}...${this.currentWallet.address.slice(-6)}`
+    currentAddress(): string | null {
+      if (!this.currentWallet) return null
+      return this.$store.getters['wallet/walletByName'](this.val).address
     },
   },
   methods: {
@@ -67,7 +71,7 @@ export default Vue.extend({
       this.signed = true
     },
     handleLogout() {
-      this.metamaskBus.$emit('logout')
+      metamaskBus.$emit('logout', this.val)
     },
   },
 })

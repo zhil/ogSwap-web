@@ -259,11 +259,18 @@ export default Vue.extend({
     phantomWallet(): WalletBody {
       return this.$store.getters['wallet/walletByName'](WalletProvider.Phantom)
     },
-    addressFrom(): string {
+    currentWallet(): WalletBody {
       return this.isFromSolana
-        ? this.metamaskWallet.address
-        : this.phantomWallet.address
+        ? this.metamaskWallet
+        : this.phantomWallet
     },
+    addressFrom(): string | null {
+      if(!this.currentWallet) return null;
+      return this.currentWallet.address;
+    }
+  },
+  mounted() {
+    // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   methods: {
     setMax() {
@@ -283,24 +290,17 @@ export default Vue.extend({
       this.connected = true
     },
     chooseCurrentChainSend(index: number, chain: any) {
-      console.log(11111)
-
       this.sendTokenIndex = index
       this.sendTokenChain = chain
       // this.isSelecting = false
       this.$emit('chain', this.sendTokenIndex, this.sendTokenChain)
     },
     chooseCurrentChainReceive(index: number, chain: any) {
-      console.log(11111)
-
       this.receiveTokenIndex = index
       this.receiveTokenChain = chain
       // this.isSelecting = false
       this.$emit('chain', this.receiveTokenIndex, this.receiveTokenChain)
     },
-  },
-  mounted() {
-    // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
 })
 </script>
