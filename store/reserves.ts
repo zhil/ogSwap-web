@@ -1,20 +1,19 @@
 import Vue from 'vue'
 import { cloneDeep, isEmpty } from 'lodash-es'
-import { Commit } from 'vuex'
 import Vuex from 'vuex'
-import { TokenAmount } from '~/utils/safe-math'
 import { EvmChains } from '~/components/utils'
+import {
+  PriceData,
+  getPoolReserves,
+  calculatePrice,
+  pools,
+} from '~/utils/reserves'
 
 type State = {
   prices: Prices
 }
 type Prices = {
   [key in EvmChains]: PriceData
-}
-type PriceData = {
-  gtonReserve: TokenAmount
-  nativeREserve: TokenAmount
-  dexGtonPrice: string
 }
 
 Vue.use(Vuex)
@@ -31,9 +30,37 @@ export default new Vuex.Store({
       [EvmChains.Polygon]: {} as PriceData,
     },
   },
+  actions: {
+    async setReserves({ commit }) {
+      for (const pool of pools) {
+        const stablePool = await getPoolReserves(
+          pool.provider,
+          pool.stablePoolContract
+        )
+        const gtonPool = await getPoolReserves(
+          pool.provider,
+          pool.mainPoolContract
+        )
+        const price = calculatePrice(
+          stablePool.nativeReserve,
+          stablePool.gtonReserve
+        )
+        commit('updatePrice', {
+          chain: pool.chain,
+          body: { gtonPool, dexGtonPrice: price },
+        })
+      }
+    },
+  },
   mutations: {
     setPrices(state: State, body: Prices) {
-      state.prices = cloneDeep(body)
+      state.prices = cloneDeep(body) // I'am not sure this is necessary
+    },
+    updatePrice(
+      state: State,
+      { chain, body }: { chain: EvmChains; body: PriceData }
+    ) {
+      state.prices[chain] = cloneDeep(body) // I'am not sure this is necessary
     },
   },
   getters: {

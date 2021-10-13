@@ -46,6 +46,7 @@
     "@nuxtjs/storybook": "^4.1.1",
     "@nuxtjs/stylelint-module": "^4.0.0",
     "@nuxtjs/tailwindcss": "^4.2.1",
+    "@types/lodash-es": "^4.17.5",
     "autoprefixer": "^10.3.4",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
