@@ -51,61 +51,69 @@ export const statusList: Array<Status> = [
   },
 ]
 
-export const originTokens = [
+export type RelayToken = {
+  type: ChainTypes
+  relayTokenIndex: number
+  chain: Chains,
+  img: string
+  title: string
+}
+
+export const originTokens: RelayToken[] = [
   {
     type: ChainTypes.Evm, // Добавить тип для всех чейнов
     relayTokenIndex: 1,
     chain: Chains.Pol,
-    img: '/img/tokens/matic.svg',
+    img: require('~/assets/img/icons/matic.svg'),
     title: 'MATIC',
   },
   // {
   //     type: ChainTypes.Evm,
   //   relayTokenIndex: 2,
   //   chain: Chains.Ftm,
-  //   img: "/img/tokens/ftm.svg",
+  //   img: "~/assets/img/icons/ftm.svg",
   //   title: "FTM"
   // },
   {
     type: ChainTypes.Evm,
     relayTokenIndex: 3,
     chain: Chains.Bsc,
-    img: '/img/tokens/bnb.svg',
+    img: require('~/assets/img/icons/bsc.svg'),
     title: 'BNB',
   },
   {
     type: ChainTypes.Evm,
     relayTokenIndex: 4,
     chain: Chains.Eth,
-    img: '/img/tokens/eth.svg',
+    img: require('~/assets/img/icons/ethereum.svg'),
     title: 'ETH',
   },
   // {
   //type: ChainTypes.Evm,
   //   relayTokenIndex: 5,
   //   chain: Chains.Xdai,
-  //   img: "/img/tokens/xdai.svg",
+  //   img: "~/assets/img/icons/xdai.svg",
   //   title: "XDAI"
   // },
   {
     type: ChainTypes.Evm,
     relayTokenIndex: 6,
     chain: Chains.Heco,
-    img: '/img/tokens/heco.svg',
+    img: require('~/assets/img/icons/heco.svg'),
     title: 'HT',
   },
   // {
   //  type: ChainTypes.Evm,
   //   relayTokenIndex: 7,
   //   chain: Chains.Avax,
-  //   img: "/img/tokens/avax.svg",
+  //   img: "~/assets/img/icons/avax.svg",
   //   title: "AVAX"
   // }
   {
     type: ChainTypes.Solana,
     relayTokenIndex: 7,
     chain: Chains.Sol,
-    img: '/img/tokens/sol.svg',
+    img: require('~/assets/img/icons/sol.svg'),
     title: 'SOL',
   },
 ]
@@ -115,49 +123,49 @@ export const destinationTokens = [
     type: ChainTypes.Evm,
     relayTokenIndex: 1,
     chain: Chains.Pol,
-    img: '/img/tokens/matic.svg',
+    img: require('~/assets/img/icons/matic.svg'),
     title: 'MATIC',
   },
   // {
   //type: ChainTypes.Evm,
   //   relayTokenIndex: 2,
   //   chain: Chains.Ftm,
-  //   img: "/img/tokens/ftm.svg",
+  //   img: "~/assets/img/icons/ftm.svg",
   //   title: "FTM"
   // },
   {
     type: ChainTypes.Evm,
     relayTokenIndex: 3,
     chain: Chains.Bsc,
-    img: '/img/tokens/bnb.svg',
+    img: require('~/assets/img/icons/bsc.svg'),
     title: 'BNB',
   },
   // {
   //type: ChainTypes.Evm,
   //   relayTokenIndex: 5,
   //   chain: Chains.Xdai,
-  //   img: "/img/tokens/xdai.svg",
+  //   img: "~/assets/img/icons/xdai.svg",
   //   title: "XDAI"
   // },
   {
     type: ChainTypes.Evm,
     relayTokenIndex: 6,
     chain: Chains.Heco,
-    img: '/img/tokens/heco.svg',
+    img: require('~/assets/img/icons/heco.svg'),
     title: 'HT',
   },
   // {
   //  type: ChainTypes.Evm,
   //   relayTokenIndex: 7,
   //   chain: Chains.Avax,
-  //   img: "/img/tokens/avax.svg",
+  //   img: "~/assets/img/icons/avax.svg",
   //   title: "AVAX"
   // }
   {
     type: ChainTypes.Solana,
     relayTokenIndex: 7,
     chain: Chains.Sol,
-    img: '/img/tokens/sol.svg',
+    img: require('~/assets/img/icons/sol.svg'),
     title: 'SOL',
   },
 ]

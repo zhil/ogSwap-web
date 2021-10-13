@@ -2,17 +2,13 @@
 import _ from 'lodash'
 import { WalletProvider } from '~/components/utils'
 import { Commit, GetterTree, ActionTree } from "vuex";
+import { WalletBody } from "./types"
+
 type State = {
-  [key in WalletProvider]: Wallet
+  [key in WalletProvider]: WalletBody
 }
 
-type Wallet = {
-  provider: WalletProvider | null,
-  checked: boolean,
-  isConnected: boolean,
-}
-
-export function isWalletEqual(walletA: Wallet, walletB: Wallet) {
+export function isWalletEqual(walletA: WalletBody, walletB: WalletBody) {
   const props = ['address', 'provider', 'wallet.label']
 
   for (const prop of props) {
@@ -27,11 +23,16 @@ export function isWalletEqual(walletA: Wallet, walletB: Wallet) {
   return true
 }
 
-export const buildWallet = (provider = null): Wallet => {
+export const buildWallet = (provider = null): WalletBody => {
   return {
     provider,
     checked: false,
     isConnected: false,
+    address: "",
+    wallet: {
+      label: "",
+      id: 0
+    }
   }
 }
 
@@ -54,7 +55,7 @@ export const actions: ActionTree<State, any> = {
 }
 
 export const mutations = {
-  updateWalletData(state: State, { provider, body }: {provider: WalletProvider, body: Wallet}) {
+  updateWalletData(state: State, { provider, body }: {provider: WalletProvider, body: WalletBody}) {
     state[provider].checked = false
 
     state[provider] = {
@@ -69,13 +70,13 @@ export const mutations = {
 
 export const getters: GetterTree<State, any> = {
   walletByName: (state: State) => (name: WalletProvider) => {
-    return state[name] && state[name].checked ? state[name] : null
+    return state[name] ? state[name] : null
   },
   currentWallet: (state: State) => {
     // we look through available wallets and take the first one that is logged
     for (const wallet of Object.keys(state)) {
        //@ts-ignore
-      if (state[wallet] && state[wallet].checked) {
+      if (state[wallet]) {
        //@ts-ignore
         return state[wallet]
       }

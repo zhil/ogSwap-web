@@ -42,7 +42,7 @@
         <div class="mb-[16px]">
           <field-label>Receive</field-label>
           <div class="relative">
-            <coin-item class="absolute left-[12px] top-1/2 -translate-y-1/2" label="MATIC" :img="require('~/assets/img/icons/matik.svg')"/>
+            <coin-item class="absolute left-[12px] top-1/2 -translate-y-1/2" label="MATIC" :img="require('~/assets/img/icons/matic.svg')"/>
             <field-input readonly value="10.0000 | $10,00.3469" class="text-right rounded-[10px] text-[18px]" />
           </div>
         </div>

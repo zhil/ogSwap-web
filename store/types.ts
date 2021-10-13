@@ -11,6 +11,6 @@ export interface WalletBody {
   provider: WalletProvider | null
   isConnected: boolean
   checked: boolean
-  label: string
-  wallet: Wallet
+  wallet: Wallet,
+  address: string
 }

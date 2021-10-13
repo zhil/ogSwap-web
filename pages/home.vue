@@ -19,17 +19,12 @@
               <template #list>
                 <coin-item
                   v-for="(token, index) of originTokens"
-                  v-bind:key="token.title"
+                  :key="token.title"
                   :label="token.title"
                   :img="token.img"
                   class="hover:font-bold"
                   @click="chooseCurrentChain(index, token.chain)"
                 />
-                <!-- <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/> -->
               </template>
             </field-dropdown>
           </div>
@@ -38,7 +33,8 @@
               <field-error-text v-show="isError" class="float-left">
                 Insufficient balance
               </field-error-text>
-              <span class="font-normal">Balance:</span> 1000 ETH
+              <span class="font-normal">Balance:</span>
+              {{ currentChainTokenBalance }} {{ currentChainTokenName }}
             </field-label>
             <div class="relative">
               <label class="block">
@@ -64,7 +60,7 @@
                   underline
                   hover:no-underline
                 "
-                @click="amount = '1000'"
+                @click="setMax()"
               >
                 MAX
               </btn>
@@ -82,8 +78,9 @@
                 alt=""
               />
               <field-input
-                v-model="address"
-                placeholder="address"
+                v-model="addressFrom"
+                readonly
+                placeholder="Address"
                 class="pl-[42px]"
               />
             </label>
@@ -128,41 +125,19 @@
             <field-dropdown size="large" block :error="isError">
               <template #default>
                 <coin-item
-                  label="MATIC"
-                  :img="require('~/assets/img/icons/matik.svg')"
+                  :label="currentTokenSend.title"
+                  :img="currentTokenSend.img"
                   class="hover:font-bold"
                 />
               </template>
               <template #list>
                 <coin-item
-                  label="ETH"
-                  :img="require('~/assets/img/icons/ethereum.svg')"
+                  v-for="(token, index) of destinationTokens"
+                  :key="token.title"
+                  :label="token.title"
+                  :img="token.img"
                   class="hover:font-bold"
-                />
-                <coin-item
-                  label="MATIC"
-                  :img="require('~/assets/img/icons/matik.svg')"
-                  class="hover:font-bold"
-                />
-                <coin-item
-                  label="ETH"
-                  :img="require('~/assets/img/icons/ethereum.svg')"
-                  class="hover:font-bold"
-                />
-                <coin-item
-                  label="MATIC"
-                  :img="require('~/assets/img/icons/matik.svg')"
-                  class="hover:font-bold"
-                />
-                <coin-item
-                  label="ETH"
-                  :img="require('~/assets/img/icons/ethereum.svg')"
-                  class="hover:font-bold"
-                />
-                <coin-item
-                  label="MATIC"
-                  :img="require('~/assets/img/icons/matik.svg')"
-                  class="hover:font-bold"
+                  @click="chooseDestChain(index, token.chain)"
                 />
               </template>
             </field-dropdown>
@@ -171,15 +146,14 @@
             <div class="relative">
               <label class="block">
                 <field-input
-                  v-model="amount"
-                  :error="isError"
+                  v-model="amountReceive"
                   size="large"
                   class="font-medium pb-[22px]"
                   type="number"
                 />
               </label>
               <div class="absolute left-[12px] top-[31px] text-xs">
-                ${{ Number(amount || 0) * 79 }}
+                ${{ Number(amount || 0)  }}
               </div>
             </div>
           </div>
@@ -195,14 +169,14 @@
                 alt=""
               />
               <field-input
-                v-model="address"
+                v-model="addressTo"
                 placeholder="Enter address"
                 class="pl-[42px]"
               />
             </label>
           </div>
           <div class="px-[6px] w-[162px] flex items-end">
-            <btn variant="blood" block> Use the same address </btn>
+            <btn variant="blood" block @click="addressTo = addressFrom" > Use the same address </btn>
           </div>
         </div>
       </div>
@@ -221,12 +195,30 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { originTokens, destinationTokens } from '~/components/constants'
-import { Chains } from '~/components/constants'
+import { TokenAmount } from '~/utils/safe-math'
+import {
+  originTokens,
+  destinationTokens,
+  RelayToken,
+  Chains
+} from '~/components/constants'
+import { WalletBody } from '~/store/types'
+import { WalletProvider } from '~/components/utils'
+const chainToTokenName: { [key in Chains]: string } = {
+  [Chains.Eth]: 'ETH',
+  [Chains.Pol]: 'MATIC',
+  [Chains.Ftm]: 'FTM',
+  [Chains.Bsc]: 'BNB',
+  [Chains.Heco]: 'HT',
+  [Chains.Xdai]: 'XDAI',
+  [Chains.Sol]: 'SOL',
+  [Chains.Avax]: 'AVAX',
+}
 export default Vue.extend({
   data: () => ({
-    address: '',
     amount: '0',
+    addressTo: "",
+    amountReceive: "",
     connected: false,
     originTokens,
     destinationTokens,
@@ -235,19 +227,44 @@ export default Vue.extend({
     isSelecting: false,
     sendIndex: 2,
     receiveIndex: 1,
+    balances: {} as { [key in Chains]: TokenAmount },
   }),
   computed: {
-    isError() {
+    currentChainTokenBalance(): string {
+      if(!this.balances[this.relayTokenChain]) return "0.0000";
+      return this.balances[this.relayTokenChain].toEther().toFixed(4)
+    },
+    currentChainTokenName(): string {
+      return chainToTokenName[this.relayTokenChain]
+    },
+    isError(): boolean {
       return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0
     },
-    currentTokenSend() {
+    currentTokenSend(): RelayToken {
       return this.originTokens[this.sendIndex]
     },
-    currentTokenReceive() {
+    currentTokenReceive(): RelayToken {
       return this.destinationTokens[this.receiveIndex]
+    },
+    isFromSolana(): boolean {
+      return this.currentTokenSend.chain === Chains.Sol
+    },
+    metamaskWallet(): WalletBody {
+      return this.$store.getters['wallet/walletByName'](WalletProvider.Metamask)
+    },
+    phantomWallet(): WalletBody {
+      return this.$store.getters['wallet/walletByName'](WalletProvider.Phantom)
+    },
+    addressFrom(): string {
+      return this.isFromSolana
+        ? this.metamaskWallet.address
+        : this.phantomWallet.address
     },
   },
   methods: {
+    setMax() {
+      this.amount = this.currentChainTokenBalance
+    },
     handleConnectWallet() {
       // Deep copy object
       const modal = JSON.parse(
@@ -267,7 +284,7 @@ export default Vue.extend({
       this.$emit('chain', this.relayTokenIndex, this.relayTokenChain)
     },
   },
-  async mounted() {
+  mounted() {
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
 })

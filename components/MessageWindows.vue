@@ -38,7 +38,7 @@
         <div class="flex flex-col justify-center items-start flex-grow">
 
           <div class="flex flex-col justify-center items-center">
-            <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" size="small" />
+            <coin-item label="MATIC" :img="require('~/assets/img/icons/matic.svg')" size="small" />
             <div class="text-sm whitespace-nowrap">
               ~10.0000
             </div>
