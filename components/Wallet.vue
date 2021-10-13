@@ -14,6 +14,7 @@
 <script lang="ts">
 // eslint-disable-next-line
 import Vue, { PropType } from 'vue'
+//@ts-ignore
 import { WalletProvider } from './utils'
 import { metamaskBus } from './metamaskBus'
 import { WalletBody } from '~/store/types'
@@ -53,12 +54,14 @@ export default Vue.extend({
     },
     currentAddress(): string | null {
       if (!this.currentWallet) return null
-      return this.$store.getters['wallet/walletByName'](this.val).address
+      let address = this.$store.getters['wallet/walletByName'](this.val).address
+      return `${address.slice(0, 4)}...${address.slice(38)}`
     },
   },
   methods: {
     handleConnectWallet() {
       // Deep copy object
+
       const modal = JSON.parse(
         JSON.stringify(this.$store.getters['app/exampleModals'].connectWallet)
       )
@@ -72,6 +75,7 @@ export default Vue.extend({
     },
     handleLogout() {
       metamaskBus.$emit('logout', this.val)
+      this.signed = false
     },
   },
 })
