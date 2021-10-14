@@ -92,55 +92,42 @@
           </div>
           <div class="px-[6px] w-[162px] flex items-end">
             <btn
-              v-if="!isFromSolana"
+              v-if="!isFromSolana && isMetamaskAvailable && !connected"
               :variant="connected ? 'dark-charcoal' : 'blood'"
-              block
-              :readonly="connected"
               @click="connected ? false : handleConnectWallet()"
             >
-              <span v-if="connected && isMetamaskAvailable" class="font-medium">
-                <icon
-                  name="mono/check"
-                  class="
-                    fill-current
-                    text-medium-spring-green
-                    ring-1 ring-inset ring-current
-                    text-[24px]
-                    rounded-full
-                    mr-[6px]
-                    relative
-                    top-[5px]
-                  "
-                />
-                Connected
-              </span>
-              <span v-else> Connect Metamask </span>
+              <span> Connect Metamask </span>
             </btn>
             <btn
-              v-else-if="isFromSolana"
+              v-else-if="isFromSolana && isPhantomAvailable && !connected"
               :variant="connected ? 'dark-charcoal' : 'blood'"
-              block
-              :readonly="connected"
               @click="connected ? false : handleConnectWallet()"
             >
-              <span v-if="connected && isPhantomAvailable" class="font-medium">
-                <icon
-                  name="mono/check"
-                  class="
-                    fill-current
-                    text-medium-spring-green
-                    ring-1 ring-inset ring-current
-                    text-[24px]
-                    rounded-full
-                    mr-[6px]
-                    relative
-                    top-[5px]
-                  "
-                />
-                Connected
-              </span>
-              <span v-else> Connect Phantom </span>
+              <span> Connect Phantom </span>
             </btn>
+            <btn
+              v-else-if="!isFromSolana && sendTokenChain != currentChain"
+              :variant="connected ? 'dark-charcoal' : 'blood'"
+              @click="switchChain()"
+            >
+              <span class="font-medium"> Switch to {{ chainIndexName }} </span>
+            </btn>
+            <span v-else class="font-medium">
+              <icon
+                name="mono/check"
+                class="
+                  fill-current
+                  text-medium-spring-green
+                  ring-1 ring-inset ring-current
+                  text-[24px]
+                  rounded-full
+                  mr-[6px]
+                  relative
+                  top-[5px]
+                "
+              />
+              Connected
+            </span>
           </div>
         </div>
       </div>
@@ -254,6 +241,16 @@ const chainToTokenName: { [key in Chains]: string } = {
   [Chains.Sol]: 'SOL',
   [Chains.Avax]: 'AVAX',
 }
+const chainNames: { [key in Chains]: string } = {
+  [Chains.Eth]: 'Ethereum',
+  [Chains.Pol]: 'Polygon',
+  [Chains.Ftm]: 'Fantom',
+  [Chains.Bsc]: 'Binance',
+  [Chains.Xdai]: 'xDai',
+  [Chains.Heco]: 'Heco',
+  [Chains.Avax]: 'Avalanche',
+  [Chains.Sol]: 'Solana',
+}
 export default Vue.extend({
   data: () => ({
     amount: '0',
@@ -310,6 +307,9 @@ export default Vue.extend({
     currentChainTokenName(): string {
       return chainToTokenName[this.sendTokenChain]
     },
+    chainIndexName(): string {
+      return chainNames[this.sendTokenChain]
+    },
     isError(): boolean {
       return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0
     },
@@ -329,7 +329,7 @@ export default Vue.extend({
       return this.$store.getters['wallet/walletByName'](WalletProvider.Phantom)
     },
     currentWallet(): WalletBody {
-      return this.isFromSolana ? this.metamaskWallet : this.phantomWallet
+      return this.isFromSolana ? this.phantomWallet : this.metamaskWallet
     },
     addressFrom(): string | null {
       if (!this.currentWallet) return null
@@ -414,7 +414,6 @@ export default Vue.extend({
       this.currentChain = await this.$web3
         .getNetworkVersion(ChainTypes.Evm)
         .call(this)
-      console.log(this.currentChain, 'is-current-chain')
     },
     async switchChain() {
       const chain = availableChains[this.sendTokenChain]
