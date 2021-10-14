@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash'
+import _ from 'lodash'
 // @ts-ignore
 import { nu64, struct, u8 } from 'buffer-layout'
 import {
@@ -9,7 +9,7 @@ import {
 import {
   closeAccount,
   initializeAccount,
-} from '@project-serum/serum/lib/token-instructions.js'
+} from '@project-serum/serum/lib/token-instructions'
 import anchor, { Provider, BN } from '@project-serum/anchor'
 import { OpenOrders } from '@project-serum/serum'
 import { MARKET_STATE_LAYOUT_V2 } from '@project-serum/serum/lib/market'
@@ -40,8 +40,7 @@ import {
   SERUM_PROGRAM_ID_V3,
   relayProgram,
   relayPortAddress,
-  oracleAssociatedTokenGton,
-} from './constants.js'
+} from './constants'
 import {
   LP_TOKENS,
   NATIVE_SOL,
@@ -50,14 +49,14 @@ import {
   LiquidityPoolInfo,
   TokenAmount,
   GTON,
-} from './tokens.js'
+} from './tokens'
 import {
   commitment,
   createAmmAuthority,
   findProgramAddress,
   getFilteredProgramAccountsAmmOrMarketCache,
   getMultipleAccounts,
-} from '~/web3/sol_utils.js'
+} from '~/web3/sol_utils'
 import { programIdls } from '~/web3/constants'
 import { Chains } from '~/components/constants'
 
@@ -290,7 +289,7 @@ export async function requestInfos(conn: Connection) {
       new PublicKey(lp.mintAddress)
     )
 
-    const poolInfo = cloneDeep(pool)
+    const poolInfo = _.cloneDeep(pool)
 
     poolInfo.coin.balance = new TokenAmount(0, coin.decimals)
     poolInfo.pc.balance = new TokenAmount(0, pc.decimals)
@@ -404,7 +403,7 @@ export async function prepare_swap(
   const transaction = new Transaction()
   const signers: Account[] = []
 
-  const owner = wallet.publicKey
+  const owner = wallet
 
   const from = getTokenByMintAddress(fromCoinMint)
   const to = getTokenByMintAddress(toCoinMint)
@@ -524,18 +523,18 @@ function hexToBytes(hex: string) {
   return bytes;
 }
 
-const chainBytes: {[key in Chains]: number[]} = {
-  [Chains.Eth]: [69, 84, 72],
-  [Chains.Ftm]: [70, 84, 77],
-  [Chains.Bsc]: [66, 78, 66],
-  [Chains.Pol]: [80, 76, 71],
-  [Chains.Heco]: [72, 69, 67],
-  [Chains.Xdai]: [68, 65, 73],
-  [Chains.Avax]: [65, 86, 65],
-  [Chains.Sol]: [83, 79, 76],
+const chainBytes: {[key: string]: number[]} = {
+  "ETH": [69, 84, 72],
+  "FTM": [70, 84, 77],
+  "BSC": [66, 78, 66],
+  "PLG": [80, 76, 71],
+  "HEC": [72, 69, 67],
+  "DAI": [68, 65, 73],
+  "AVA": [65, 86, 65],
+  "SOL": [83, 79, 76],
 }
 
-export function prepareDataForTransfer(user_address: string, chain: Chains, amount: number): TransferOpts {
+export function prepareDataForTransfer(user_address: string, chain: string, amount: number): TransferOpts {
   const extraBytes: number[] = []
   extraBytes.fill(0, 0, 44)
   const address = hexToBytes(user_address).concat(extraBytes)
@@ -566,7 +565,7 @@ export async function transfer(
     accounts: {
       authority: user,
       from: acoc,
-      to: oracleAssociatedTokenGton,
+      to: GTON.associatedAddress,
       tokenProgram: TOKEN_PROGRAM_ID,
       relayPort: relayPort,
       userEventData: userEventDataAccount.publicKey,
@@ -791,7 +790,7 @@ function walletFromRaw() {
   return anchor.Wallet.local()
 }
 
-async function getTokenAccounts(conn: Connection, user: PublicKey) {
+export async function getTokenAccounts(conn: Connection, user: PublicKey) {
   const TOKEN_PROGRAM_ID = new PublicKey(
     'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'
   )

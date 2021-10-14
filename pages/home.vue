@@ -379,7 +379,7 @@ export default Vue.extend({
       this.amountReceive = '0'
     },
     inputChange() {
-      console.log(this.reservesFrom);
+      if(!this.reservesFrom || !this.reservesTo) return;
       const gtonAmount =
         this.reservesFrom.gtonReserve
           .toEther()

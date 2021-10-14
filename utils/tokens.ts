@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash-es'
+import _ from 'lodash'
 import BigNumber from 'bignumber.js'
 
 export interface Tokens {
@@ -208,18 +208,19 @@ export const GTON = {
   symbol: 'Gton',
   name: 'Graviton',
   mintAddress: '4hJ6sjwmsvvFag6TKL97yhWiBSDX9BABWoiXgb3EPXxB',
+  associatedAddress: "A3AXJ2MXokLYY5gwTnW2ecXp5XaaoBxM14z3GxjoJd9U",
   decimals: 10,
   tags: ['raydium'],
 }
 
 export function getTokenByMintAddress(mintAddress: string): TokenInfo | null {
   if (mintAddress === NATIVE_SOL.mintAddress) {
-    return cloneDeep(NATIVE_SOL)
+    return _.cloneDeep(NATIVE_SOL)
   }
   const token = Object.values(TOKENS).find(
     (item) => item.mintAddress === mintAddress
   )
-  return token ? cloneDeep(token) : null
+  return token ? _.cloneDeep(token) : null
 }
 
 export const TOKENS: Tokens = {

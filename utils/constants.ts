@@ -1,6 +1,4 @@
-import { LiquidityPoolInfo } from "./tokens"
-
-export const { LP_TOKENS, NATIVE_SOL, TOKENS } = require('./tokens.js')
+import { LP_TOKENS, NATIVE_SOL, TOKENS, LiquidityPoolInfo } from './tokens'
 
 
 export  const LIQUIDITY_POOL_PROGRAM_ID_V2 = 'RVKd61ztZW9GUwhRbbLoYVRE5Xf1B2tVscKqwZqXgEr'
