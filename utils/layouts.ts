@@ -1,9 +1,9 @@
 import { bool, publicKey, struct, u32, u64, u128, u8 } from "@project-serum/borsh";
 import { PublicKey } from "@solana/web3.js";
-import { LP_TOKENS } from './tokens.js';
+import { LP_TOKENS } from './tokens';
 import {
   commitment, getMultipleAccounts, 
-} from '~/web3/sol_utils.js';
+} from '~/web3/sol_utils';
 
  export const MINT_LAYOUT = struct([
   u32("mintAuthorityOption"),

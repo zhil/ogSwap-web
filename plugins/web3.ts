@@ -1,11 +1,22 @@
-import { Connection } from '@solana/web3.js'
+import { Connection, PublicKey } from '@solana/web3.js'
 import { Plugin } from '@nuxt/types'
 import { Chains } from '~/components/constants'
 import Web3 from 'web3'
-import { AbiItem } from "web3-utils";
-import { WalletProvider, ChainTypes } from '~/components/utils'
+import { AbiItem } from 'web3-utils'
+import { ChainTypes } from '~/components/utils'
 import { MetamaskChain } from '~/web3/evm_chain'
-import {relayAddresses, contractsABI} from "~/web3/constants"
+import { relayAddresses, contractsABI } from '~/web3/constants'
+import {
+  prepare_swap,
+  transfer,
+  requestInfos,
+  getTokenAccounts,
+  setupAnchorProvider,
+  prepareDataForTransfer,
+} from '~/utils/swap'
+import { setUpcomingTxn } from '~/utils/oracle'
+import { getSwapOutAmount, GTON } from '~/utils/tokens'
+import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
 
 const { HttpProvider } = Web3.providers
 
@@ -43,30 +54,113 @@ interface Web3Invoker {
 }
 
 export interface RelaySwapData {
-  destination: string;
-  userAddress: string;
-  addressTo: string;
-  value: string;
-  chainId: string;
+  destination: string
+  userAddress: string
+  addressTo: string
+  value: string
+  chainId: Chains
+}
+
+function toHexString(byteArray: Uint8Array) {
+  var s = '0x';
+  byteArray.forEach(function(byte) {
+    s += ('0' + (byte & 0xFF).toString(16)).slice(-2);
+  });
+  return s;
 }
 
 async function makeSwapEvm(params: RelaySwapData): Promise<string> {
-  const { destination, addressTo, value, userAddress, chainId } = params;
+  console.log(params)
+  const { destination, addressTo, value, userAddress, chainId } = params
+  let destinationAddress;
+  if (destination == "SOL") {
+    destinationAddress = toHexString(new PublicKey(addressTo).toBytes())
+    console.log(destinationAddress);
+  } else {
+    destinationAddress = addressTo
+  }
   //@ts-ignore
-  const contractAddress = relayAddresses[chainId];
-  const web3 = createMetamaskInstance();
+  const contractAddress = relayAddresses[chainId]
+  const web3 = createMetamaskInstance()
   const contract = new web3.eth.Contract(
     contractsABI.RelayContract as AbiItem[],
     contractAddress
-  );
+  )
   const res = await contract.methods
-    .lock(destination, addressTo)
-    .send({ from: userAddress, value });
+    .lock(destination, destinationAddress)
+    .send({ from: userAddress, value })
   return res
 }
+async function makeSwapSol(params: RelaySwapData): Promise<string> {
+  const { destination, addressTo, value, userAddress, chainId } = params
+  const endpoint = 'https://solana-api.projectserum.com'
+  const connection = createSolInstance(endpoint)
+  const ammId = 'J8r2dynpYQuH6S415SPEdGuBGPmwgNuyfbxt1T371Myi'
+  const infos = await requestInfos(connection)
+  const owner = window.solana.publicKey
+  // @ts-ignore
+  const poolInfo = Object.values(infos).find((p) => p.ammId === ammId)
+  console.log(infos)
+  const baseMint = GTON.mintAddress
+  const quoteMint = WRAPPED_SOL_MINT.toString()
+  const data = await getTokenAccounts(connection, owner)
 
-async function makeSwapSol(params?: Object): Promise<string> {
-  return ''
+  // @ts-ignore
+  const baseAccount = data[baseMint] // from token user account
+  // @ts-ignore
+  const quoteAccount = data[quoteMint] // to token user account
+
+  const toCoinWithSlippage = getSwapOutAmount(
+    poolInfo,
+    baseMint,
+    quoteMint,
+    value,
+    0.5
+  )
+
+  const [txn, signers] = await prepare_swap(
+    connection,
+    owner,
+    poolInfo,
+    baseMint,
+    quoteMint,
+    baseAccount,
+    quoteAccount,
+    value,
+    // @ts-ignore
+    toCoinWithSlippage
+  )
+  // @ts-ignore
+  txn.recentBlockhash = (
+    await connection.getRecentBlockhash()
+  ).blockhash;
+    // @ts-ignore
+  txn.feePayer = owner;
+  //@ts-ignores
+  const txnId = await connection.sendTransaction(txn, connection, {
+    signers,
+    skipPreflight: true,
+    preflightCommitment: "confirmed"
+  })
+  console.log(txnId)
+  const provider = setupAnchorProvider(connection, window.solana)
+  const transferData = prepareDataForTransfer(
+    addressTo,
+    destination,
+    toCoinWithSlippage.amountOutWithSlippage.toWei().toNumber()
+  )
+  const [transferTxnId, dataAcc] = await transfer(
+    window.solana.publicKey,
+    provider,
+    transferData
+  )
+  console.log(transferTxnId)
+  try {
+    const res = await setUpcomingTxn(dataAcc)
+  } catch (e) {
+    console.log(e)
+  }
+  return transferTxnId
 }
 
 async function resolveAdrressEvm(): Promise<string> {
@@ -160,7 +254,6 @@ const invoker: Web3Invoker = {
 }
 
 const web3Plugin: Plugin = async (ctx, inject) => {
-
   inject('web3', invoker)
 }
 

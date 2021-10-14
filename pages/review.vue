@@ -116,14 +116,7 @@
         </div>
       </div>
 
-      <btn
-        class="mt-4"
-        block
-        :disabled="isError || Number(amount || 0) === 0"
-        @click="makeSwap"
-      >
-        Approve
-      </btn>
+      <btn class="mt-4" block @click="makeSwap"> Swap </btn>
     </angle-card>
   </div>
 </template>
@@ -131,7 +124,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Transaction } from '~/utils/transactions'
-import { Chains, RelayToken, tokens } from '~/components/constants'
+import { Chains, chainToName, RelayToken, tokens } from '~/components/constants'
+import { RelaySwapData } from '~/web3/metamask'
 const logos: { [key in Chains]: string } = {
   [Chains.Ftm]: require('~/assets/img/logotypes/fantom.svg'),
   [Chains.Bsc]: require('~/assets/img/logotypes/binance.svg'),
@@ -170,7 +164,17 @@ export default Vue.extend({
     },
   },
   methods: {
-    async makeSwap() {},
+    async makeSwap() {
+      const txnId = await this.$web3
+        .makeSwap(this.fromToken.type, {
+          destination: chainToName[this.toToken.chain],
+          userAddress: this.preview.fromAddress,
+          addressTo: this.preview.toAddress,
+          value: this.preview.amountFrom.toWei().toString(),
+          chainId: this.preview.chainFrom,
+        } as RelaySwapData)
+        .call(this)
+    },
   },
 })
 </script>

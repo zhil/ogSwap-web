@@ -155,6 +155,11 @@ export default {
         autoprefixer: {},
       },
     },
+    extend (config, { isDev, isClient }) {
+      config.node = {
+         fs: 'empty'
+       }
+   }
   },
 
   tailwindcss: {

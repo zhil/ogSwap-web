@@ -49,7 +49,7 @@ export default Vue.extend({
       return wallet
     },
     currentChainName(): string {
-      if(!this.currentWallet) return "";
+      if (!this.currentWallet) return ''
       return String(this.currentWallet.wallet.label)
     },
     currentAddress(): string | null {
@@ -58,9 +58,7 @@ export default Vue.extend({
       return `${address.slice(0, 4)}...${address.slice(38)}`
     },
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     handleConnectWallet() {
       // Deep copy object
@@ -77,7 +75,7 @@ export default Vue.extend({
       this.signed = true
     },
     handleLogout() {
-      this.signed = false;
+      this.signed = false
       metamaskBus.$emit('logout', this.val)
       this.signed = false
     },

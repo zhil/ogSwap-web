@@ -27,7 +27,8 @@ export const relayAddresses: Record<string, string> = {
 }
 
 export enum ProvidersUrl {
-  FANTOM_PROVIDER_URL = 'https://rpc.ftm.tools',
+  // FANTOM_PROVIDER_URL = 'https://rpc.ftm.tools',
+  FANTOM_PROVIDER_URL = 'https://apis.ankr.com/c3f382db4c55497b81bf3feb1e9a8499/d37735e535d9d051230799cae45aeb6a/fantom/full/main',
   BSC_PROVIDER_URL = 'https://bsc-dataseed.binance.org',
   POLYGON_PROVIDER_URL = 'https://polygon-rpc.com/',
   HECO_PROVIDER_URL = 'https://http-mainnet.hecochain.com',

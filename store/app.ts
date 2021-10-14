@@ -1,3 +1,4 @@
+import { Provider } from '@project-serum/anchor'
 import { WalletProvider } from '~/components/utils'
 
 export const state = () => ({
@@ -102,10 +103,21 @@ export const mutations = {
       }
     }
   },
+  // SET_CONNECT(state: any, provider: WalletProvider) {
+  //   const modals = state.modals
+  //   modals[provider].data.connected = true
+  // },
 }
 
 export const getters = {
   getModal: (state: any) => (provider: number) => state.modalData[provider],
   modals: (state: any) => state.modals,
   menu: (state: any) => state.menu,
+  // isConnect: (state: any) => (provider: number) =>
+  //   state.modalData[provider].data.connected,
 }
+
+// export const setters = {
+//   setConnect: (state: any) => (provider: number) =>
+//     (state.modalData[provider].data.connected = true),
+// }

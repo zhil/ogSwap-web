@@ -90,29 +90,48 @@
               />
             </label>
           </div>
-          <div class="px-[6px] w-[162px] flex items-end">
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-if="!isFromSolana && isMetamaskAvailable && !connected"
+          >
             <btn
-              v-if="!isFromSolana && isMetamaskAvailable && !connected"
               :variant="connected ? 'dark-charcoal' : 'blood'"
+              block
               @click="connected ? false : handleConnectWallet()"
             >
               <span> Connect Metamask </span>
             </btn>
+          </div>
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-else-if="isFromSolana && isPhantomAvailable && !connected"
+          >
             <btn
-              v-else-if="isFromSolana && isPhantomAvailable && !connected"
+              block
               :variant="connected ? 'dark-charcoal' : 'blood'"
               @click="connected ? false : handleConnectWallet()"
             >
               <span> Connect Phantom </span>
             </btn>
+          </div>
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-else-if="!isFromSolana && sendTokenChain != currentChain"
+          >
             <btn
-              v-else-if="!isFromSolana && sendTokenChain != currentChain"
+              block
               :variant="connected ? 'dark-charcoal' : 'blood'"
               @click="switchChain()"
             >
               <span class="font-medium"> Switch to {{ chainIndexName }} </span>
             </btn>
-            <span v-else class="font-medium">
+          </div>
+          <div class="px-[6px] w-[162px] flex items-end" v-else>
+            <btn
+              block
+              :readonly="connected"
+              :variant="connected ? 'dark-charcoal' : 'blood'"
+            >
               <icon
                 name="mono/check"
                 class="
@@ -127,7 +146,7 @@
                 "
               />
               Connected
-            </span>
+            </btn>
           </div>
         </div>
       </div>
@@ -260,9 +279,9 @@ export default Vue.extend({
     connected: false,
     originTokens,
     destinationTokens,
-    sendTokenIndex: 1,
+    sendTokenIndex: 3,
     sendTokenChain: Chains.Eth as Chains,
-    receiveTokenIndex: 3,
+    receiveTokenIndex: 2,
     receiveTokenChain: Chains.Bsc as Chains,
     isSelecting: false,
     balances: {} as { [key in Chains]: TokenAmount },
@@ -271,12 +290,12 @@ export default Vue.extend({
   }),
   computed: {
     fromTokenPrice(): string {
-      if(!this.amount || this.reservesFrom == null) return "0";
+      if (!this.amount || this.reservesFrom == null) return '0'
       const currentChainTokenPrice = Number(this.reservesFrom.dexNativePrice)
       return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
     },
     toTokenPrice(): string {
-      if(!this.amountReceive || this.reservesTo == null ) return "0";
+      if (!this.amountReceive || this.reservesTo == null) return '0'
       const currentChainTokenPrice = Number(this.reservesTo.dexNativePrice)
       return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
     },
@@ -284,7 +303,9 @@ export default Vue.extend({
       return this.$store.getters['reserves/getReserveData'](this.sendTokenChain) // should be passed evm chain
     },
     reservesTo(): PriceData {
-      return this.$store.getters['reserves/getReserveData'](this.receiveTokenChain)
+      return this.$store.getters['reserves/getReserveData'](
+        this.receiveTokenChain
+      )
     },
     currentChainTokenBalance(): string {
       if (!this.balances[this.sendTokenChain]) return '0.0000'
@@ -334,6 +355,7 @@ export default Vue.extend({
   },
   async mounted() {
     await this.$store.dispatch('reserves/setReserves')
+    await this.setChain()
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   methods: {
@@ -379,7 +401,7 @@ export default Vue.extend({
       this.amountReceive = '0'
     },
     inputChange() {
-      console.log(this.reservesFrom);
+      if (!this.reservesFrom || !this.reservesTo) return
       const gtonAmount =
         this.reservesFrom.gtonReserve
           .toEther()
