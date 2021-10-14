@@ -19,7 +19,7 @@
               <template #list>
                 <coin-item
                   v-for="(token, index) of originTokens"
-                  :key="token.title"
+                  v-bind:key="token.title"
                   :label="token.title"
                   :img="token.img"
                   :index="index"
@@ -164,7 +164,7 @@
               <template #list>
                 <coin-item
                   v-for="(token, index) of destinationTokens"
-                  :key="token.title"
+                  v-bind:key="token.title"
                   :label="token.title"
                   :img="token.img"
                   :index="index"

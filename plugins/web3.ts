@@ -2,13 +2,18 @@ import { Connection } from '@solana/web3.js'
 import { Plugin } from '@nuxt/types'
 import { Chains } from '~/components/constants'
 import Web3 from 'web3'
+import { AbiItem } from "web3-utils";
 import { WalletProvider, ChainTypes } from '~/components/utils'
 import { MetamaskChain } from '~/web3/evm_chain'
+import {relayAddresses, contractsABI} from "~/web3/constants"
 
 const { HttpProvider } = Web3.providers
 
 function createEvmInstance(endpoint: string): Web3 {
   return new Web3(new HttpProvider(endpoint))
+}
+function createMetamaskInstance(): Web3 {
+  return new Web3(window.ethereum)
 }
 
 const createSolInstance = (endpoint: string) => {
@@ -37,8 +42,27 @@ interface Web3Invoker {
   switchNetwork(chain: MetamaskChain): void
 }
 
-async function makeSwapEvm(params?: Object): Promise<string> {
-  return ''
+export interface RelaySwapData {
+  destination: string;
+  userAddress: string;
+  addressTo: string;
+  value: string;
+  chainId: string;
+}
+
+async function makeSwapEvm(params: RelaySwapData): Promise<string> {
+  const { destination, addressTo, value, userAddress, chainId } = params;
+  //@ts-ignore
+  const contractAddress = relayAddresses[chainId];
+  const web3 = createMetamaskInstance();
+  const contract = new web3.eth.Contract(
+    contractsABI.RelayContract as AbiItem[],
+    contractAddress
+  );
+  const res = await contract.methods
+    .lock(destination, addressTo)
+    .send({ from: userAddress, value });
+  return res
 }
 
 async function makeSwapSol(params?: Object): Promise<string> {
@@ -136,6 +160,7 @@ const invoker: Web3Invoker = {
 }
 
 const web3Plugin: Plugin = async (ctx, inject) => {
+
   inject('web3', invoker)
 }
 
