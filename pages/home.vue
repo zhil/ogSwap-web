@@ -223,7 +223,7 @@
         class="mt-4"
         block
         :disabled="isError || Number(amount || 0) === 0"
-        @click="$router.push('/review')"
+        @click="switchToPreview()"
       >
         Next
       </btn>
@@ -243,6 +243,7 @@ import {
 import { WalletBody } from '~/store/types'
 import { EvmChains, WalletProvider } from '~/components/utils'
 import { PriceData } from '~/utils/reserves'
+import { Transaction } from '~/utils/transactions'
 
 const chainToTokenName: { [key in Chains]: string } = {
   [Chains.Eth]: 'ETH',
@@ -271,35 +272,20 @@ export default Vue.extend({
   }),
   computed: {
     fromTokenPrice(): string {
-      // if(!this.amount || this.reservesFrom == null) return "0";
-      // console.log(this.reservesFrom);
-      // const currentChainTokenPrice = 12
-      //   Number(this.reservesFrom.dexGtonPrice) *
-      //   this.reservesFrom.gtonReserve
-      //     .toEther()
-      //     .dividedBy(this.reservesFrom.nativeReserve.toEther())
-      //     .toNumber()
-      // return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
-      return '0'
+      if(!this.amount || this.reservesFrom == null) return "0";
+      const currentChainTokenPrice = Number(this.reservesFrom.dexNativePrice)
+      return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
     },
     toTokenPrice(): string {
-      // if(!this.amountReceive || this.reservesTo == null ) return "0";
-      // console.log(this.reservesTo);
-
-      // const currentChainTokenPrice = 12
-      //   Number(this.reservesTo.dexGtonPrice) *
-      //   this.reservesTo.gtonReserve
-      //     .toEther()
-      //     .dividedBy(this.reservesTo.nativeReserve.toEther())
-      //     .toNumber()
-      // return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
-      return '0'
+      if(!this.amountReceive || this.reservesTo == null ) return "0";
+      const currentChainTokenPrice = Number(this.reservesTo.dexNativePrice)
+      return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
     },
     reservesFrom(): PriceData {
-      return this.$store.getters['reserves/getReserveData'](EvmChains.Fantom) // should be passed evm chain
+      return this.$store.getters['reserves/getReserveData'](this.sendTokenChain) // should be passed evm chain
     },
     reservesTo(): PriceData {
-      return this.$store.getters['reserves/getReserveData'](EvmChains.Polygon)
+      return this.$store.getters['reserves/getReserveData'](this.receiveTokenChain)
     },
     currentChainTokenBalance(): string {
       if (!this.balances[this.sendTokenChain]) return '0.0000'
@@ -349,6 +335,32 @@ export default Vue.extend({
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   methods: {
+    switchToPreview() {
+      if (!this.addressFrom) return
+      const data: Transaction = {
+        id: 0,
+        firstTxnHash: null,
+        secondTxnHash: null,
+        lastBalance: Number(this.currentChainTokenBalance),
+        fromAddress: this.addressFrom,
+        toAddress: this.addressTo,
+        amountFrom: new TokenAmount(
+          this.amount,
+          this.currentTokenSend.decimals,
+          false
+        ),
+        amountTo: new TokenAmount(
+          this.amountReceive,
+          this.currentTokenReceive.decimals,
+          false
+        ),
+        lastBlock: 0, //might not necessary
+        chainFrom: this.sendTokenChain,
+        chainTo: this.receiveTokenChain,
+      }
+      this.$store.commit('transactions/setPreview', data)
+      this.$router.push('/review')
+    },
     setReceived(index: number, chain: any) {
       this.receiveTokenChain = chain
       this.receiveTokenIndex = index
@@ -365,6 +377,7 @@ export default Vue.extend({
       this.amountReceive = '0'
     },
     inputChange() {
+      console.log(this.reservesFrom);
       const gtonAmount =
         this.reservesFrom.gtonReserve
           .toEther()

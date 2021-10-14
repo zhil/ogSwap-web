@@ -554,6 +554,7 @@ export async function transfer(
   anchor.setProvider(provider)
   let userEventDataAccount = anchor.web3.Keypair.generate()
   const programId = new PublicKey(relayProgram)
+  // @ts-ignore
   const program = new anchor.Program(programIdls.RelayProgram, programId)
   const relayPort = new PublicKey(relayPortAddress)
   const acoc = await findAssociatedTokenAddress(

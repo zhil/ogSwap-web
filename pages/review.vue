@@ -14,7 +14,7 @@
 
         <div class="mb-[10px] flex justify-center">
           <div class="w-[140px] flex justify-end items-center">
-            <img class="max-w-full h-auto max-h-[27px]" src="~/assets/img/logotypes/fantom.svg" alt="">
+            <img class="max-w-full h-auto max-h-[27px]" :src="fromLogoUrl" alt="">
           </div>
           <div class="w-[70px] flex justify-center items-center">
             <div class="text-black bg-ghost-white rounded-full w-[33px] h-[33px] flex justify-center items-center">
@@ -22,34 +22,35 @@
             </div>
           </div>
           <div class="w-[140px] flex justify-start items-center">
-            <img class="max-w-full h-auto max-h-[27px]" src="~/assets/img/logotypes/binance.svg" alt="">
+            <img class="max-w-full h-auto max-h-[27px]" :src="toLogoUrl" alt="">
           </div>
         </div>
 
         <div class="mb-[16px]">
           <field-label>Send</field-label>
           <div class="relative">
-            <coin-item class="absolute left-[12px] top-1/2 -translate-y-1/2" label="ETH" :img="require('~/assets/img/icons/ethereum.svg')"/>
-            <field-input readonly value="10.0000 | $10,00.3469" class="text-right rounded-[10px] text-[18px]" />
+            <coin-item class="absolute left-[12px] top-1/2 -translate-y-1/2" :label="fromToken.title" :img="fromToken.img"/>
+            <field-input readonly :value="preview.amountFrom.fixed(4)" class="text-right rounded-[10px] text-[18px]" />
           </div>
         </div>
 
         <div class="mb-[16px]">
           <field-label class="mb-[5px]">From address</field-label>
-          0xEA3ed91a668B6a56751729016EBafc214dFBeB65
+          {{preview.fromAddress}}
         </div>
 
         <div class="mb-[16px]">
           <field-label>Receive</field-label>
           <div class="relative">
-            <coin-item class="absolute left-[12px] top-1/2 -translate-y-1/2" label="MATIC" :img="require('~/assets/img/icons/matic.svg')"/>
-            <field-input readonly value="10.0000 | $10,00.3469" class="text-right rounded-[10px] text-[18px]" />
+            <coin-item class="absolute left-[12px] top-1/2 -translate-y-1/2" :label="toToken.title" :img="toToken.img"/>
+            <field-input readonly :value="preview.amountTo.wei.toFixed(4)" class="text-right rounded-[10px] text-[18px]" />
+            <!-- <field-input readonly value="10.0000 | $10,00.3469" class="text-right rounded-[10px] text-[18px]" /> -->
           </div>
         </div>
 
         <div class="mb-[16px]">
           <field-label class="mb-[5px]">To address</field-label>
-          0xEA3ed91a668B6a56751729016EBafc214dFBeB65
+          {{preview.toAddress}}
         </div>
 
       </div>
@@ -74,7 +75,7 @@
       </div>
 
       <btn class="mt-4" block :disabled="isError || Number(amount || 0) === 0"
-           @click="$router.push('/review')">
+           @click="makeSwap">
         Approve
       </btn>
     </angle-card>
@@ -83,6 +84,18 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { Transaction } from '~/utils/transactions';
+import {Chains, RelayToken, tokens} from "~/components/constants"
+const logos: {[key in Chains]: string} = {
+  [Chains.Ftm]: require("~/assets/img/logotypes/fantom.svg"),
+  [Chains.Bsc]: require("~/assets/img/logotypes/binance.svg"),
+  [Chains.Eth]: require("~/assets/img/logotypes/ethereum.svg"),
+  [Chains.Pol]: require("~/assets/img/logotypes/matic.svg"),
+  [Chains.Xdai]: require("~/assets/img/logotypes/xdai.svg"),
+  [Chains.Heco]: require("~/assets/img/logotypes/huobi.svg"),
+  [Chains.Avax]: require("~/assets/img/logotypes/huobi.svg"),
+  [Chains.Sol]: require("~/assets/img/logotypes/huobi.svg"),
+}
 
 export default Vue.extend({
   data: () => ({
@@ -91,12 +104,29 @@ export default Vue.extend({
     connected: false,
   }),
   computed: {
-    isError() {
+    isError(): boolean {
       return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0;
-    }
+    },
+    fromToken(): RelayToken {
+      return tokens[this.preview.chainFrom]
+    },
+    toToken(): RelayToken {
+      return tokens[this.preview.chainTo]
+    },
+    preview(): Transaction {
+      return this.$store.getters["transactions/getPreview"];
+    },
+    fromLogoUrl(): string {
+      return logos[this.preview.chainFrom]
+    },
+    toLogoUrl(): string {
+      return logos[this.preview.chainTo]
+    },
   },
   methods: {
+    async makeSwap() {
 
+    }
   }
 })
 </script>

@@ -5,26 +5,28 @@ import {
   PriceData,
   getPoolReserves,
   calculatePrice,
+  getPoolStable,
   pools,
 } from '~/utils/reserves'
+import { Chains } from '~/components/constants'
 
 type State = {
   prices: Prices
 }
 type Prices = {
-  [key in EvmChains]: PriceData
+  [key in Chains]: PriceData
 }
 
 export const state = () => {
   return {
     prices: {
-      [EvmChains.Avax]: {} as PriceData,
-      [EvmChains.Ethereum]: {} as PriceData,
-      [EvmChains.Fantom]: {} as PriceData,
-      [EvmChains.Binance]: {} as PriceData,
-      [EvmChains.Xdai]: {} as PriceData,
-      [EvmChains.Heco]: {} as PriceData,
-      [EvmChains.Polygon]: {} as PriceData,
+      [Chains.Avax]: {} as PriceData,
+      [Chains.Eth]: {} as PriceData,
+      [Chains.Ftm]: {} as PriceData,
+      [Chains.Bsc]: {} as PriceData,
+      [Chains.Xdai]: {} as PriceData,
+      [Chains.Heco]: {} as PriceData,
+      [Chains.Pol]: {} as PriceData,
     },
   }
 }
@@ -32,22 +34,22 @@ export const state = () => {
 export const actions: ActionTree<State, any> = {
   async setReserves({ commit }) {
     for (const pool of pools) {
-      const stablePool = await getPoolReserves(
+      const stablePool = await getPoolStable(
         pool.provider,
-        pool.stablePoolContract
+        pool.stablePoolContract,
+        pool.nativeTokenAddress
       )
-      console.log(stablePool);
       const gtonPool = await getPoolReserves(
         pool.provider,
         pool.mainPoolContract
       )
       const price = calculatePrice(
-        stablePool.nativeReserve,
-        stablePool.gtonReserve
+        stablePool.stableReserve,
+        stablePool.nativeReserve
       )
       commit('updatePrice', {
         chain: pool.chain,
-        body: { ...gtonPool, dexGtonPrice: price },
+        body: { ...gtonPool, dexNativePrice: price },
       })
     }
   },
@@ -59,15 +61,15 @@ export const mutations = {
   },
   updatePrice(
     state: State,
-    { chain, body }: { chain: EvmChains; body: PriceData }
+    { chain, body }: { chain: Chains; body: PriceData }
   ) {
     state.prices[chain] = _.cloneDeep(body) // I'am not sure this is necessary
   },
 }
 
 export const getters: GetterTree<State, any> = {
-    getReserveData: (state: State) => (chain: EvmChains) => {
-      return _.isEmpty(state.prices[chain]) ? state.prices[chain] : null
+  getReserveData: (state: State) => (chain: Chains) => {
+      return !_.isEmpty(state.prices[chain]) ? state.prices[chain] : null
     },
 }
 

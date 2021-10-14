@@ -1,23 +1,30 @@
-import { Token } from '~/components/utils'
 import { Commit, GetterTree, ActionTree } from 'vuex'
+import { Chains } from '~/components/constants'
+import { TokenAmount } from '~/utils/safe-math'
+import { Transaction } from '~/utils/transactions'
 
 type State = {
-  transactions: Transaction[]
+  transactions: Transaction[],
+  preview: Transaction
 }
 
-type Transaction = {
-  id: number
-  firstTxnHash: string | null
-  secondTxnHash: string | null
-  lastBalance: boolean
-  lastBlock: boolean //might not necessary
-  tokenFrom: Token
-  tokenTo: Token
+const emptyPreview = {
+  id: 0,
+  firstTxnHash: null,
+  secondTxnHash: null,
+  lastBalance: 0,
+  lastBlock: 0, //might not necessary
+  chainFrom:  Chains.Eth,
+  chainTo: Chains.Ftm,
+  fromAddress: "",
+  toAddress: "",
+  amountFrom: new TokenAmount(0),
+  amountTo: new TokenAmount(0)
 }
-
 export const state = () => {
   return {
     transactions: [],
+    preview: emptyPreview
   }
 }
 
@@ -43,6 +50,13 @@ export const mutations = {
       ...body,
     }
   },
+  setPreview(
+    state: State,
+    data: Transaction
+  ) {
+    // merging both of the bodies
+    state.preview = data
+  },
   delete(state: State, { txnIndex }: { txnIndex: number }) {
     state.transactions.splice(txnIndex, 1)
   },
@@ -55,4 +69,7 @@ export const getters: GetterTree<State, any> = {
   getTransactionHistory(state: State) {
     return state.transactions
   },
+  getPreview(state: State) {
+    return state.preview
+  }
 }
