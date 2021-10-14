@@ -54,121 +54,89 @@ export const statusList: Array<Status> = [
 export type RelayToken = {
   type: ChainTypes
   relayTokenIndex: number
-  chain: Chains,
+  chain: Chains
   img: string
   title: string
+  decimals: number
 }
+const MATIC = {
+  type: ChainTypes.Evm, // Добавить тип для всех чейнов
+  relayTokenIndex: 1,
+  chain: Chains.Pol,
+  img: require('~/assets/img/icons/matic.svg'),
+  title: 'MATIC',
+  decimals: 18,
+}
+const FTM = {
+  type: ChainTypes.Evm,
+  relayTokenIndex: 2,
+  chain: Chains.Ftm,
+  img: require('~/assets/img/icons/ftm.svg'),
+  title: 'FTM',
+  decimals: 18,
+}
+const BNB = {
+  type: ChainTypes.Evm,
+  relayTokenIndex: 3,
+  chain: Chains.Bsc,
+  img: require('~/assets/img/icons/bsc.svg'),
+  title: 'BNB',
+  decimals: 18,
+}
+const ETH = {
+  type: ChainTypes.Evm,
+  relayTokenIndex: 4,
+  chain: Chains.Eth,
+  img: require('~/assets/img/icons/ethereum.svg'),
+  title: 'ETH',
+  decimals: 18,
+}
+const XDAI = {
+  type: ChainTypes.Evm,
+  relayTokenIndex: 5,
+  chain: Chains.Xdai,
+  img: require('~/assets/img/icons/xdai.svg'),
+  title: 'XDAI',
+  decimals: 18,
+}
+const SOL = {
+  type: ChainTypes.Solana,
+  relayTokenIndex: 7,
+  chain: Chains.Sol,
+  img: require('~/assets/img/icons/sol.svg'),
+  title: 'SOL',
+  decimals: 9,
+}
+const HT = {
+  type: ChainTypes.Evm,
+  relayTokenIndex: 6,
+  chain: Chains.Heco,
+  img: require('~/assets/img/icons/heco.svg'),
+  title: 'HT',
+  decimals: 18,
+}
+const AVAX = {
+  type: ChainTypes.Evm,
+  relayTokenIndex: 7,
+  chain: Chains.Avax,
+  img: '~/assets/img/icons/avax.svg',
+  title: 'AVAX',
+  decimals: 18,
+}
+export const originTokens: RelayToken[] = [MATIC, FTM, BNB, ETH, XDAI, SOL]
 
-export const originTokens: RelayToken[] = [
-  {
-    type: ChainTypes.Evm, // Добавить тип для всех чейнов
-    relayTokenIndex: 1,
-    chain: Chains.Pol,
-    img: require('~/assets/img/icons/matic.svg'),
-    title: 'MATIC',
-  },
-  {
-    type: ChainTypes.Evm,
-    relayTokenIndex: 2,
-    chain: Chains.Ftm,
-    img: require("~/assets/img/icons/ftm.svg"),
-    title: "FTM"
-  },
-  {
-    type: ChainTypes.Evm,
-    relayTokenIndex: 3,
-    chain: Chains.Bsc,
-    img: require('~/assets/img/icons/bsc.svg'),
-    title: 'BNB',
-  },
-  {
-    type: ChainTypes.Evm,
-    relayTokenIndex: 4,
-    chain: Chains.Eth,
-    img: require('~/assets/img/icons/ethereum.svg'),
-    title: 'ETH',
-  },
-  {
-    type: ChainTypes.Evm,
-    relayTokenIndex: 5,
-    chain: Chains.Xdai,
-    img: require("~/assets/img/icons/xdai.svg"),
-    title: "XDAI"
-  },
-  // {
-  //   type: ChainTypes.Evm,
-  //   relayTokenIndex: 6,
-  //   chain: Chains.Heco,
-  //   img: require('~/assets/img/icons/heco.svg'),
-  //   title: 'HT',
-  // },
-  // {
-  //  type: ChainTypes.Evm,
-  //   relayTokenIndex: 7,
-  //   chain: Chains.Avax,
-  //   img: "~/assets/img/icons/avax.svg",
-  //   title: "AVAX"
-  // }
-  {
-    type: ChainTypes.Solana,
-    relayTokenIndex: 7,
-    chain: Chains.Sol,
-    img: require('~/assets/img/icons/sol.svg'),
-    title: 'SOL',
-  },
-]
+export const destinationTokens: RelayToken[] = [MATIC, FTM, BNB, XDAI, SOL]
 
-export const destinationTokens = [
-  {
-    type: ChainTypes.Evm,
-    relayTokenIndex: 1,
-    chain: Chains.Pol,
-    img: require('~/assets/img/icons/matic.svg'),
-    title: 'MATIC',
-  },
-  {
-    type: ChainTypes.Evm,
-    relayTokenIndex: 2,
-    chain: Chains.Ftm,
-    img: require("~/assets/img/icons/ftm.svg"),
-    title: "FTM"
-  },
-  {
-    type: ChainTypes.Evm,
-    relayTokenIndex: 3,
-    chain: Chains.Bsc,
-    img: require('~/assets/img/icons/bsc.svg'),
-    title: 'BNB',
-  },
-  {
-    type: ChainTypes.Evm,
-    relayTokenIndex: 5,
-    chain: Chains.Xdai,
-    img: require("~/assets/img/icons/xdai.svg"),
-    title: "XDAI"
-  },
-  // {
-  //   type: ChainTypes.Evm,
-  //   relayTokenIndex: 6,
-  //   chain: Chains.Heco,
-  //   img: require('~/assets/img/icons/heco.svg'),
-  //   title: 'HT',
-  // },
-  // {
-  //  type: ChainTypes.Evm,
-  //   relayTokenIndex: 7,
-  //   chain: Chains.Avax,
-  //   img: "~/assets/img/icons/avax.svg",
-  //   title: "AVAX"
-  // }
-  {
-    type: ChainTypes.Solana,
-    relayTokenIndex: 7,
-    chain: Chains.Sol,
-    img: require('~/assets/img/icons/sol.svg'),
-    title: 'SOL',
-  },
-]
+export const tokens = {
+  [Chains.Avax]: AVAX,
+  [Chains.Eth]: ETH,
+  [Chains.Ftm]: FTM,
+  [Chains.Bsc]: BNB,
+  [Chains.Pol]: MATIC,
+  [Chains.Heco]: HT,
+  [Chains.Sol]: SOL,
+  [Chains.Xdai]: XDAI,
+}
 
 export type ChainMap = {
   [key in Chains]: string

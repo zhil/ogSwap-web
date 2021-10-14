@@ -1,7 +1,7 @@
 import RelayContract from './abi/relay_contract.json'
 import ERC20ABI from './abi/erc20.json'
 import LpContractV2 from './abi/lpContractv2.json'
-import RelayProgram from './idl/relay'
+import RelayProgram from './idl/relay.json'
 
 export const contractsAddresses: Record<string, string> = {
   gtonEth: '0x01e0E2e61f554eCAaeC0cC933E739Ad90f24a86d',

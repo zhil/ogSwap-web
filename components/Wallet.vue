@@ -49,6 +49,7 @@ export default Vue.extend({
       return wallet
     },
     currentChainName(): string {
+      if(!this.currentWallet) return "";
       return String(this.currentWallet.wallet.label)
     },
     currentAddress(): string | null {
