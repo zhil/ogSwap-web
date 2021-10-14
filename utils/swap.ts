@@ -58,7 +58,7 @@ import {
   getFilteredProgramAccountsAmmOrMarketCache,
   getMultipleAccounts,
 } from '~/web3/sol_utils.js'
-import { programIdls } from '~/web3/constants'
+//import { programIdls } from '~/web3/constants'
 import { Chains } from '~/components/constants'
 
 export interface Wallet {
@@ -520,11 +520,11 @@ export function setupAnchorProvider(
 
 function hexToBytes(hex: string) {
   for (var bytes = [], c = 0; c < hex.length; c += 2)
-  bytes.push(parseInt(hex.substr(c, 2), 16));
-  return bytes;
+    bytes.push(parseInt(hex.substr(c, 2), 16))
+  return bytes
 }
 
-const chainBytes: {[key in Chains]: number[]} = {
+const chainBytes: { [key in Chains]: number[] } = {
   [Chains.Eth]: [69, 84, 72],
   [Chains.Ftm]: [70, 84, 77],
   [Chains.Bsc]: [66, 78, 66],
@@ -535,14 +535,18 @@ const chainBytes: {[key in Chains]: number[]} = {
   [Chains.Sol]: [83, 79, 76],
 }
 
-export function prepareDataForTransfer(user_address: string, chain: Chains, amount: number): TransferOpts {
+export function prepareDataForTransfer(
+  user_address: string,
+  chain: Chains,
+  amount: number
+): TransferOpts {
   const extraBytes: number[] = []
   extraBytes.fill(0, 0, 44)
   const address = hexToBytes(user_address).concat(extraBytes)
   return {
     address,
     chain: chainBytes[chain],
-    amount
+    amount,
   }
 }
 
