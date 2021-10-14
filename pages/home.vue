@@ -92,7 +92,7 @@
           </div>
           <div class="px-[6px] w-[162px] flex items-end">
             <btn
-              v-if="currentTokenSend.chain == isFromSolana"
+              v-if="!isFromSolana"
               :variant="connected ? 'dark-charcoal' : 'blood'"
               block
               :readonly="connected"
@@ -117,7 +117,7 @@
               <span v-else> Connect Metamask </span>
             </btn>
             <btn
-              v-else-if="currentTokenSend.chain == !isFromSolana"
+              v-else-if="isFromSolana"
               :variant="connected ? 'dark-charcoal' : 'blood'"
               block
               :readonly="connected"
@@ -241,9 +241,9 @@ import {
   Chains,
 } from '~/components/constants'
 import { WalletBody } from '~/store/types'
-import { EvmChains, WalletProvider } from '~/components/utils'
+import { EvmChains, WalletProvider, ChainTypes } from '~/components/utils'
 import { PriceData } from '~/utils/reserves'
-
+import { availableChains } from '~/web3/evm_chain'
 const chainToTokenName: { [key in Chains]: string } = {
   [Chains.Eth]: 'ETH',
   [Chains.Pol]: 'MATIC',
@@ -268,6 +268,8 @@ export default Vue.extend({
     receiveTokenChain: Chains.Bsc as Chains,
     isSelecting: false,
     balances: {} as { [key in Chains]: TokenAmount },
+    availableChains,
+    currentChain: null as Chains | null,
   }),
   computed: {
     fromTokenPrice(): string {
@@ -407,6 +409,17 @@ export default Vue.extend({
       this.receiveTokenChain = chain
       // this.isSelecting = false
       this.setReceived(this.receiveTokenIndex, this.receiveTokenChain)
+    },
+    async setChain() {
+      this.currentChain = await this.$web3
+        .getNetworkVersion(ChainTypes.Evm)
+        .call(this)
+      console.log(this.currentChain, 'is-current-chain')
+    },
+    async switchChain() {
+      const chain = availableChains[this.sendTokenChain]
+      await this.$web3.switchNetwork(chain)
+      await this.setChain()
     },
   },
 })
