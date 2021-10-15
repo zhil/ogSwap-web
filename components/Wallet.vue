@@ -78,17 +78,17 @@ export default Vue.extend({
       )
 
       modal.data.callbackConnect = () => {
-        this.signed = this.$store.getters['wallet/isWalletAvailableByName'](
-          this.val
-        )
+        // this.signed = this.$store.getters['wallet/isWalletAvailableByName'](
+        //   this.val
+        // )
 
         this.$store.commit('app/CLOSE_MODAL')
       }
       this.$store.commit('app/PUSH_MODAL', modal)
-      this.connected = this.$store.getters['wallet/isWalletAvailableByName'](
-        this.val
-      )
-      this.signed = true
+      // this.connected = this.$store.getters['wallet/isWalletAvailableByName'](
+      //   this.val
+      // )
+      // this.signed = true
     },
     handleLogout() {
       this.signed = false

@@ -430,11 +430,12 @@ export default Vue.extend({
       )
 
       modal.data.callbackConnect = () => {
-        this.connected = true
+        this.connected =
+          this.$store.getters['wallet/isWalletAvailableByName'](provider)
         this.$store.commit('app/CLOSE_MODAL')
       }
       this.$store.commit('app/PUSH_MODAL', modal)
-      this.connected = true
+      //this.connected = true
     },
     chooseCurrentChainSend(index: number, chain: any) {
       this.sendTokenIndex = index
