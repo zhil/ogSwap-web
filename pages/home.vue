@@ -92,7 +92,7 @@
           </div>
           <div
             class="px-[6px] w-[162px] flex items-end"
-            v-if="!isFromSolana && isMetamaskAvailable && !connected"
+            v-if="!isFromSolana && !isMetamaskAvailable"
           >
             <btn
               :variant="connected ? 'dark-charcoal' : 'blood'"
@@ -104,7 +104,7 @@
           </div>
           <div
             class="px-[6px] w-[162px] flex items-end"
-            v-else-if="isFromSolana && isPhantomAvailable && !connected"
+            v-else-if="isFromSolana && !isPhantomAvailable"
           >
             <btn
               block
@@ -239,6 +239,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { eventBus } from '~/global/main.js'
 import { TokenAmount } from '~/utils/safe-math'
 import {
   originTokens,
@@ -271,8 +272,10 @@ const chainNames: { [key in Chains]: string } = {
   [Chains.Avax]: 'Avalanche',
   [Chains.Sol]: 'Solana',
 }
+
 export default Vue.extend({
   data: () => ({
+    eventBus,
     amount: '0',
     addressTo: '',
     amountReceive: '0',

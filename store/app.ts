@@ -10,6 +10,7 @@ export const state = () => ({
         label: 'Connect to Phantom',
         img: require('~/assets/img/icons/phantom.svg'),
         provider: WalletProvider.Phantom,
+        connected: false,
       },
     },
     [WalletProvider.Metamask]: {
@@ -19,6 +20,7 @@ export const state = () => ({
         label: 'Connect to MetaMask',
         img: require('~/assets/img/icons/metamask.svg'),
         provider: WalletProvider.Metamask,
+        connected: false,
       }, // Данные помещаемые в модальное окно
     },
   },

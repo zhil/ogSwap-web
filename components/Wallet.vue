@@ -3,9 +3,9 @@
     class="ml-[12px]"
     :address="currentAddress"
     :img="img"
-    :signed="signed"
+    :signed="isWalletAvailable"
     :network="currentChainName"
-    :connected="connected"
+    :connected="isWalletAvailable"
     @login="handleConnectWallet()"
     @logout="handleLogout()"
   />
@@ -14,6 +14,7 @@
 <script lang="ts">
 // eslint-disable-next-line
 import Vue, { PropType } from 'vue'
+import { eventBus } from '~/global/main.js'
 //@ts-ignore
 import { WalletProvider } from './utils'
 import { metamaskBus } from './metamaskBus'
@@ -31,11 +32,17 @@ export default Vue.extend({
     },
   },
   data: () => ({
+    eventBus,
     connected: false,
     WalletProvider,
     metamaskBus: new Vue(),
     signed: false,
   }),
+  created() {
+    eventBus.$on('wallet', (data: { connected: boolean }) => {
+      this.connected = data.connected
+    })
+  },
   computed: {
     open(): boolean {
       return this.$store.getters['app/menu'].open
@@ -57,6 +64,9 @@ export default Vue.extend({
       let address = this.$store.getters['wallet/walletByName'](this.val).address
       return `${address.slice(0, 4)}...${address.slice(38)}`
     },
+    isWalletAvailable(): boolean {
+      return this.$store.getters['wallet/walletByName'](this.val)
+    },
   },
   mounted() {},
   methods: {
@@ -68,10 +78,16 @@ export default Vue.extend({
       )
 
       modal.data.callbackConnect = () => {
-        this.connected = true
+        this.signed = this.$store.getters['wallet/isWalletAvailableByName'](
+          this.val
+        )
+
         this.$store.commit('app/CLOSE_MODAL')
       }
       this.$store.commit('app/PUSH_MODAL', modal)
+      this.connected = this.$store.getters['wallet/isWalletAvailableByName'](
+        this.val
+      )
       this.signed = true
     },
     handleLogout() {
