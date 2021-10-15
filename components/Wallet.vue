@@ -65,7 +65,7 @@ export default Vue.extend({
       return `${address.slice(0, 4)}...${address.slice(38)}`
     },
     isWalletAvailable(): boolean {
-      return this.$store.getters['wallet/walletByName'](this.val)
+      return this.$store.getters['wallet/isWalletAvailableByName'](this.val)
     },
   },
   mounted() {},

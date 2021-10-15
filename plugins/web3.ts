@@ -17,7 +17,7 @@ import {
 } from '~/utils/swap'
 import { setUpcomingTxn } from '~/utils/oracle'
 import { getSwapOutAmount, GTON, NATIVE_SOL } from '~/utils/tokens'
-import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
+import { gtonPoolInfo } from '~/utils/constants'
 
 const { HttpProvider } = Web3.providers
 
@@ -101,8 +101,7 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
   const infos = await requestInfos(connection)
   const owner = window.solana.publicKey
   // @ts-ignore
-  const poolInfo = Object.values(infos).find((p) => p.ammId === ammId)
-  console.log(infos)
+  const poolInfo = gtonPoolInfo
   const baseMint = GTON.mintAddress
   const quoteMint = NATIVE_SOL.mintAddress
   const data = await getTokenAccounts(connection, owner)

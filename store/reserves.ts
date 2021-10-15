@@ -34,15 +34,19 @@ export const state = () => {
 export const actions: ActionTree<State, any> = {
   async setReserves({ commit }) {
     for (const pool of pools) {
+      console.log("stable");
       const stablePool = await getPoolStable(
         pool.provider,
         pool.stablePoolContract,
-        pool.nativeTokenAddress
+        pool.nativeTokenAddress,
+        pool.stableDecimals
       )
+      console.log("gton");
       const gtonPool = await getPoolReserves(
         pool.provider,
         pool.mainPoolContract
       )
+
       const price = calculatePrice(
         stablePool.stableReserve,
         stablePool.nativeReserve

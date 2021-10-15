@@ -118,7 +118,7 @@ const logos: { [key in Chains]: string } = {
   [Chains.Xdai]: require('~/assets/img/logotypes/xdai.svg'),
   [Chains.Heco]: require('~/assets/img/logotypes/huobi.svg'),
   [Chains.Avax]: require('~/assets/img/logotypes/huobi.svg'),
-  [Chains.Sol]: require('~/assets/img/logotypes/huobi.svg'),
+  [Chains.Sol]: require('~/assets/img/logotypes/solana.svg'),
 }
 
 export default Vue.extend({
