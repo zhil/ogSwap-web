@@ -1,10 +1,11 @@
-const mainTitle = "OG Swap";
+const mainTitle = 'OG Swap'
 
-const shortDescription = "Authentic multichain swaps of native tokens via $GTON as a relay";
+const shortDescription =
+  'Authentic multichain swaps of native tokens via $GTON as a relay'
 
-const url = "https://mesh.susy.one";
+const url = 'https://mesh.susy.one'
 
-const previewImagePath = url+"/preview.jpg";
+const previewImagePath = url + '/preview.jpg'
 
 export default {
   // Target: https://go.nuxtjs.dev/config-target
@@ -14,7 +15,7 @@ export default {
   head: {
     title: mainTitle,
     htmlAttrs: {
-      lang: "en-US"
+      lang: 'en-US',
     },
     meta: [
       { charset: 'utf-8' },
@@ -22,88 +23,85 @@ export default {
       { hid: 'description', name: 'description', content: shortDescription },
       { name: 'format-detection', content: 'telephone=no' },
       {
-        name: "keywords",
+        name: 'keywords',
         content:
-          "blockchain, crosschain, interchain, oracles, datafeeds, waves, ethereum, bitcoin, gateways, consensus, smartcontract, ride, solidity"
+          'blockchain, crosschain, interchain, oracles, datafeeds, waves, ethereum, bitcoin, gateways, consensus, smartcontract, ride, solidity',
       },
       {
         content: mainTitle,
-        property: "og:title"
+        property: 'og:title',
       },
       {
         content: url,
-        property: "og:url"
+        property: 'og:url',
       },
       {
-        content: "OG Swap",
-        property: "og:site_name"
+        content: 'OG Swap',
+        property: 'og:site_name',
       },
       {
-        property: "og:image",
-        content: previewImagePath
+        property: 'og:image',
+        content: previewImagePath,
       },
       {
-        content: "OG Swap",
-        property: "twitter:site"
+        content: 'OG Swap',
+        property: 'twitter:site',
       },
       {
         content: mainTitle,
-        property: "twitter:title"
+        property: 'twitter:title',
       },
       {
-        property: "twitter:image",
-        content: previewImagePath
+        property: 'twitter:image',
+        content: previewImagePath,
       },
       {
-        property: "twitter:image:src",
-        content: previewImagePath
+        property: 'twitter:image:src',
+        content: previewImagePath,
       },
       {
-        property: "twitter:card",
-        content: "summary_large_image"
+        property: 'twitter:card',
+        content: 'summary_large_image',
       },
       {
-        content: "all",
-        name: "robots"
+        content: 'all',
+        name: 'robots',
       },
       {
-        content: "website",
-        property: "og:type"
+        content: 'website',
+        property: 'og:type',
       },
       {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1"
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
       },
       {
-        name: "apple-mobile-web-app-status-bar-style",
-        content: "black"
+        name: 'apple-mobile-web-app-status-bar-style',
+        content: 'black',
       },
       {
-        name: "apple-mobile-web-app-capable",
-        content: "yes"
+        name: 'apple-mobile-web-app-capable',
+        content: 'yes',
       },
       {
-        name: "format-detection",
-        content: "email=no"
-      }
+        name: 'format-detection',
+        content: 'email=no',
+      },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       {
-        rel: "stylesheet",
-        href:
-          "https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@200;300;400;700&family=Red+Rose&display=swap"
-      }
-    ]
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@200;300;400;700&family=Red+Rose&display=swap',
+      },
+    ],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: [
-    './assets/css/app.pcss',
-  ],
+  css: ['./assets/css/app.pcss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ['@/plugins/web3.ts'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -124,8 +122,8 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    ["nuxt-rfg-icon", { masterPicture: "static/favicon.svg" }],
-    "@nuxtjs/manifest",
+    ['nuxt-rfg-icon', { masterPicture: 'static/favicon.svg' }],
+    '@nuxtjs/manifest',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     // https://www.npmjs.com/package/@nuxtjs/svg-sprite
@@ -138,8 +136,8 @@ export default {
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {
     manifest: {
-      lang: 'en'
-    }
+      lang: 'en',
+    },
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
@@ -154,9 +152,14 @@ export default {
           propList: ['*'],
           minPixelValue: 4,
         },
-        'autoprefixer': {},
-      }
-    }
+        autoprefixer: {},
+      },
+    },
+    extend (config, { isDev, isClient }) {
+      config.node = {
+         fs: 'empty'
+       }
+   }
   },
 
   tailwindcss: {
@@ -164,10 +167,10 @@ export default {
   },
 
   optimizedImages: {
-    optimizeImages: true
+    optimizeImages: true,
   },
 
   storybook: {
     // Options
-  }
+  },
 }

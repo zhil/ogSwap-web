@@ -1,28 +1,34 @@
 <template>
   <div class="flex-grow flex flex-col justify-center">
     <angle-card
-      class="w-full max-w-[645px] mx-auto pt-[20px] pb-[24px] px-[40px]">
-
-      <div class="font-red-rose text-center text-[22px] mb-[19px]">
-        Swap
-      </div>
+      class="w-full max-w-[645px] mx-auto pt-[20px] pb-[24px] px-[40px]"
+    >
+      <div class="font-red-rose text-center text-[22px] mb-[19px]">Swap</div>
 
       <div class="bg-[#1C1C1C] py-4 px-[28px] rounded-[4px]">
-
         <div class="-mx-[6px] flex mb-[14px]">
           <div class="px-[6px] w-[154px]">
             <field-label>Send</field-label>
             <field-dropdown size="large" block :error="isError">
               <template #default>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')"/>
+                <coin-item
+                  :label="currentTokenSend.title"
+                  :img="currentTokenSend.img"
+                />
               </template>
               <template #list>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
+                <coin-item
+                  v-for="(token, index) of originTokens"
+                  v-bind:key="token.title"
+                  :label="token.title"
+                  :img="token.img"
+                  :index="index"
+                  :chain="token.chain"
+                  :blocking="false"
+                  :selected="receiveTokenChain"
+                  class="hover:font-bold"
+                  @select="chooseCurrentChainSend"
+                />
               </template>
             </field-dropdown>
           </div>
@@ -31,17 +37,36 @@
               <field-error-text v-show="isError" class="float-left">
                 Insufficient balance
               </field-error-text>
-              <span class="font-normal">Balance:</span> 1000 ETH
+              <span class="font-normal">Balance:</span>
+              {{ currentChainTokenBalance }} {{ currentChainTokenName }}
             </field-label>
             <div class="relative">
               <label class="block">
-                <field-input v-model="amount" :error="isError" size="large" class="font-medium pb-[22px]"
-                             type="number"/>
+                <field-input
+                  v-model="amount"
+                  :error="isError"
+                  size="large"
+                  class="font-medium pb-[22px]"
+                  type="number"
+                  @input="inputChange"
+                />
               </label>
-              <div class="absolute left-[12px] top-[31px] text-xs">${{ Number(amount || 0) * 79 }}</div>
-              <btn square variant="black"
-                   class="absolute right-[12px] top-[8px] font-red-rose underline hover:no-underline"
-                   @click="amount = '1000'">
+              <div class="absolute left-[12px] top-[31px] text-xs">
+                ${{ fromTokenPrice }}
+              </div>
+              <btn
+                square
+                variant="black"
+                class="
+                  absolute
+                  right-[12px]
+                  top-[8px]
+                  font-red-rose
+                  underline
+                  hover:no-underline
+                "
+                @click="setMax()"
+              >
                 MAX
               </btn>
             </div>
@@ -52,60 +77,126 @@
           <div class="px-[6px] flex-grow">
             <field-label>From address</field-label>
             <label class="relative block">
-              <img class="w-[24px] h-[24px] left-[12px] top-[9px] absolute" src="~/assets/img/icons/metamask.svg"
-                   alt="">
-              <field-input v-model="address" placeholder="address" class="pl-[42px]"/>
+              <img
+                class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
+                src="~/assets/img/icons/metamask.svg"
+                alt=""
+              />
+              <field-input
+                v-model="addressFrom"
+                readonly
+                placeholder="Address"
+                class="pl-[42px]"
+              />
             </label>
           </div>
-          <div class="px-[6px] w-[162px] flex items-end">
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-if="!isFromSolana && !isMetamaskAvailable"
+          >
             <btn
-              :variant="connected ? 'dark-charcoal' : 'blood'" block
+              :variant="connected ? 'dark-charcoal' : 'blood'"
+              block
+              @click="connected ? false : handleConnectWallet()"
+            >
+              <span> Connect Metamask </span>
+            </btn>
+          </div>
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-else-if="isFromSolana && !isPhantomAvailable"
+          >
+            <btn
+              block
+              :variant="connected ? 'dark-charcoal' : 'blood'"
+              @click="connected ? false : handleConnectWallet()"
+            >
+              <span> Connect Phantom </span>
+            </btn>
+          </div>
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-else-if="!isFromSolana && sendTokenChain != currentChain"
+          >
+            <btn
+              block
+              :variant="connected ? 'dark-charcoal' : 'blood'"
+              @click="switchChain()"
+            >
+              <span class="font-medium"> Switch to {{ chainIndexName }} </span>
+            </btn>
+          </div>
+          <div class="px-[6px] w-[162px] flex items-end" v-else>
+            <btn
+              block
               :readonly="connected"
-              @click="connected ? false : handleConnectWallet()">
-              <span v-if="connected" class="font-medium">
-              <icon name="mono/check"
-                    class="fill-current text-medium-spring-green ring-1 ring-inset ring-current text-[24px] rounded-full mr-[6px] relative top-[5px]"/>
-                Connected
-              </span>
-              <span v-else>
-                Connect wallet
-              </span>
+              :variant="connected ? 'dark-charcoal' : 'blood'"
+            >
+              <icon
+                name="mono/check"
+                class="
+                  fill-current
+                  text-medium-spring-green
+                  ring-1 ring-inset ring-current
+                  text-[24px]
+                  rounded-full
+                  mr-[6px]
+                  relative
+                  top-[5px]
+                "
+              />
+              Connected
             </btn>
           </div>
         </div>
-
       </div>
 
       <div class="h-[18px] w-full text-[18px] text-[#8D9EB5] text-center">
-        <icon name="mono/arrow-wide-2" class="fill-current"/>
+        <icon name="mono/arrow-wide-2" class="fill-current" />
       </div>
 
       <div class="bg-[#1C1C1C] py-4 px-[28px] rounded-[4px]">
-
         <div class="-mx-[6px] flex mb-[14px]">
           <div class="px-[6px] w-[154px]">
             <field-label>Receive</field-label>
             <field-dropdown size="large" block :error="isError">
               <template #default>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
+                <coin-item
+                  :label="currentTokenReceive.title"
+                  :img="currentTokenReceive.img"
+                  class="hover:font-bold"
+                />
               </template>
               <template #list>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
-                <coin-item label="ETH" :img="require('~/assets/img/icons/ethereum.svg')" class="hover:font-bold"/>
-                <coin-item label="MATIC" :img="require('~/assets/img/icons/matik.svg')" class="hover:font-bold"/>
+                <coin-item
+                  v-for="(token, index) of destinationTokens"
+                  v-bind:key="token.title"
+                  :label="token.title"
+                  :img="token.img"
+                  :index="index"
+                  :chain="token.chain"
+                  :selected="sendTokenChain"
+                  :blocking="true"
+                  class="hover:font-bold"
+                  @select="chooseCurrentChainReceive"
+                />
               </template>
             </field-dropdown>
           </div>
           <div class="px-[6px] flex-grow flex flex-col justify-end">
             <div class="relative">
               <label class="block">
-                <field-input v-model="amount" :error="isError" size="large" class="font-medium pb-[22px]"
-                             type="number"/>
+                <field-input
+                  v-model="amountReceive"
+                  size="large"
+                  class="font-medium pb-[22px]"
+                  type="number"
+                  readonly
+                />
               </label>
-              <div class="absolute left-[12px] top-[31px] text-xs">${{ Number(amount || 0) * 79 }}</div>
+              <div class="absolute left-[12px] top-[31px] text-xs">
+                ${{ toTokenPrice }}
+              </div>
             </div>
           </div>
         </div>
@@ -114,21 +205,32 @@
           <div class="px-[6px] flex-grow">
             <field-label>To address</field-label>
             <label class="relative block">
-              <img class="w-[24px] h-[24px] left-[12px] top-[9px] absolute" src="~/assets/img/icons/metamask.svg"
-                   alt="">
-              <field-input v-model="address" placeholder="Enter address" class="pl-[42px]"/>
+              <img
+                class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
+                src="~/assets/img/icons/metamask.svg"
+                alt=""
+              />
+              <field-input
+                v-model="addressTo"
+                placeholder="Enter address"
+                class="pl-[42px]"
+              />
             </label>
           </div>
           <div class="px-[6px] w-[162px] flex items-end">
-            <btn variant="blood" block>
+            <btn variant="blood" block @click="addressTo = addressFrom">
               Use the same address
             </btn>
           </div>
         </div>
       </div>
 
-      <btn class="mt-4" block :disabled="isError || Number(amount || 0) === 0"
-           @click="$router.push('/review')">
+      <btn
+        class="mt-4"
+        block
+        :disabled="isError || Number(amount || 0) === 0"
+        @click="switchToPreview()"
+      >
         Next
       </btn>
     </angle-card>
@@ -137,29 +239,255 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { Web3Invoker } from '~/web3/metamask'
+import { eventBus } from '~/global/main.js'
+import { TokenAmount } from '~/utils/safe-math'
+import {
+  originTokens,
+  destinationTokens,
+  RelayToken,
+  Chains,
+} from '~/components/constants'
+import { WalletBody } from '~/store/types'
+import { EvmChains, WalletProvider, ChainTypes } from '~/components/utils'
+import { PriceData } from '~/utils/reserves'
+import { Transaction } from '~/utils/transactions'
+import { availableChains } from '~/web3/evm_chain'
+import {
+  BSC_PROVIDER_URL,
+  FANTOM_PROVIDER_URL,
+  MAINNET_INFURA_URL,
+  POLYGON_PROVIDER_URL,
+  HECO_PROVIDER_URL,
+  AVAX_PROVIDER_URL,
+  XDAI_PROVIDER_URL,
+} from '~/web3/constants'
+const chainToTokenName: { [key in Chains]: string } = {
+  [Chains.Eth]: 'ETH',
+  [Chains.Pol]: 'MATIC',
+  [Chains.Ftm]: 'FTM',
+  [Chains.Bsc]: 'BNB',
+  [Chains.Heco]: 'HT',
+  [Chains.Xdai]: 'XDAI',
+  [Chains.Sol]: 'SOL',
+  [Chains.Avax]: 'AVAX',
+}
+const chainNames: { [key in Chains]: string } = {
+  [Chains.Eth]: 'Ethereum',
+  [Chains.Pol]: 'Polygon',
+  [Chains.Ftm]: 'Fantom',
+  [Chains.Bsc]: 'Binance',
+  [Chains.Xdai]: 'xDai',
+  [Chains.Heco]: 'Heco',
+  [Chains.Avax]: 'Avalanche',
+  [Chains.Sol]: 'Solana',
+}
+
+const invoker = new Web3Invoker()
 
 export default Vue.extend({
   data: () => ({
-    address: '',
+    eventBus,
     amount: '0',
+    addressTo: '',
+    amountReceive: '0',
     connected: false,
+    originTokens,
+    destinationTokens,
+    sendTokenIndex: 3,
+    sendTokenChain: Chains.Eth as Chains,
+    receiveTokenIndex: 2,
+    receiveTokenChain: Chains.Bsc as Chains,
+    isSelecting: false,
+    balances: {} as { [key in Chains]: TokenAmount },
+    availableChains,
+    currentChain: null as Chains | null,
   }),
   computed: {
-    isError() {
-      return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0;
-    }
+    fromTokenPrice(): string {
+      if (!this.amount || this.reservesFrom == null) return '0'
+      const currentChainTokenPrice = Number(this.reservesFrom.dexNativePrice)
+      return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
+    },
+    toTokenPrice(): string {
+      if (!this.amountReceive || this.reservesTo == null) return '0'
+      const currentChainTokenPrice = Number(this.reservesTo.dexNativePrice)
+      return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
+    },
+    reservesFrom(): PriceData {
+      return this.$store.getters['reserves/getReserveData'](this.sendTokenChain) // should be passed evm chain
+    },
+    reservesTo(): PriceData {
+      return this.$store.getters['reserves/getReserveData'](
+        this.receiveTokenChain
+      )
+    },
+    currentChainTokenBalance(): string {
+      if (!this.balances[this.sendTokenChain]) return '0.0000'
+      return this.balances[this.sendTokenChain].toEther().toFixed(4)
+    },
+    currentChainTokenName(): string {
+      return chainToTokenName[this.sendTokenChain]
+    },
+    chainIndexName(): string {
+      return chainNames[this.sendTokenChain]
+    },
+    isError(): boolean {
+      return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0
+    },
+    currentTokenSend(): RelayToken {
+      return originTokens[this.sendTokenIndex]
+    },
+    currentTokenReceive(): RelayToken {
+      return destinationTokens[this.receiveTokenIndex]
+    },
+    isFromSolana(): boolean {
+      return this.currentTokenSend.chain === Chains.Sol
+    },
+    metamaskWallet(): WalletBody {
+      return this.$store.getters['wallet/walletByName'](WalletProvider.Metamask)
+    },
+    phantomWallet(): WalletBody {
+      return this.$store.getters['wallet/walletByName'](WalletProvider.Phantom)
+    },
+    currentWallet(): WalletBody {
+      return this.isFromSolana ? this.phantomWallet : this.metamaskWallet
+    },
+    addressFrom(): string | null {
+      if (!this.currentWallet) return null
+      return this.currentWallet.address
+    },
+    isPhantomAvailable(): boolean {
+      return this.$store.getters['wallet/isWalletAvailableByName'](
+        WalletProvider.Phantom
+      )
+    },
+    isMetamaskAvailable(): boolean {
+      return this.$store.getters['wallet/isWalletAvailableByName'](
+        WalletProvider.Metamask
+      )
+    },
+  },
+  async mounted() {
+    await this.$store.dispatch('reserves/setReserves')
+    await this.setBalances()
+    await this.setChain()
+    // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   methods: {
+    async setBalances() {
+      if (!this.$store.getters['wallet/isWalletAvailable']) return
+      const address = this.currentWallet.address
+      this.balances[Chains.Eth] = new TokenAmount(
+        await invoker.getChainBalance(MAINNET_INFURA_URL, address)
+      )
+      this.balances[Chains.Pol] = new TokenAmount(
+        await invoker.getChainBalance(POLYGON_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Ftm] = new TokenAmount(
+        await invoker.getChainBalance(FANTOM_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Bsc] = new TokenAmount(
+        await invoker.getChainBalance(BSC_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Xdai] = new TokenAmount(
+        await invoker.getChainBalance(XDAI_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Heco] = new TokenAmount(
+        await invoker.getChainBalance(HECO_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Avax] = new TokenAmount(
+        await invoker.getChainBalance(AVAX_PROVIDER_URL, address)
+      )
+    },
+    switchToPreview() {
+      const data: Transaction = {
+        id: 0,
+        firstTxnHash: null,
+        secondTxnHash: null,
+        lastBalance: Number(this.currentChainTokenBalance),
+        fromAddress: this.addressFrom ?? "",
+        toAddress: this.addressTo,
+        amountFrom: this.amount,
+        amountTo: this.amountReceive,
+        lastBlock: 0, //might not necessary
+        chainFrom: this.sendTokenChain,
+        chainTo: this.receiveTokenChain,
+      }
+      this.$store.commit('transactions/setPreview', data)
+      this.$router.push('/review')
+    },
+    setReceived(index: number, chain: any) {
+      this.receiveTokenChain = chain
+      this.receiveTokenIndex = index
+      this.amountReceive = '0'
+    },
+    setSend(index: number, chain: any) {
+      if (this.sendTokenChain == chain) {
+        //@ts-ignore
+        this.sendTokenIndex = 137 == Number(chain) ? Chains.Bsc : Chains.Pol
+        this.receiveTokenIndex = 137 == Number(chain) ? 1 : 0
+      }
+      this.sendTokenChain = chain
+      this.sendTokenIndex = index
+      this.amountReceive = '0'
+    },
+    inputChange() {
+      if (!this.reservesFrom || !this.reservesTo) return
+      const gtonAmount =
+        this.reservesFrom.gtonReserve
+          .toEther()
+          .dividedBy(this.reservesFrom.nativeReserve.toEther())
+          .toNumber() * Number(this.amount)
+      this.amountReceive = (
+        this.reservesTo.nativeReserve
+          .toEther()
+          .dividedBy(this.reservesTo.gtonReserve.toEther())
+          .toNumber() * gtonAmount
+      ).toFixed(2)
+    },
+    setMax() {
+      this.amount = this.currentChainTokenBalance
+    },
     handleConnectWallet() {
+      const provider = this.isFromSolana
+        ? WalletProvider.Phantom
+        : WalletProvider.Metamask
       // Deep copy object
-      const modal = JSON.parse(JSON.stringify(this.$store.getters["app/exampleModals"].connectWallet));
+      const modal = JSON.parse(
+        JSON.stringify(this.$store.getters['app/getModal'](provider))
+      )
 
       modal.data.callbackConnect = () => {
-        this.connected = true
+        this.connected =
+          this.$store.getters['wallet/isWalletAvailableByName'](provider)
         this.$store.commit('app/CLOSE_MODAL')
       }
       this.$store.commit('app/PUSH_MODAL', modal)
-    }
-  }
+      //this.connected = true
+    },
+    chooseCurrentChainSend(index: number, chain: any) {
+      this.sendTokenIndex = index
+      this.sendTokenChain = chain
+      // this.isSelecting = false
+      this.setSend(this.sendTokenIndex, this.sendTokenChain)
+    },
+    chooseCurrentChainReceive(index: number, chain: any) {
+      this.receiveTokenIndex = index
+      this.receiveTokenChain = chain
+      // this.isSelecting = false
+      this.setReceived(this.receiveTokenIndex, this.receiveTokenChain)
+    },
+    async setChain() {
+      this.currentChain = await this.$web3
+        .getNetworkVersion(ChainTypes.Evm)
+        .call(this)
+    },
+    async switchChain() {
+      const chain = availableChains[this.sendTokenChain]
+      await this.$web3.switchNetwork(chain)
+      await this.setChain()
+    },
+  },
 })
 </script>
