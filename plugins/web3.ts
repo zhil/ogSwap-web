@@ -16,7 +16,7 @@ import {
   prepareDataForTransfer,
 } from '~/utils/swap'
 import { setUpcomingTxn } from '~/utils/oracle'
-import { getSwapOutAmount, GTON, NATIVE_SOL } from '~/utils/tokens'
+import { getSwapOutAmount, GTON, NATIVE_SOL, TokenAmount } from '~/utils/tokens'
 import { gtonPoolInfo } from '~/utils/constants'
 
 const { HttpProvider } = Web3.providers
@@ -80,6 +80,7 @@ async function makeSwapEvm(params: RelaySwapData): Promise<string> {
   } else {
     destinationAddress = addressTo
   }
+  const valueToSend = new TokenAmount(value, 18, false).toWei().toString();
   //@ts-ignore
   const contractAddress = relayAddresses[chainId]
   const web3 = createMetamaskInstance()
@@ -89,7 +90,7 @@ async function makeSwapEvm(params: RelaySwapData): Promise<string> {
   )
   const res = await contract.methods
     .lock(destination, destinationAddress)
-    .send({ from: userAddress, value })
+    .send({ from: userAddress, valueToSend })
   return res
 }
 async function makeSwapSol(params: RelaySwapData): Promise<string> {
@@ -97,8 +98,8 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
   const { destination, addressTo, value, userAddress, chainId } = params
   const endpoint = 'https://solana-api.projectserum.com'
   const connection = createSolInstance(endpoint)
-  const ammId = 'J8r2dynpYQuH6S415SPEdGuBGPmwgNuyfbxt1T371Myi'
-  const infos = await requestInfos(connection)
+  // const ammId = 'J8r2dynpYQuH6S415SPEdGuBGPmwgNuyfbxt1T371Myi'
+  // const infos = await requestInfos(connection)
   const owner = window.solana.publicKey
   // @ts-ignore
   const poolInfo = gtonPoolInfo
