@@ -309,15 +309,17 @@ export default Vue.extend({
   }),
   computed: {
     fromTokenPrice(): string {
-      if(!Number(this.amount)) return "0"
+      if (!Number(this.amount)) return '0'
       return (Number(this.amount) * this.prices[this.sendTokenChain]).toFixed(2)
       // if (!this.amount || this.reservesFrom == null) return '0'
       // const currentChainTokenPrice = Number(this.reservesFrom.dexNativePrice)
       // return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
     },
     toTokenPrice(): string {
-      if(!Number(this.amountReceive)) return "0"
-      return (Number(this.amountReceive) * this.prices[this.receiveTokenChain]).toFixed(2)
+      if (!Number(this.amountReceive)) return '0'
+      return (
+        Number(this.amountReceive) * this.prices[this.receiveTokenChain]
+      ).toFixed(2)
       // if (!this.amountReceive || this.reservesTo == null) return '0'
       // const currentChainTokenPrice = Number(this.reservesTo.dexNativePrice)
       // return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
@@ -384,8 +386,8 @@ export default Vue.extend({
     await this.setBalances()
     await this.setChain()
     await this.setPrices()
-    console.log(this.prices);
-    
+    console.log(this.prices)
+
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   watch: {
@@ -398,22 +400,18 @@ export default Vue.extend({
   },
   methods: {
     async setPrices() {
-      this.prices[Chains.Eth] = await getTokenById(tokenPrices['1'])
-      this.prices[Chains.Pol] = await getTokenById(tokenPrices['137'])
-      this.prices[Chains.Bsc] = await getTokenById(tokenPrices['56'])
-      this.prices[Chains.Ftm] = await getTokenById(tokenPrices['250'])
-      this.prices[Chains.Heco] = await getTokenById(tokenPrices['128'])
-      this.prices[Chains.Xdai] = await getTokenById(tokenPrices['100'])
-      this.prices[Chains.Avax] = await getTokenById(tokenPrices['43114'])
-      this.prices[Chains.Sol] = await getTokenById(tokenPrices['43114'])
+      for (const item of Object.values(Chains)) {
+        this.prices[item] = await getTokenById(tokenPrices[item])
+      }
     },
     async setBalances() {
-      if(this.metamaskWallet) await this.setMMBalances();
-      if(this.phantomWallet) await this.setPhBalance();
+      if (this.metamaskWallet) await this.setMMBalances()
+      if (this.phantomWallet) await this.setPhBalance()
     },
     async setPhBalance() {
       this.balances[Chains.Sol] = new TokenAmount(
-        await invoker.getSolBalance(this.phantomWallet.address), 9
+        await invoker.getSolBalance(this.phantomWallet.address),
+        9
       )
     },
     async setMMBalances() {
