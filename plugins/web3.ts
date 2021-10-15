@@ -2,6 +2,7 @@ import { Connection, PublicKey } from '@solana/web3.js'
 import { Plugin } from '@nuxt/types'
 import { Chains } from '~/components/constants'
 import Web3 from 'web3'
+import _ from "lodash"
 import { AbiItem } from 'web3-utils'
 import { ChainTypes } from '~/components/utils'
 import { MetamaskChain } from '~/web3/evm_chain'
@@ -73,7 +74,7 @@ async function makeSwapEvm(params: RelaySwapData): Promise<string> {
   console.log(params)
   const { destination, addressTo, value, userAddress, chainId } = params
   let destinationAddress;
-  if (destination == "SOL") {
+  if (destination == "HEC") {
     destinationAddress = toHexString(new PublicKey(addressTo).toBytes())
     console.log(destinationAddress);
   } else {
@@ -92,6 +93,7 @@ async function makeSwapEvm(params: RelaySwapData): Promise<string> {
   return res
 }
 async function makeSwapSol(params: RelaySwapData): Promise<string> {
+  console.log(params)
   const { destination, addressTo, value, userAddress, chainId } = params
   const endpoint = 'https://solana-api.projectserum.com'
   const connection = createSolInstance(endpoint)
@@ -105,50 +107,49 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
   const quoteMint = NATIVE_SOL.mintAddress
   const data = await getTokenAccounts(connection, owner)
   console.log(data);
-  // @ts-ignore
-  const baseAccount = data.tokenAccounts[baseMint].tokenAccountAddress // from token user account
-  // @ts-ignore
-  // const quoteAccount = data.tokenAccounts[quoteMint].tokenAccountAddress // to token user account
-  const quoteAccount = undefined // to token user account
+  const baseAccount = _.get(data.tokenAccounts, `${baseMint}.tokenAccountAddress`)// from token user account
+  const quoteAccount = _.get(data.tokenAccounts, `${quoteMint}.tokenAccountAddress`) // to token user account
   console.log(baseAccount);
   console.log(quoteAccount);
 
   const toCoinWithSlippage = getSwapOutAmount(
     poolInfo,
-    baseMint,
     quoteMint,
+    baseMint,
     value,
     0.5
   )
-
-  const [txn, signers] = await prepare_swap(
-    connection,
-    owner,
-    poolInfo,
-    quoteMint,
-    baseMint,
-    quoteAccount,
-    baseAccount,
-    value,
-    // @ts-ignore
-    toCoinWithSlippage
-  )
-  // @ts-ignore
-  txn.recentBlockhash = (
-    await connection.getRecentBlockhash()
-  ).blockhash;
-    // @ts-ignore
-  txn.feePayer = owner;
-  if (signers.length > 0) {
-    for (const signer of signers) {
-      txn.sign(signer)
-    }
-  }
-  const signedTxn = await window.solana.signTransaction(txn)
-  console.log(signedTxn);
+  console.log(toCoinWithSlippage);
+  console.log(toCoinWithSlippage.amountOutWithSlippage.fixed())
+    
+  // const [txn, signers] = await prepare_swap(
+  //   connection,
+  //   owner,
+  //   poolInfo,
+  //   quoteMint,
+  //   baseMint,
+  //   quoteAccount,
+  //   baseAccount,
+  //   value,
+  //   toCoinWithSlippage.amountOutWithSlippage.fixed()
+  // )
+  // txn.recentBlockhash = (
+  //   await connection.getRecentBlockhash()
+  // ).blockhash;
+  // console.log("Blockhash");
+  // console.log(txn.recentBlockhash);
+  //   // @ts-ignore
+  // txn.feePayer = owner;
+  // if (signers.length > 0) {
+  //   for (const signer of signers) {
+  //     txn.sign(signer)
+  //   }
+  // }
+  // const signedTxn = await window.solana.signTransaction(txn)
+  // console.log(signedTxn);
   //@ts-ignores
-  const txnId = await connection.sendRawTransaction(signedTxn.serialize())
-  console.log(txnId)
+  // const txnId = await connection.sendRawTransaction(signedTxn.serialize())
+  // console.log(txnId)
   const provider = setupAnchorProvider(connection, window.solana)
   const transferData = prepareDataForTransfer(
     addressTo,
@@ -198,6 +199,7 @@ async function getNetworkVersionEvm(): Promise<number> {
 }
 
 async function resolveAdrressSol(): Promise<string> {
+  if(!window.solana.publicKey) return ""
   return window.solana.publicKey.toString()
 }
 

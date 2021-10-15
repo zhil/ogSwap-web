@@ -261,8 +261,8 @@ export default Vue.extend({
     originTokens,
     destinationTokens,
     sendTokenIndex: 1,
-    sendTokenChain: Chains.Eth as Chains,
-    receiveTokenIndex: 3,
+    sendTokenChain: Chains.Ftm as Chains,
+    receiveTokenIndex: 2,
     receiveTokenChain: Chains.Bsc as Chains,
     isSelecting: false,
     balances: {} as { [key in Chains]: TokenAmount },
@@ -338,24 +338,15 @@ export default Vue.extend({
   },
   methods: {
     switchToPreview() {
-      if (!this.addressFrom) return
       const data: Transaction = {
         id: 0,
         firstTxnHash: null,
         secondTxnHash: null,
         lastBalance: Number(this.currentChainTokenBalance),
-        fromAddress: this.addressFrom,
+        fromAddress: this.addressFrom ?? "",
         toAddress: this.addressTo,
-        amountFrom: new TokenAmount(
-          this.amount,
-          this.currentTokenSend.decimals,
-          false
-        ),
-        amountTo: new TokenAmount(
-          this.amountReceive,
-          this.currentTokenReceive.decimals,
-          false
-        ),
+        amountFrom: this.amount,
+        amountTo: this.amountReceive,
         lastBlock: 0, //might not necessary
         chainFrom: this.sendTokenChain,
         chainTo: this.receiveTokenChain,

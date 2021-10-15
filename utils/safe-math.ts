@@ -18,7 +18,9 @@ export class TokenAmount {
       this.wei = new BigNumber(wei).multipliedBy(this._decimals)
     }
   }
-
+  toString() {
+    return this.toEther().toFixed(4)
+  }
   toEther() {
     return this.wei.dividedBy(this._decimals)
   }

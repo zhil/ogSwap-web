@@ -68,11 +68,11 @@ export default Vue.extend({
     },
     blocking: {
       type: Boolean,
-      default: '',
+      default: false,
     },
     selected: {
-      type: Number,
-      default: '',
+      type: String,
+      default: "0",
     },
   },
 })

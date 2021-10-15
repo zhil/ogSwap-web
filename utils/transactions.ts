@@ -8,8 +8,8 @@ export type Transaction = {
   lastBalance: number
   fromAddress: string;
   toAddress: string;
-  amountFrom: TokenAmount;
-  amountTo: TokenAmount;
+  amountFrom: string;
+  amountTo: string;
   lastBlock: number //might not necessary
   chainFrom: Chains
   chainTo: Chains

@@ -10,7 +10,7 @@ import {
   closeAccount,
   initializeAccount,
 } from '@project-serum/serum/lib/token-instructions'
-import anchor, { Provider, BN } from '@project-serum/anchor'
+import { Provider, BN, Program } from '@project-serum/anchor'
 import { OpenOrders } from '@project-serum/serum'
 import { MARKET_STATE_LAYOUT_V2 } from '@project-serum/serum/lib/market'
 // eslint-disable-next-line import/named
@@ -410,7 +410,10 @@ export async function prepare_swap(
 
   const amountIn = new TokenAmount(aIn, from.decimals, false)
   const amountOut = new TokenAmount(aOut, to.decimals, false)
-
+  console.log("in");
+  console.log(amountIn.toWei().toString())
+  console.log("out");
+  console.log(amountOut.toWei().toString())
   let fromMint = fromCoinMint
   let toMint = toCoinMint
 
@@ -547,11 +550,10 @@ export async function transfer(
   provider: Provider,
   { amount, address, chain }: TransferOpts
 ): Promise<string[]> {
-  anchor.setProvider(provider)
-  let userEventDataAccount = anchor.web3.Keypair.generate()
+  let userEventDataAccount = Keypair.generate()
   const programId = new PublicKey(relayProgram)
   // @ts-ignore
-  const program = new anchor.Program(programIdls.RelayProgram, programId)
+  const program = new Program(programIdls.RelayProgram, programId, provider)
   const relayPort = new PublicKey(relayPortAddress)
   const acoc = await findAssociatedTokenAddress(
     user,
@@ -710,9 +712,7 @@ export async function createProgramAccountIfNotExist(
       SystemProgram.createAccount({
         fromPubkey: owner,
         newAccountPubkey: publicKey,
-        lamports:
-          lamports ??
-          (await connection.getMinimumBalanceForRentExemption(layout.span)),
+        lamports: (await connection.getMinimumBalanceForRentExemption(layout.span)),
         space: layout.span,
         programId,
       })
@@ -752,6 +752,9 @@ export async function createAssociatedTokenAccountIfNotExist(
     mintAddress !== TOKENS.WSOL.mintAddress &&
     !atas.includes(ata.toBase58())
   ) {
+    console.log("adding inst creating for pk");
+    console.log(publicKey);
+    
     transaction.add(
       Token.createAssociatedTokenAccountInstruction(
         ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -783,9 +786,6 @@ export async function createAssociatedTokenAccountIfNotExist(
 //   return txid
 // }
 
-function walletFromRaw() {
-  return anchor.Wallet.local()
-}
 
 export async function getTokenAccounts(conn: Connection, user: PublicKey) {
   const TOKEN_PROGRAM_ID = new PublicKey(

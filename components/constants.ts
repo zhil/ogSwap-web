@@ -154,7 +154,7 @@ export const chainToName: ChainMap = {
   [Chains.Xdai]: 'DAI',
   [Chains.Heco]: 'HEC',
   [Chains.Avax]: 'AVA',
-  [Chains.Sol]: 'SOL',
+  [Chains.Sol]: 'HEC',
 }
 export const explorers: ChainMap = {
   [Chains.Pol]: 'https://polygonscan.com/tx/',
