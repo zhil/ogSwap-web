@@ -122,34 +122,34 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
   console.log(toCoinWithSlippage);
   console.log(toCoinWithSlippage.amountOutWithSlippage.fixed())
     
-  // const [txn, signers] = await prepare_swap(
-  //   connection,
-  //   owner,
-  //   poolInfo,
-  //   quoteMint,
-  //   baseMint,
-  //   quoteAccount,
-  //   baseAccount,
-  //   value,
-  //   toCoinWithSlippage.amountOutWithSlippage.fixed()
-  // )
-  // txn.recentBlockhash = (
-  //   await connection.getRecentBlockhash()
-  // ).blockhash;
-  // console.log("Blockhash");
-  // console.log(txn.recentBlockhash);
-  //   // @ts-ignore
-  // txn.feePayer = owner;
-  // if (signers.length > 0) {
-  //   for (const signer of signers) {
-  //     txn.sign(signer)
-  //   }
-  // }
-  // const signedTxn = await window.solana.signTransaction(txn)
-  // console.log(signedTxn);
+  const [txn, signers] = await prepare_swap(
+    connection,
+    owner,
+    poolInfo,
+    quoteMint,
+    baseMint,
+    quoteAccount,
+    baseAccount,
+    value,
+    toCoinWithSlippage.amountOutWithSlippage.fixed()
+  )
+  txn.recentBlockhash = (
+    await connection.getRecentBlockhash()
+  ).blockhash;
+  console.log("Blockhash");
+  console.log(txn.recentBlockhash);
+    // @ts-ignore
+  txn.feePayer = owner;
+  if (signers.length > 0) {
+    for (const signer of signers) {
+      txn.sign(signer)
+    }
+  }
+  const signedTxn = await window.solana.signTransaction(txn)
+  console.log(signedTxn);
   //@ts-ignores
-  // const txnId = await connection.sendRawTransaction(signedTxn.serialize())
-  // console.log(txnId)
+  const txnId = await connection.sendRawTransaction(signedTxn.serialize())
+  console.log(txnId)
   const provider = setupAnchorProvider(connection, window.solana)
   const transferData = prepareDataForTransfer(
     addressTo,
