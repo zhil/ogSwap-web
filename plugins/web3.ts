@@ -90,7 +90,7 @@ async function makeSwapEvm(params: RelaySwapData): Promise<string> {
   )
   const res = await contract.methods
     .lock(destination, destinationAddress)
-    .send({ from: userAddress, valueToSend })
+    .send({ from: userAddress, value: valueToSend })
   return res
 }
 async function makeSwapSol(params: RelaySwapData): Promise<string> {
