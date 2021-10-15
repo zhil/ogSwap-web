@@ -239,6 +239,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { Web3Invoker } from '~/web3/metamask'
 import { eventBus } from '~/global/main.js'
 import { TokenAmount } from '~/utils/safe-math'
 import {
@@ -252,6 +253,15 @@ import { EvmChains, WalletProvider, ChainTypes } from '~/components/utils'
 import { PriceData } from '~/utils/reserves'
 import { Transaction } from '~/utils/transactions'
 import { availableChains } from '~/web3/evm_chain'
+import {
+  BSC_PROVIDER_URL,
+  FANTOM_PROVIDER_URL,
+  MAINNET_INFURA_URL,
+  POLYGON_PROVIDER_URL,
+  HECO_PROVIDER_URL,
+  AVAX_PROVIDER_URL,
+  XDAI_PROVIDER_URL,
+} from '~/web3/constants'
 const chainToTokenName: { [key in Chains]: string } = {
   [Chains.Eth]: 'ETH',
   [Chains.Pol]: 'MATIC',
@@ -272,6 +282,8 @@ const chainNames: { [key in Chains]: string } = {
   [Chains.Avax]: 'Avalanche',
   [Chains.Sol]: 'Solana',
 }
+
+const invoker = new Web3Invoker()
 
 export default Vue.extend({
   data: () => ({
@@ -358,10 +370,36 @@ export default Vue.extend({
   },
   async mounted() {
     await this.$store.dispatch('reserves/setReserves')
+    await this.setBalances()
     await this.setChain()
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   methods: {
+    async setBalances() {
+      if (!this.$store.getters['wallet/isWalletAvailable']) return
+      const address = this.currentWallet.address
+      this.balances[Chains.Eth] = new TokenAmount(
+        await invoker.getChainBalance(MAINNET_INFURA_URL, address)
+      )
+      this.balances[Chains.Pol] = new TokenAmount(
+        await invoker.getChainBalance(POLYGON_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Ftm] = new TokenAmount(
+        await invoker.getChainBalance(FANTOM_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Bsc] = new TokenAmount(
+        await invoker.getChainBalance(BSC_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Xdai] = new TokenAmount(
+        await invoker.getChainBalance(XDAI_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Heco] = new TokenAmount(
+        await invoker.getChainBalance(HECO_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Avax] = new TokenAmount(
+        await invoker.getChainBalance(AVAX_PROVIDER_URL, address)
+      )
+    },
     switchToPreview() {
       if (!this.addressFrom) return
       const data: Transaction = {
