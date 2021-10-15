@@ -3,6 +3,9 @@ import Web3 from 'web3'
 import { MetamaskChain } from '~/web3/evm_chain'
 
 import { relayAddresses, contractsABI } from './constants'
+import { Connection, PublicKey } from '@solana/web3.js'
+
+const endpoint = 'https://solana-api.projectserum.com'
 
 declare global {
   interface Window {
@@ -125,6 +128,12 @@ export class Web3Invoker extends Invoker {
     const web3 = new Web3(new HttpProvider(nodeUrl))
     const res = await web3.eth.getBalance(address)
     return Number(web3.utils.fromWei(res))
+  }
+
+  async getSolBalance(address: string): Promise<number> {
+    const conn = new Connection(endpoint)
+    const res = await conn.getBalance(new PublicKey(address))
+    return res;
   }
 
   async getLastBlock(nodeUrl: string): Promise<number> {

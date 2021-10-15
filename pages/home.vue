@@ -388,6 +388,14 @@ export default Vue.extend({
     
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
+  watch: {
+    async metamaskWallet() {
+      await this.setMMBalances()
+    },
+    async phantomWallet() {
+      await this.setPhBalance()
+    },
+  },
   methods: {
     async setPrices() {
       this.prices[Chains.Eth] = await getTokenById(tokenPrices['1'])
@@ -400,7 +408,15 @@ export default Vue.extend({
       this.prices[Chains.Sol] = await getTokenById(tokenPrices['43114'])
     },
     async setBalances() {
-      if (!this.$store.getters['wallet/isWalletAvailable']) return
+      if(this.metamaskWallet) await this.setMMBalances();
+      if(this.phantomWallet) await this.setPhBalance();
+    },
+    async setPhBalance() {
+      this.balances[Chains.Sol] = new TokenAmount(
+        await invoker.getSolBalance(this.phantomWallet.address), 9
+      )
+    },
+    async setMMBalances() {
       const address = this.metamaskWallet.address
       this.balances[Chains.Eth] = new TokenAmount(
         await invoker.getChainBalance(MAINNET_INFURA_URL, address)
