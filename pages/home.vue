@@ -248,7 +248,9 @@ import {
   RelayToken,
   Chains,
 } from '~/components/constants'
+import { getSwapOutAmount, GTON, NATIVE_SOL } from '~/utils/tokens'
 import { WalletBody } from '~/store/types'
+import { getTokenById, tokenPrices } from '~/utils/oracle'
 import { EvmChains, WalletProvider, ChainTypes } from '~/components/utils'
 import { PriceData } from '~/utils/reserves'
 import { Transaction } from '~/utils/transactions'
@@ -262,6 +264,7 @@ import {
   AVAX_PROVIDER_URL,
   XDAI_PROVIDER_URL,
 } from '~/web3/constants'
+import { gtonPoolInfo } from '~/utils/constants'
 const chainToTokenName: { [key in Chains]: string } = {
   [Chains.Eth]: 'ETH',
   [Chains.Pol]: 'MATIC',
@@ -288,6 +291,7 @@ const invoker = new Web3Invoker()
 export default Vue.extend({
   data: () => ({
     eventBus,
+    prices: {} as { [key in Chains]: number },
     amount: '0',
     addressTo: '',
     amountReceive: '0',
@@ -305,14 +309,18 @@ export default Vue.extend({
   }),
   computed: {
     fromTokenPrice(): string {
-      if (!this.amount || this.reservesFrom == null) return '0'
-      const currentChainTokenPrice = Number(this.reservesFrom.dexNativePrice)
-      return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
+      if(!Number(this.amount)) return "0"
+      return (Number(this.amount) * this.prices[this.sendTokenChain]).toFixed(2)
+      // if (!this.amount || this.reservesFrom == null) return '0'
+      // const currentChainTokenPrice = Number(this.reservesFrom.dexNativePrice)
+      // return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
     },
     toTokenPrice(): string {
-      if (!this.amountReceive || this.reservesTo == null) return '0'
-      const currentChainTokenPrice = Number(this.reservesTo.dexNativePrice)
-      return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
+      if(!Number(this.amountReceive)) return "0"
+      return (Number(this.amountReceive) * this.prices[this.receiveTokenChain]).toFixed(2)
+      // if (!this.amountReceive || this.reservesTo == null) return '0'
+      // const currentChainTokenPrice = Number(this.reservesTo.dexNativePrice)
+      // return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
     },
     reservesFrom(): PriceData {
       return this.$store.getters['reserves/getReserveData'](this.sendTokenChain) // should be passed evm chain
@@ -344,6 +352,9 @@ export default Vue.extend({
     isFromSolana(): boolean {
       return this.currentTokenSend.chain === Chains.Sol
     },
+    isToSolana(): boolean {
+      return this.currentTokenReceive.chain === Chains.Sol
+    },
     metamaskWallet(): WalletBody {
       return this.$store.getters['wallet/walletByName'](WalletProvider.Metamask)
     },
@@ -369,15 +380,28 @@ export default Vue.extend({
     },
   },
   async mounted() {
-    await this.$store.dispatch('reserves/setReserves')
+    // await this.$store.dispatch('reserves/setReserves')
     await this.setBalances()
     await this.setChain()
+    await this.setPrices()
+    console.log(this.prices);
+    
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   methods: {
+    async setPrices() {
+      this.prices[Chains.Eth] = await getTokenById(tokenPrices['1'])
+      this.prices[Chains.Pol] = await getTokenById(tokenPrices['137'])
+      this.prices[Chains.Bsc] = await getTokenById(tokenPrices['56'])
+      this.prices[Chains.Ftm] = await getTokenById(tokenPrices['250'])
+      this.prices[Chains.Heco] = await getTokenById(tokenPrices['128'])
+      this.prices[Chains.Xdai] = await getTokenById(tokenPrices['100'])
+      this.prices[Chains.Avax] = await getTokenById(tokenPrices['43114'])
+      this.prices[Chains.Sol] = await getTokenById(tokenPrices['43114'])
+    },
     async setBalances() {
       if (!this.$store.getters['wallet/isWalletAvailable']) return
-      const address = this.currentWallet.address
+      const address = this.metamaskWallet.address
       this.balances[Chains.Eth] = new TokenAmount(
         await invoker.getChainBalance(MAINNET_INFURA_URL, address)
       )
@@ -406,7 +430,7 @@ export default Vue.extend({
         firstTxnHash: null,
         secondTxnHash: null,
         lastBalance: Number(this.currentChainTokenBalance),
-        fromAddress: this.addressFrom ?? "",
+        fromAddress: this.addressFrom ?? '',
         toAddress: this.addressTo,
         amountFrom: this.amount,
         amountTo: this.amountReceive,
@@ -425,7 +449,7 @@ export default Vue.extend({
     setSend(index: number, chain: any) {
       if (this.sendTokenChain == chain) {
         //@ts-ignore
-        this.sendTokenIndex = 137 == Number(chain) ? Chains.Bsc : Chains.Pol
+        this.sendTokenIndex = 137 == Number(chain) ? Chains.Ftm : Chains.Pol
         this.receiveTokenIndex = 137 == Number(chain) ? 1 : 0
       }
       this.sendTokenChain = chain
@@ -433,18 +457,52 @@ export default Vue.extend({
       this.amountReceive = '0'
     },
     inputChange() {
-      if (!this.reservesFrom || !this.reservesTo) return
-      const gtonAmount =
-        this.reservesFrom.gtonReserve
-          .toEther()
-          .dividedBy(this.reservesFrom.nativeReserve.toEther())
-          .toNumber() * Number(this.amount)
+      if (!this.amount) {
+        this.amountReceive = '0'
+        return
+      }
+      const currentPrice =
+        Number(this.amount) * this.prices[this.sendTokenChain]
       this.amountReceive = (
-        this.reservesTo.nativeReserve
-          .toEther()
-          .dividedBy(this.reservesTo.gtonReserve.toEther())
-          .toNumber() * gtonAmount
+        currentPrice / this.prices[this.receiveTokenChain]
       ).toFixed(2)
+      // let gtonAmount
+      // if (this.isFromSolana) {
+      //   gtonAmount = getSwapOutAmount(
+      //     gtonPoolInfo,
+      //     NATIVE_SOL.mintAddress,
+      //     GTON.mintAddress,
+      //     String(this.amount),
+      //     0.5
+      //   )
+      //     .amountOutWithSlippage.toEther()
+      //     .toNumber()
+      // } else {
+
+      //   gtonAmount = this.reservesFrom ?
+      //     this.reservesFrom.
+      //       gtonReserve.toEther()
+      //       .dividedBy(this.reservesFrom.nativeReserve.toEther())
+      //       .toNumber() * Number(this.amount) : 1
+      // }
+      // if (this.isToSolana) {
+      //   this.amountReceive = getSwapOutAmount(
+      //     gtonPoolInfo,
+      //     GTON.mintAddress,
+      //     NATIVE_SOL.mintAddress,
+      //     String(gtonAmount),
+      //     0.5
+      //   )
+      //     .amountOutWithSlippage.toEther()
+      //     .toFixed()
+      // } else {
+      //   this.amountReceive = this.reservesTo ? (
+      //     this.reservesTo.nativeReserve
+      //       .toEther()
+      //       .dividedBy(this.reservesTo.gtonReserve.toEther())
+      //       .toNumber() * gtonAmount
+      //   ).toFixed(2) : gtonAmount.toFixed(2)
+      // }
     },
     setMax() {
       this.amount = this.currentChainTokenBalance

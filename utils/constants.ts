@@ -11,6 +11,68 @@ export  const relayProgram = 'GZh7Rbi4x66yjyW6P5mnLAB1vu4J3vkRJ72fvjnwAiJB';
 export  const relayPortAddress = 'FjjBrAVteZzeZXnubmKPuCk4FE11Xv9cpc8w7dk5Dp9v';
 export  const oracleAssociatedTokenGton = 'FjjBrAVteZzeZXnubmKPuCk4FE11Xv9cpc8w7dk5Dp9v'; // CHANGE THE ADDRESS
 
+export const gtonPoolInfo = {
+  name: 'unknown-SOL',
+  coin: {
+    symbol: 'unknown',
+    name: 'unknown',
+    mintAddress: '4hJ6sjwmsvvFag6TKL97yhWiBSDX9BABWoiXgb3EPXxB',
+    decimals: 8,
+    cache: true,
+    tags: [ 'unofficial' ],
+  },
+  pc: {
+    symbol: 'SOL',
+    name: 'SOL',
+    mintAddress: '11111111111111111111111111111111',
+    decimals: 9,
+    cache: true,
+    tags: [ 'unofficial' ],
+  },
+  lp: {
+    symbol: 'unknown-SOL',
+    name: 'unknown-SOL',
+    coin: {
+      symbol: 'unknown',
+      name: 'unknown',
+      mintAddress: '4hJ6sjwmsvvFag6TKL97yhWiBSDX9BABWoiXgb3EPXxB',
+      decimals: 8,
+      cache: true,
+    },
+    pc: {
+      symbol: 'SOL',
+      name: 'SOL',
+      mintAddress: '11111111111111111111111111111111',
+      decimals: 9,
+      cache: true,
+    },
+    mintAddress: '2iqMaAsJVNc3SbfkJDSEiia2oG5LkRbfrS1AgpX4mqdx',
+    decimals: 8,
+  },
+  version: 4,
+  programId: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
+  ammId: 'J8r2dynpYQuH6S415SPEdGuBGPmwgNuyfbxt1T371Myi',
+  ammAuthority: '5Q544fKrFoe6tsEbD7S8EmxGTJYAKtTVhAW5Q5pge4j1',
+  ammOpenOrders: '8wST83JAUvvRrf42Eu5wyr7g7D7D4qsUDUZJLuf7qB5',
+  ammTargetOrders: 'HRAZ2fQxX9yFMCPwXZjDfhqDGocJG9shCLidaAw3KyJE',
+  ammQuantities: '11111111111111111111111111111111',
+  poolCoinTokenAccount: 'CfhKoYHSQbXdEho5fmnfewZstFAWi3CFJoVfgV1gDh4Z',
+  poolPcTokenAccount: 'AzxNvPasRQCocbu9kjRjseaTdUEwHMuNs1SMr8iF28XG',
+  poolWithdrawQueue: '3TK7Lg9dtYiuxNFxKKS7s8hZqYzaD8eJhVWiiHBRGJnU',
+  poolTempLpTokenAccount: '93Br2yJiysaf49RfjDa5v8Q4F11qC52esJHpGDcFDfof',
+  serumProgramId: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin',
+  serumMarket: '3ZQhYKMo731KJcy6TJSxnz5d87ZaukKduAzs5mSrNy7b',
+  serumBids: 'eeDyuvyvZz8Wm6iAStF4PJjGnxX31VayRQ5j7uXZXzc',
+  serumAsks: 'EtyNqrN5siMcFzN95sQJ443TvyYde3bbbrAzFBSbD5NZ',
+  serumEventQueue: '9hBykWxB3e7Qf4tqA55xmVB7DxLtorVXf7t6dZNtg3Dx',
+  serumCoinVaultAccount: '6h8ZDNkfKUDiJgRASh5saKZJzZbm3jakndR9v5eTnZZZ',
+  serumPcVaultAccount: 'Be23eiHJjcVvFdnTVV81BH11o3mQCB5oNUjKeivRp4Np',
+  serumVaultSigner: '6Z7DcxgNDf1XL4qKWNNQJbKuXpX4FqKM7qvaBuErphGF',
+  official: false,
+  fees: { swapFeeNumerator: 25, swapFeeDenominator: 10000 },
+  status: 1
+}
+
 export  function getAddressForWhat(address: string) {
   for (const pool of LIQUIDITY_POOLS) {
     for (const [key, value] of Object.entries(pool)) {

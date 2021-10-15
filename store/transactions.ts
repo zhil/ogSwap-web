@@ -18,8 +18,8 @@ const emptyPreview = {
   chainTo: Chains.Ftm,
   fromAddress: "",
   toAddress: "",
-  amountFrom: new TokenAmount(0),
-  amountTo: new TokenAmount(0)
+  amountFrom: 0,
+  amountTo: 0
 }
 export const state = () => {
   return {
