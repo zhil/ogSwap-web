@@ -15,7 +15,7 @@ import {
   prepareDataForTransfer,
 } from '~/utils/swap'
 import { setUpcomingTxn } from '~/utils/oracle'
-import { getSwapOutAmount, GTON } from '~/utils/tokens'
+import { getSwapOutAmount, GTON, NATIVE_SOL } from '~/utils/tokens'
 import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions'
 
 const { HttpProvider } = Web3.providers
@@ -102,13 +102,16 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
   const poolInfo = Object.values(infos).find((p) => p.ammId === ammId)
   console.log(infos)
   const baseMint = GTON.mintAddress
-  const quoteMint = WRAPPED_SOL_MINT.toString()
+  const quoteMint = NATIVE_SOL.mintAddress
   const data = await getTokenAccounts(connection, owner)
-
+  console.log(data);
   // @ts-ignore
-  const baseAccount = data[baseMint] // from token user account
+  const baseAccount = data.tokenAccounts[baseMint].tokenAccountAddress // from token user account
   // @ts-ignore
-  const quoteAccount = data[quoteMint] // to token user account
+  // const quoteAccount = data.tokenAccounts[quoteMint].tokenAccountAddress // to token user account
+  const quoteAccount = undefined // to token user account
+  console.log(baseAccount);
+  console.log(quoteAccount);
 
   const toCoinWithSlippage = getSwapOutAmount(
     poolInfo,
@@ -122,10 +125,10 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
     connection,
     owner,
     poolInfo,
-    baseMint,
     quoteMint,
-    baseAccount,
+    baseMint,
     quoteAccount,
+    baseAccount,
     value,
     // @ts-ignore
     toCoinWithSlippage
@@ -136,12 +139,15 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
   ).blockhash;
     // @ts-ignore
   txn.feePayer = owner;
+  if (signers.length > 0) {
+    for (const signer of signers) {
+      txn.sign(signer)
+    }
+  }
+  const signedTxn = await window.solana.signTransaction(txn)
+  console.log(signedTxn);
   //@ts-ignores
-  const txnId = await connection.sendTransaction(txn, connection, {
-    signers,
-    skipPreflight: true,
-    preflightCommitment: "confirmed"
-  })
+  const txnId = await connection.sendRawTransaction(signedTxn.serialize())
   console.log(txnId)
   const provider = setupAnchorProvider(connection, window.solana)
   const transferData = prepareDataForTransfer(

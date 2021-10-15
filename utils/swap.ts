@@ -23,6 +23,8 @@ import {
   Connection,
   AccountInfo,
   ParsedAccountData,
+  Signer,
+  Keypair,
 } from '@solana/web3.js'
 import {
   ACCOUNT_LAYOUT,
@@ -167,9 +169,7 @@ export async function requestInfos(conn: Connection) {
       }
       coin = TOKENS[`unknow-${ammInfo.coinMintAddress.toString()}`]
     }
-    if (!coin.tags.includes('unofficial')) {
-      coin.tags.push('unofficial')
-    }
+
 
     let pc = Object.values(TOKENS).find((item) => item.mintAddress === toCoin)
     if (!pc) {
@@ -182,9 +182,6 @@ export async function requestInfos(conn: Connection) {
         tags: [],
       }
       pc = TOKENS[`unknow-${ammInfo.pcMintAddress.toString()}`]
-    }
-    if (!pc.tags.includes('unofficial')) {
-      pc.tags.push('unofficial')
     }
 
     if (coin.mintAddress === TOKENS.WSOL.mintAddress) {
@@ -399,9 +396,9 @@ export async function prepare_swap(
   toTokenAccount: string,
   aIn: string,
   aOut: string
-) {
+): Promise<[Transaction, Signer[]]> {
   const transaction = new Transaction()
-  const signers: Account[] = []
+  const signers: Signer[] = []
 
   const owner = wallet
 
@@ -660,7 +657,7 @@ export async function createTokenAccountIfNotExist(
   lamports: number | null,
 
   transaction: Transaction,
-  signer: Array<Account>
+  signer: Array<Signer>
 ) {
   let publicKey
 
@@ -699,14 +696,14 @@ export async function createProgramAccountIfNotExist(
   layout: any,
 
   transaction: Transaction,
-  signer: Array<Account>
+  signer: Array<Signer>
 ) {
   let publicKey
 
   if (account) {
     publicKey = new PublicKey(account)
   } else {
-    const newAccount = new Account()
+    const newAccount = Keypair.generate();
     publicKey = newAccount.publicKey
 
     transaction.add(
