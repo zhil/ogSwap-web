@@ -90,29 +90,48 @@
               />
             </label>
           </div>
-          <div class="px-[6px] w-[162px] flex items-end">
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-if="!isFromSolana && !isMetamaskAvailable"
+          >
             <btn
-              v-if="!isFromSolana && isMetamaskAvailable && !connected"
               :variant="connected ? 'dark-charcoal' : 'blood'"
+              block
               @click="connected ? false : handleConnectWallet()"
             >
               <span> Connect Metamask </span>
             </btn>
+          </div>
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-else-if="isFromSolana && !isPhantomAvailable"
+          >
             <btn
-              v-else-if="isFromSolana && isPhantomAvailable && !connected"
+              block
               :variant="connected ? 'dark-charcoal' : 'blood'"
               @click="connected ? false : handleConnectWallet()"
             >
               <span> Connect Phantom </span>
             </btn>
+          </div>
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-else-if="!isFromSolana && sendTokenChain != currentChain"
+          >
             <btn
-              v-else-if="!isFromSolana && sendTokenChain != currentChain"
+              block
               :variant="connected ? 'dark-charcoal' : 'blood'"
               @click="switchChain()"
             >
               <span class="font-medium"> Switch to {{ chainIndexName }} </span>
             </btn>
-            <span v-else class="font-medium">
+          </div>
+          <div class="px-[6px] w-[162px] flex items-end" v-else>
+            <btn
+              block
+              :readonly="connected"
+              :variant="connected ? 'dark-charcoal' : 'blood'"
+            >
               <icon
                 name="mono/check"
                 class="
@@ -127,7 +146,7 @@
                 "
               />
               Connected
-            </span>
+            </btn>
           </div>
         </div>
       </div>
@@ -220,6 +239,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { Web3Invoker } from '~/web3/metamask'
+import { eventBus } from '~/global/main.js'
 import { TokenAmount } from '~/utils/safe-math'
 import {
   originTokens,
@@ -232,6 +253,15 @@ import { EvmChains, WalletProvider, ChainTypes } from '~/components/utils'
 import { PriceData } from '~/utils/reserves'
 import { Transaction } from '~/utils/transactions'
 import { availableChains } from '~/web3/evm_chain'
+import {
+  BSC_PROVIDER_URL,
+  FANTOM_PROVIDER_URL,
+  MAINNET_INFURA_URL,
+  POLYGON_PROVIDER_URL,
+  HECO_PROVIDER_URL,
+  AVAX_PROVIDER_URL,
+  XDAI_PROVIDER_URL,
+} from '~/web3/constants'
 const chainToTokenName: { [key in Chains]: string } = {
   [Chains.Eth]: 'ETH',
   [Chains.Pol]: 'MATIC',
@@ -252,16 +282,20 @@ const chainNames: { [key in Chains]: string } = {
   [Chains.Avax]: 'Avalanche',
   [Chains.Sol]: 'Solana',
 }
+
+const invoker = new Web3Invoker()
+
 export default Vue.extend({
   data: () => ({
+    eventBus,
     amount: '0',
     addressTo: '',
     amountReceive: '0',
     connected: false,
     originTokens,
     destinationTokens,
-    sendTokenIndex: 1,
-    sendTokenChain: Chains.Ftm as Chains,
+    sendTokenIndex: 3,
+    sendTokenChain: Chains.Eth as Chains,
     receiveTokenIndex: 2,
     receiveTokenChain: Chains.Bsc as Chains,
     isSelecting: false,
@@ -271,12 +305,12 @@ export default Vue.extend({
   }),
   computed: {
     fromTokenPrice(): string {
-      if(!this.amount || this.reservesFrom == null) return "0";
+      if (!this.amount || this.reservesFrom == null) return '0'
       const currentChainTokenPrice = Number(this.reservesFrom.dexNativePrice)
       return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
     },
     toTokenPrice(): string {
-      if(!this.amountReceive || this.reservesTo == null ) return "0";
+      if (!this.amountReceive || this.reservesTo == null) return '0'
       const currentChainTokenPrice = Number(this.reservesTo.dexNativePrice)
       return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
     },
@@ -284,7 +318,9 @@ export default Vue.extend({
       return this.$store.getters['reserves/getReserveData'](this.sendTokenChain) // should be passed evm chain
     },
     reservesTo(): PriceData {
-      return this.$store.getters['reserves/getReserveData'](this.receiveTokenChain)
+      return this.$store.getters['reserves/getReserveData'](
+        this.receiveTokenChain
+      )
     },
     currentChainTokenBalance(): string {
       if (!this.balances[this.sendTokenChain]) return '0.0000'
@@ -334,9 +370,36 @@ export default Vue.extend({
   },
   async mounted() {
     await this.$store.dispatch('reserves/setReserves')
+    await this.setBalances()
+    await this.setChain()
     // достаем все данные из стора и начинаем проверку данных по последним изменениям баланса
   },
   methods: {
+    async setBalances() {
+      if (!this.$store.getters['wallet/isWalletAvailable']) return
+      const address = this.currentWallet.address
+      this.balances[Chains.Eth] = new TokenAmount(
+        await invoker.getChainBalance(MAINNET_INFURA_URL, address)
+      )
+      this.balances[Chains.Pol] = new TokenAmount(
+        await invoker.getChainBalance(POLYGON_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Ftm] = new TokenAmount(
+        await invoker.getChainBalance(FANTOM_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Bsc] = new TokenAmount(
+        await invoker.getChainBalance(BSC_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Xdai] = new TokenAmount(
+        await invoker.getChainBalance(XDAI_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Heco] = new TokenAmount(
+        await invoker.getChainBalance(HECO_PROVIDER_URL, address)
+      )
+      this.balances[Chains.Avax] = new TokenAmount(
+        await invoker.getChainBalance(AVAX_PROVIDER_URL, address)
+      )
+    },
     switchToPreview() {
       const data: Transaction = {
         id: 0,
@@ -370,7 +433,7 @@ export default Vue.extend({
       this.amountReceive = '0'
     },
     inputChange() {
-      if(!this.reservesFrom || !this.reservesTo) return;
+      if (!this.reservesFrom || !this.reservesTo) return
       const gtonAmount =
         this.reservesFrom.gtonReserve
           .toEther()
@@ -396,11 +459,12 @@ export default Vue.extend({
       )
 
       modal.data.callbackConnect = () => {
-        this.connected = true
+        this.connected =
+          this.$store.getters['wallet/isWalletAvailableByName'](provider)
         this.$store.commit('app/CLOSE_MODAL')
       }
       this.$store.commit('app/PUSH_MODAL', modal)
-      this.connected = true
+      //this.connected = true
     },
     chooseCurrentChainSend(index: number, chain: any) {
       this.sendTokenIndex = index

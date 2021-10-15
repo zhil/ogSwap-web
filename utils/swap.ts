@@ -519,29 +519,33 @@ export function setupAnchorProvider(
 
 function hexToBytes(hex: string) {
   for (var bytes = [], c = 0; c < hex.length; c += 2)
-  bytes.push(parseInt(hex.substr(c, 2), 16));
-  return bytes;
+    bytes.push(parseInt(hex.substr(c, 2), 16))
+  return bytes
 }
 
-const chainBytes: {[key: string]: number[]} = {
-  "ETH": [69, 84, 72],
-  "FTM": [70, 84, 77],
-  "BSC": [66, 78, 66],
-  "PLG": [80, 76, 71],
-  "HEC": [72, 69, 67],
-  "DAI": [68, 65, 73],
-  "AVA": [65, 86, 65],
-  "SOL": [83, 79, 76],
+const chainBytes: { [key: string]: number[] } = {
+  ETH: [69, 84, 72],
+  FTM: [70, 84, 77],
+  BSC: [66, 78, 66],
+  PLG: [80, 76, 71],
+  HEC: [72, 69, 67],
+  DAI: [68, 65, 73],
+  AVA: [65, 86, 65],
+  SOL: [83, 79, 76],
 }
 
-export function prepareDataForTransfer(user_address: string, chain: string, amount: number): TransferOpts {
+export function prepareDataForTransfer(
+  user_address: string,
+  chain: string,
+  amount: number
+): TransferOpts {
   const extraBytes: number[] = []
   extraBytes.fill(0, 0, 44)
   const address = hexToBytes(user_address).concat(extraBytes)
   return {
     address,
     chain: chainBytes[chain],
-    amount
+    amount,
   }
 }
 

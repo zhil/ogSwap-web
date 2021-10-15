@@ -72,7 +72,7 @@ export default Vue.extend({
     },
     selected: {
       type: String,
-      default: "0",
+      default: '',
     },
   },
 })
