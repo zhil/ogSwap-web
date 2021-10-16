@@ -28,8 +28,8 @@ module.exports = {
         'dark-charcoal': '#313030',
         'vampire-black': '#0A0A0A',
         'quick-silver': '#A6A3A3',
-        'candy-apple-red': '#FF1405',
-        'electric-red': '#DF1205',
+        'candy-apple-red': '#ff7e00',
+        'electric-red': '#ff7e00',
         'medium-spring-green': '#00FFA3',
       },
       transitionProperty: {
