@@ -248,10 +248,9 @@ import {
   RelayToken,
   Chains,
 } from '~/components/constants'
-import { getSwapOutAmount, GTON, NATIVE_SOL } from '~/utils/tokens'
 import { WalletBody } from '~/store/types'
 import { getTokenById, tokenPrices } from '~/utils/oracle'
-import { EvmChains, WalletProvider, ChainTypes } from '~/components/utils'
+import { WalletProvider, ChainTypes } from '~/components/utils'
 import { PriceData } from '~/utils/reserves'
 import { Transaction } from '~/utils/transactions'
 import { availableChains } from '~/web3/evm_chain'
@@ -264,7 +263,6 @@ import {
   AVAX_PROVIDER_URL,
   XDAI_PROVIDER_URL,
 } from '~/web3/constants'
-import { gtonPoolInfo } from '~/utils/constants'
 const chainToTokenName: { [key in Chains]: string } = {
   [Chains.Eth]: 'ETH',
   [Chains.Pol]: 'MATIC',
@@ -409,34 +407,31 @@ export default Vue.extend({
       if (this.phantomWallet) await this.setPhBalance()
     },
     async setPhBalance() {
-      this.balances[Chains.Sol] = new TokenAmount(
+      if(!this.phantomWallet) return;
+      const amount = new TokenAmount(
         await invoker.getSolBalance(this.phantomWallet.address),
         9
-      )
+      ) 
+      this.$set(this.balances, Chains.Sol, amount)
     },
     async setMMBalances() {
+      if(!this.metamaskWallet) return;
       const address = this.metamaskWallet.address
-      this.balances[Chains.Eth] = new TokenAmount(
+      this.$set(this.balances, Chains.Eth, new TokenAmount(
         await invoker.getChainBalance(MAINNET_INFURA_URL, address)
-      )
-      this.balances[Chains.Pol] = new TokenAmount(
+      ))
+     this.$set(this.balances, Chains.Pol, new TokenAmount(
         await invoker.getChainBalance(POLYGON_PROVIDER_URL, address)
-      )
-      this.balances[Chains.Ftm] = new TokenAmount(
+      ))
+     this.$set(this.balances, Chains.Ftm, new TokenAmount(
         await invoker.getChainBalance(FANTOM_PROVIDER_URL, address)
-      )
-      this.balances[Chains.Bsc] = new TokenAmount(
+      ))
+     this.$set(this.balances, Chains.Bsc, new TokenAmount(
         await invoker.getChainBalance(BSC_PROVIDER_URL, address)
-      )
-      this.balances[Chains.Xdai] = new TokenAmount(
+      ))
+     this.$set(this.balances, Chains.Xdai, new TokenAmount(
         await invoker.getChainBalance(XDAI_PROVIDER_URL, address)
-      )
-      this.balances[Chains.Heco] = new TokenAmount(
-        await invoker.getChainBalance(HECO_PROVIDER_URL, address)
-      )
-      this.balances[Chains.Avax] = new TokenAmount(
-        await invoker.getChainBalance(AVAX_PROVIDER_URL, address)
-      )
+      ))
     },
     switchToPreview() {
       const data: Transaction = {
@@ -458,17 +453,17 @@ export default Vue.extend({
     setReceived(index: number, chain: any) {
       this.receiveTokenChain = chain
       this.receiveTokenIndex = index
-      this.amountReceive = '0'
+      this.inputChange()
     },
     setSend(index: number, chain: any) {
-      if (this.sendTokenChain == chain) {
+      if (this.receiveTokenChain == chain) {
         //@ts-ignore
-        this.sendTokenIndex = 137 == Number(chain) ? Chains.Ftm : Chains.Pol
+        this.receiveTokenChain = 137 == Number(chain) ? Chains.Ftm : Chains.Pol
         this.receiveTokenIndex = 137 == Number(chain) ? 1 : 0
       }
       this.sendTokenChain = chain
       this.sendTokenIndex = index
-      this.amountReceive = '0'
+      this.inputChange()
     },
     inputChange() {
       if (!this.amount) {
