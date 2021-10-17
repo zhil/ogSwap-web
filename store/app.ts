@@ -61,7 +61,7 @@ export const state = () => ({
     ],
     socials: [
       {
-        href: '/',
+        href: 'https://twitter.com/OGmultiswap',
         icon: 'mono/twitter',
       },
       // {
@@ -73,7 +73,7 @@ export const state = () => ({
         icon: 'mono/github',
       },
       {
-        href: '/',
+        href: 'https://t.me/OGmultiswap',
         icon: 'mono/telegram',
       },
     ],

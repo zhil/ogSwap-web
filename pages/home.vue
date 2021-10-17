@@ -44,6 +44,7 @@
               <label class="block">
                 <field-input
                   v-model="amount"
+                  placeholder="0"
                   :error="isError"
                   size="large"
                   class="font-medium pb-[22px]"
@@ -195,6 +196,7 @@
               <label class="block">
                 <field-input
                   v-model="amountReceive"
+                  placeholder="0"
                   size="large"
                   class="font-medium pb-[22px]"
                   type="number"
@@ -202,7 +204,7 @@
                 />
               </label>
               <div class="absolute left-[12px] top-[31px] text-xs">
-                ${{ toTokenPrice }}
+                ~ ${{ toTokenPrice }}
               </div>
             </div>
           </div>
@@ -426,31 +428,51 @@ export default Vue.extend({
       if (this.phantomWallet) await this.setPhBalance()
     },
     async setPhBalance() {
-      if(!this.phantomWallet) return;
+      if (!this.phantomWallet) return
       const amount = new TokenAmount(
         await invoker.getSolBalance(this.phantomWallet.address),
         9
-      ) 
+      )
       this.$set(this.balances, Chains.Sol, amount)
     },
     async setMMBalances() {
-      if(!this.metamaskWallet) return;
+      if (!this.metamaskWallet) return
       const address = this.metamaskWallet.address
-      this.$set(this.balances, Chains.Eth, new TokenAmount(
-        await invoker.getChainBalance(MAINNET_INFURA_URL, address)
-      ))
-     this.$set(this.balances, Chains.Pol, new TokenAmount(
-        await invoker.getChainBalance(POLYGON_PROVIDER_URL, address)
-      ))
-     this.$set(this.balances, Chains.Ftm, new TokenAmount(
-        await invoker.getChainBalance(FANTOM_PROVIDER_URL, address)
-      ))
-     this.$set(this.balances, Chains.Bsc, new TokenAmount(
-        await invoker.getChainBalance(BSC_PROVIDER_URL, address)
-      ))
-     this.$set(this.balances, Chains.Xdai, new TokenAmount(
-        await invoker.getChainBalance(XDAI_PROVIDER_URL, address)
-      ))
+      this.$set(
+        this.balances,
+        Chains.Eth,
+        new TokenAmount(
+          await invoker.getChainBalance(MAINNET_INFURA_URL, address)
+        )
+      )
+      this.$set(
+        this.balances,
+        Chains.Pol,
+        new TokenAmount(
+          await invoker.getChainBalance(POLYGON_PROVIDER_URL, address)
+        )
+      )
+      this.$set(
+        this.balances,
+        Chains.Ftm,
+        new TokenAmount(
+          await invoker.getChainBalance(FANTOM_PROVIDER_URL, address)
+        )
+      )
+      this.$set(
+        this.balances,
+        Chains.Bsc,
+        new TokenAmount(
+          await invoker.getChainBalance(BSC_PROVIDER_URL, address)
+        )
+      )
+      this.$set(
+        this.balances,
+        Chains.Xdai,
+        new TokenAmount(
+          await invoker.getChainBalance(XDAI_PROVIDER_URL, address)
+        )
+      )
     },
     switchToPreview() {
       const data: Transaction = {
