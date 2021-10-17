@@ -98,7 +98,7 @@ export default Vue.extend({
       if (!this.address) return '';
       const len = this.address.length
       return (
-        this.address.slice(0, 4) + '...' + this.address.slice(len - 5, len - 1)
+        this.address.slice(0, 4) + '...' + this.address.slice(len - 5, len)
       )
     },
   },
