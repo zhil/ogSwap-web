@@ -78,8 +78,15 @@
             <field-label>From address</field-label>
             <label class="relative block">
               <img
+                v-show="!isFromSolana"
                 class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
                 src="~/assets/img/icons/metamask.svg"
+                alt=""
+              />
+              <img
+                v-show="isFromSolana"
+                class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
+                src="~/assets/img/icons/phantom.svg"
                 alt=""
               />
               <field-input
@@ -206,8 +213,15 @@
             <field-label>To address</field-label>
             <label class="relative block">
               <img
+                v-show="!isToSolana"
                 class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
                 src="~/assets/img/icons/metamask.svg"
+                alt=""
+              />
+              <img
+                v-show="isToSolana"
+                class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
+                src="~/assets/img/icons/phantom.svg"
                 alt=""
               />
               <field-input
@@ -217,7 +231,12 @@
               />
             </label>
           </div>
-          <div class="px-[6px] w-[162px] flex items-end">
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-show="
+              isFromSolana === isToSolana || !isFromSolana === !isToSolana
+            "
+          >
             <btn variant="blood" block @click="addressTo = addressFrom">
               Use the same address
             </btn>
