@@ -100,7 +100,7 @@
         </div>
       </div>
 
-      <btn class="mt-4" block @click="makeSwap"> Swap </btn>
+      <btn class="mt-4" block :disabled="processing" @click="makeSwap"> Swap </btn>
     </angle-card>
   </div>
 </template>
@@ -126,6 +126,7 @@ export default Vue.extend({
     address: '',
     amount: '0',
     connected: false,
+    processing: false
   }),
   computed: {
     isError(): boolean {
@@ -149,6 +150,7 @@ export default Vue.extend({
   },
   methods: {
     async makeSwap() {
+      this.processing = true;
       const txnId = await this.$web3.makeSwap(this.fromToken.type, {
         destination: chainToName[this.toToken.chain],
         userAddress: this.preview.fromAddress,

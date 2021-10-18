@@ -433,7 +433,7 @@ export async function prepare_swap(
       wrappedSolAccount,
       owner,
       TOKENS.WSOL.mintAddress,
-      getBigNumber(amountIn.wei) + 1e7,
+      1e7,
       transaction,
       signers
     )

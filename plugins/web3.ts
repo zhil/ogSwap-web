@@ -2,7 +2,7 @@ import { Connection, PublicKey } from '@solana/web3.js'
 import { Plugin } from '@nuxt/types'
 import { Chains } from '~/components/constants'
 import Web3 from 'web3'
-import _ from "lodash"
+import { get } from "lodash"
 import { AbiItem } from 'web3-utils'
 import { ChainTypes } from '~/components/utils'
 import { MetamaskChain } from '~/web3/evm_chain'
@@ -98,21 +98,22 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
   const { destination, addressTo, value, userAddress, chainId } = params
   const endpoint = 'https://solana-api.projectserum.com'
   const connection = createSolInstance(endpoint)
-  // const ammId = 'J8r2dynpYQuH6S415SPEdGuBGPmwgNuyfbxt1T371Myi'
-  // const infos = await requestInfos(connection)
+  const ammId = 'J8r2dynpYQuH6S415SPEdGuBGPmwgNuyfbxt1T371Myi'
+  const infos = await requestInfos(connection) // NEED TO DECOMPOSE THE function to update only one pool
   const owner = window.solana.publicKey
   // @ts-ignore
-  const poolInfo = gtonPoolInfo
+  // const poolInfo = gtonPoolInfo
+  const poolInfo = Object.values(infos).find((p) => p.ammId === ammId)
   const baseMint = GTON.mintAddress
   const quoteMint = NATIVE_SOL.mintAddress
   const data = await getTokenAccounts(connection, owner)
   console.log(data);
-  const baseAccount = _.get(data.tokenAccounts, `${baseMint}.tokenAccountAddress`)// from token user account
-  const quoteAccount = _.get(data.tokenAccounts, `${quoteMint}.tokenAccountAddress`) // to token user account
+  const baseAccount = get(data.tokenAccounts, `${baseMint}.tokenAccountAddress`)// from token user account
+  const quoteAccount = get(data.tokenAccounts, `${quoteMint}.tokenAccountAddress`) // to token user account
   console.log(baseAccount);
   console.log(quoteAccount);
 
-  const toCoinWithSlippage = getSwapOutAmount(
+  const toCoinWithSlippage = getSwapOutAmount( 
     poolInfo,
     quoteMint,
     baseMint,
