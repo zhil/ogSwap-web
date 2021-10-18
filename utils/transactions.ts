@@ -13,4 +13,19 @@ export type Transaction = {
   lastBlock: number //might not necessary
   chainFrom: Chains
   chainTo: Chains
+  gtonAmount?: string
+}
+
+export const emptyPreview = {
+  id: 0,
+  firstTxnHash: null,
+  secondTxnHash: null,
+  lastBalance: 0,
+  lastBlock: 0, //might not necessary
+  chainFrom:  Chains.Eth,
+  chainTo: Chains.Ftm,
+  fromAddress: "",
+  toAddress: "",
+  amountFrom: 0,
+  amountTo: 0
 }

@@ -2,33 +2,88 @@
   <div class="message-window">
     <div class="h-[40px] flex items-center px-[20px]">
       <div class="w-[40px] flex items-center justify-start">
-        <icon v-show="completed" name="mono/check-2" class="fill-current stroke-current text-[20px] text-medium-spring-green" />
-        <icon v-show="!completed" name="mono/clock" class="fill-current stroke-current text-[18px] relative left-[1px]" />
+        <icon
+          v-show="completed"
+          name="mono/check-2"
+          class="
+            fill-current
+            stroke-current
+            text-[20px] text-medium-spring-green
+          "
+        />
+        <icon
+          v-show="!completed"
+          name="mono/clock"
+          class="fill-current stroke-current text-[18px] relative left-[1px]"
+        />
       </div>
-      <div class="flex-grow text-[13px] font-medium text-center"
-      :class="{'text-medium-spring-green':completed}">
-        Transaction is processing
+      <div
+        class="flex-grow text-[13px] font-medium text-center"
+        :class="{ 'text-medium-spring-green': completed }"
+      >
+        {{ statusText }}
       </div>
       <div class="w-[40px] flex items-center justify-end">
-        <button v-show="!collapsed" type="button" class="flex items-center justify-center bg-transparent border-none outline-none text-white hover:text-candy-apple-red"
-        @click="$emit('collapse')">
+        <button
+          v-show="!collapsed"
+          type="button"
+          class="
+            flex
+            items-center
+            justify-center
+            bg-transparent
+            border-none
+            outline-none
+            text-white
+            hover:text-candy-apple-red
+          "
+          @click="$emit('collapse')"
+        >
           <icon name="mono/line" class="stroke-current text-[15px]" />
         </button>
-        <button v-show="collapsed" type="button" class="flex items-center justify-center bg-transparent border-none outline-none text-white hover:text-candy-apple-red"
-                @click="$emit('collapse')">
+        <button
+          v-show="collapsed"
+          type="button"
+          class="
+            flex
+            items-center
+            justify-center
+            bg-transparent
+            border-none
+            outline-none
+            text-white
+            hover:text-candy-apple-red
+          "
+          @click="$emit('collapse')"
+        >
           <icon name="mono/spread" class="fill-current text-[15px]" />
         </button>
-        <button type="button" class="flex items-center justify-center bg-transparent border-none outline-none text-white ml-[10px] hover:text-candy-apple-red"
-                @click="$emit('close')">
+        <button
+          type="button"
+          class="
+            flex
+            items-center
+            justify-center
+            bg-transparent
+            border-none
+            outline-none
+            text-white
+            ml-[10px]
+            hover:text-candy-apple-red
+          "
+          @click="$emit('close')"
+        >
           <icon name="mono/close" class="fill-current text-[15px]" />
         </button>
       </div>
     </div>
-    <div class="transition-all overflow-hidden"
-    :class="{
-      'h-[190px]': !collapsed,
-      'h-0': collapsed,
-    }">
+    <div
+      class="transition-all overflow-hidden"
+      :class="{
+        'h-[190px]': !collapsed,
+        'h-0': collapsed,
+      }"
+    >
       <div class="px-[20px]">
         <slot />
       </div>
@@ -37,24 +92,99 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import { Transaction, emptyPreview } from '~/utils/transactions'
+import Vue, { PropType } from 'vue'
+import { Chains, chainProviderUrls } from './constants'
+import {relayAddresses} from "~/web3/constants"
+import {Web3Invoker} from "~/web3/metamask"
+import _ from "lodash";
 
+const invoker = new Web3Invoker();
+const serviceUrl = ''
 export default Vue.extend({
+  data() {
+    return {
+      watcher: 0 as unknown as NodeJS.Timeout | null,
+    }
+  },
   props: {
     collapsed: {
       type: Boolean,
-      default: false
+      default: false,
     },
     completed: {
       type: Boolean,
-      default: false
+      default: false,
     },
-  }
+    txn: {
+      type: Object as PropType<Transaction>,
+      default: emptyPreview,
+    },
+    txnindex: {
+      type: Number,
+      default: 0,
+    },
+  },
+  computed: {
+    statusText(): string {
+      return this.completed
+        ? 'Transaction is completed'
+        : 'Transaction is processing'
+    },
+  },
+  methods: {
+    async watchEvm() {
+      const nodeUrl = chainProviderUrls[this.txn.chainTo];
+      const balance = await invoker.getChainBalance(
+        nodeUrl,
+        this.txn.toAddress
+      );;
+      if (balance <= this.txn.lastBalance) {
+        this.$store.commit("transactions/update", {txnindex: this.txnindex, body: {lastBalance: balance}})
+        return;
+      }
+      const fromAddress = relayAddresses[
+        this.txn.chainTo
+      ].toLowerCase();
+      const { hash, block } = await invoker.checkForTransaction(
+        this.txn.lastBlock,
+        nodeUrl,
+        this.txn.toAddress,
+        fromAddress
+      );
+      if (_.isNil(hash)) {
+        if (!_.isNil(this.watcher)) clearInterval(this.watcher);
+      } else {
+        this.txn.lastBlock = block;
+      }
+    },
+    async watchSol() {
+      if(!this.txn.gtonAmount) return;
+      const res = await fetch(serviceUrl+this.txn.gtonAmount);
+      //...
+    },
+  },
+  created() {
+    if (this.txn.chainTo == Chains.Sol) {
+      const fn = async () => {
+        await this.watchSol()
+      }
+      this.watcher = setInterval(fn.bind(this), 4000)
+    } else {
+      const fn = async () => {
+        await this.watchEvm()
+      }
+      this.watcher = setInterval(fn.bind(this), 4000)
+    }
+  },
+  beforeDestroy() {
+    if (!_.isNil(this.watcher)) clearInterval(this.watcher)
+  },
 })
 </script>
 
 <style lang="postcss">
-.message-window{
+.message-window {
   @apply mt-4 bg-black ring-inset ring-1 ring-white rounded-[10px] w-[330px];
 }
 </style>
