@@ -1,7 +1,9 @@
 <template>
-  <component :is="route ? ($route.name === route ? 'span' : 'nuxt-link') : 'a'"
-             v-bind="{ [route? 'to' : 'href']: route ? ({name: route}) : href }"
-  ><slot /></component>
+  <component
+    :is="route ? ($route.name === route ? 'span' : 'nuxt-link') : 'a'"
+    v-bind="{ [route ? 'to' : 'href']: route ? { name: route } : href }"
+    ><slot
+  /></component>
 </template>
 
 <script lang="ts">
@@ -11,12 +13,21 @@ export default Vue.extend({
   props: {
     route: {
       type: String,
-      default: ''
+      default: '',
     },
     href: {
       type: String,
-      default: ''
+      default: '',
     },
-  }
+  },
 })
 </script>
+
+<style scoped>
+.relative {
+  position: relative;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+</style>

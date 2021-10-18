@@ -28,36 +28,15 @@
             whitespace-nowrap
             no-underline
             hover:underline
+            relative
           "
         >
           {{ item.label }}
+          <div v-if="item.label === 'Logs'" class="soon">Soon</div>
         </component-link>
       </div>
 
       <div class="flex lg:w-[350px] justify-end">
-        <!-- <coin-account
-          class="ml-[12px]"
-          :img="require('~/assets/img/icons/phantom.svg')"
-          address="0xtest...test"
-          :network="currentChainName"
-          :signed="signed1"
-          :connected="connected1"
-          @click="connectMetamask()"
-          @login="signed1 = true"
-          @logout="signed1 = false"
-        />
-        <coin-account
-          class="ml-[12px]"
-          :img="require('~/assets/img/icons/metamask.svg')"
-          :network="currentChainName"
-          address="0xtest...test"
-          :signed="signed2"
-          :connected="connected2"
-          @click="connectMetamask()"
-          @login="signed2 = true"
-          @logout="signed2 = false"
-        /> -->
-        <!-- <div>1</div> -->
         <wallet
           :img="require('~/assets/img/icons/metamask.svg')"
           :val="metamask"
@@ -107,3 +86,15 @@ export default Vue.extend({
   },
 })
 </script>
+
+<style>
+.soon {
+  background: rgba(255, 126, 0, var(--tw-bg-opacity));
+  border-radius: 10px;
+  padding: 1px 7px;
+  position: absolute;
+  align-items: center;
+  bottom: 20px;
+  font-size: 10px;
+}
+</style>
