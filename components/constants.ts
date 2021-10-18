@@ -29,7 +29,7 @@ export const limits: Record<string, number> = {
   [Chains.Heco]: 0.74, // 747630800000000000
   [Chains.Xdai]: 10.0, //10002986200000000000
   [Chains.Avax]: 0.22, //224775200000000000
-  [Chains.Sol]: 0.22, // Will add limit for solana?
+  [Chains.Sol]: 0.62, // Will add limit for solana?
 }
 
 interface Status {

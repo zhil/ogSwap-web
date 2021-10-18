@@ -224,10 +224,10 @@ export function getTokenByMintAddress(mintAddress: string): TokenInfo | null {
 }
 
 export const TOKENS: Tokens = {
-  GTON: {
-    mintAddress: '4hJ6sjwmsvvFag6TKL97yhWiBSDX9BABWoiXgb3EPXxB',
-    decimals: 9,
-  },
+  // GTON: {
+  //   mintAddress: '4hJ6sjwmsvvFag6TKL97yhWiBSDX9BABWoiXgb3EPXxB',
+  //   decimals: 8,
+  // },
   WSOL: {
     symbol: 'WSOL',
     name: 'Wrapped Solana',

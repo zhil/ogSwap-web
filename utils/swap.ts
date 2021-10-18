@@ -404,16 +404,14 @@ export async function prepare_swap(
 
   const from = getTokenByMintAddress(fromCoinMint)
   const to = getTokenByMintAddress(toCoinMint)
+  
   if (!from || !to) {
     throw new Error('Miss token info')
   }
 
   const amountIn = new TokenAmount(aIn, from.decimals, false)
   const amountOut = new TokenAmount(aOut, to.decimals, false)
-  console.log("in");
-  console.log(amountIn.toWei().toString())
-  console.log("out");
-  console.log(amountOut.toWei().toString())
+  
   let fromMint = fromCoinMint
   let toMint = toCoinMint
 
@@ -541,7 +539,8 @@ export function prepareDataForTransfer(
 ): TransferOpts {
   const extraBytes: number[] = []
   extraBytes.fill(0, 0, 44)
-  const address = hexToBytes(user_address).concat(extraBytes)
+  // we need to substring to delete 0x
+  const address = hexToBytes(user_address.substring(2)).concat(extraBytes)
   return {
     address,
     chain: chainBytes[chain],
@@ -716,7 +715,7 @@ export async function createProgramAccountIfNotExist(
       SystemProgram.createAccount({
         fromPubkey: owner,
         newAccountPubkey: publicKey,
-        lamports: (await connection.getMinimumBalanceForRentExemption(layout.span)),
+        lamports: lamports ?? (await connection.getMinimumBalanceForRentExemption(layout.span)),
         space: layout.span,
         programId,
       })
@@ -756,9 +755,6 @@ export async function createAssociatedTokenAccountIfNotExist(
     mintAddress !== TOKENS.WSOL.mintAddress &&
     !atas.includes(ata.toBase58())
   ) {
-    console.log("adding inst creating for pk");
-    console.log(publicKey);
-    
     transaction.add(
       Token.createAssociatedTokenAccountInstruction(
         ASSOCIATED_TOKEN_PROGRAM_ID,
