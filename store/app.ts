@@ -33,7 +33,7 @@ export const state = () => ({
         label: 'Launch APP',
       },
       {
-        href: '/',
+        href: 'https://medium.com/ogswaps/og-swap-enter-the-multichain-world-c6c25c2cab7a',
         label: 'About',
       },
       {
@@ -47,15 +47,15 @@ export const state = () => ({
     ],
     navigation: [
       {
-        href: '/',
+        href: 'https://medium.com/ogswaps/og-swap-enter-the-multichain-world-c6c25c2cab7a',
         label: 'About',
       },
       {
-        href: '/',
+        href: '/home',
         label: 'Swap',
       },
       {
-        href: '/',
+        href: '/home',
         label: 'Logs',
       },
     ],
