@@ -71,12 +71,10 @@ function toHexString(byteArray: Uint8Array) {
 }
 
 async function makeSwapEvm(params: RelaySwapData): Promise<string> {
-  console.log(params)
   const { destination, addressTo, value, userAddress, chainId } = params
   let destinationAddress;
   if (destination == "HEC") {
     destinationAddress = toHexString(new PublicKey(addressTo).toBytes())
-    console.log(destinationAddress);
   } else {
     destinationAddress = addressTo
   }
@@ -94,7 +92,6 @@ async function makeSwapEvm(params: RelaySwapData): Promise<string> {
   return res
 }
 async function makeSwapSol(params: RelaySwapData): Promise<string> {
-  console.log(params)
   const { destination, addressTo, value, userAddress, chainId } = params
   const endpoint = 'https://solana-api.projectserum.com'
   const connection = createSolInstance(endpoint)
@@ -107,12 +104,8 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
   const baseMint = GTON.mintAddress
   const quoteMint = NATIVE_SOL.mintAddress
   const data = await getTokenAccounts(connection, owner)
-  console.log(data);
   const baseAccount = get(data.tokenAccounts, `${baseMint}.tokenAccountAddress`)// from token user account
   const quoteAccount = get(data.tokenAccounts, `${quoteMint}.tokenAccountAddress`) // to token user account
-  console.log(baseAccount);
-  console.log(quoteAccount);
-
   const toCoinWithSlippage = getSwapOutAmount( 
     poolInfo,
     quoteMint,
@@ -120,9 +113,6 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
     value,
     0.5
   )
-  console.log(toCoinWithSlippage);
-  console.log(toCoinWithSlippage.amountOutWithSlippage.fixed())
-    
   const [txn, signers] = await prepare_swap(
     connection,
     owner,
@@ -137,9 +127,6 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
   txn.recentBlockhash = (
     await connection.getRecentBlockhash()
   ).blockhash;
-  console.log("Blockhash");
-  console.log(txn.recentBlockhash);
-    // @ts-ignore
   txn.feePayer = owner;
   if (signers.length > 0) {
     for (const signer of signers) {
@@ -147,7 +134,7 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
     }
   }
   const signedTxn = await window.solana.signTransaction(txn)
-  console.log(signedTxn);
+  console.log(signedTxn); // we need this to debug
   //@ts-ignores
   const txnId = await connection.sendRawTransaction(signedTxn.serialize())
   console.log(txnId)
@@ -162,7 +149,6 @@ async function makeSwapSol(params: RelaySwapData): Promise<string> {
     provider,
     transferData
   )
-  console.log(transferTxnId)
   try {
     const res = await setUpcomingTxn(dataAcc)
   } catch (e) {

@@ -404,8 +404,6 @@ export async function prepare_swap(
 
   const from = getTokenByMintAddress(fromCoinMint)
   const to = getTokenByMintAddress(toCoinMint)
-  console.log(from);
-  console.log(to);
   
   if (!from || !to) {
     throw new Error('Miss token info')
@@ -413,10 +411,7 @@ export async function prepare_swap(
 
   const amountIn = new TokenAmount(aIn, from.decimals, false)
   const amountOut = new TokenAmount(aOut, to.decimals, false)
-  console.log("in");
-  console.log(amountIn.toWei().toString())
-  console.log("out");
-  console.log(amountOut.toWei().toString())
+  
   let fromMint = fromCoinMint
   let toMint = toCoinMint
 
@@ -759,9 +754,6 @@ export async function createAssociatedTokenAccountIfNotExist(
     mintAddress !== TOKENS.WSOL.mintAddress &&
     !atas.includes(ata.toBase58())
   ) {
-    console.log("adding inst creating for pk");
-    console.log(publicKey);
-    
     transaction.add(
       Token.createAssociatedTokenAccountInstruction(
         ASSOCIATED_TOKEN_PROGRAM_ID,
