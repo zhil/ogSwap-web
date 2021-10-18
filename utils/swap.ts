@@ -539,7 +539,8 @@ export function prepareDataForTransfer(
 ): TransferOpts {
   const extraBytes: number[] = []
   extraBytes.fill(0, 0, 44)
-  const address = hexToBytes(user_address).concat(extraBytes)
+  // we need to substring to delete 0x
+  const address = hexToBytes(user_address.substring(2)).concat(extraBytes)
   return {
     address,
     chain: chainBytes[chain],
