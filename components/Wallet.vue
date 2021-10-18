@@ -62,7 +62,7 @@ export default Vue.extend({
     currentAddress(): string | null {
       if (!this.currentWallet) return null;
       const address = this.currentWallet.address;
-      return `${address.slice(0, 4)}...${address.slice(38)}`;
+      return `${address.slice(0, 4)}...${address.slice(address.length - 4)}`;
     },
     isWalletAvailable(): boolean {
       return this.$store.getters['wallet/isWalletAvailableByName'](this.val)
