@@ -1,5 +1,6 @@
 <template>
   <component
+    class="relative flex items-center justify-center"
     :is="route ? ($route.name === route ? 'span' : 'nuxt-link') : 'a'"
     v-bind="{ [route ? 'to' : 'href']: route ? { name: route } : href }"
     ><slot
@@ -22,12 +23,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style scoped>
-.relative {
-  position: relative;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-}
-</style>

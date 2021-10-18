@@ -32,7 +32,12 @@
           "
         >
           {{ item.label }}
-          <div v-if="item.label === 'Logs'" class="soon">Soon</div>
+          <div
+            v-if="item.label === 'Logs'"
+            class="absolute bg-candy-apple-red rounded-lg px-2 bottom-5"
+          >
+            Soon
+          </div>
         </component-link>
       </div>
 
@@ -86,15 +91,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style>
-.soon {
-  background: rgba(255, 126, 0, var(--tw-bg-opacity));
-  border-radius: 10px;
-  padding: 1px 7px;
-  position: absolute;
-  align-items: center;
-  bottom: 20px;
-  font-size: 10px;
-}
-</style>
