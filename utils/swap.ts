@@ -404,6 +404,9 @@ export async function prepare_swap(
 
   const from = getTokenByMintAddress(fromCoinMint)
   const to = getTokenByMintAddress(toCoinMint)
+  console.log(from);
+  console.log(to);
+  
   if (!from || !to) {
     throw new Error('Miss token info')
   }
@@ -433,7 +436,7 @@ export async function prepare_swap(
       wrappedSolAccount,
       owner,
       TOKENS.WSOL.mintAddress,
-      1e7,
+      getBigNumber(amountIn.wei) + 1e7,
       transaction,
       signers
     )
@@ -716,7 +719,7 @@ export async function createProgramAccountIfNotExist(
       SystemProgram.createAccount({
         fromPubkey: owner,
         newAccountPubkey: publicKey,
-        lamports: (await connection.getMinimumBalanceForRentExemption(layout.span)),
+        lamports: lamports ?? (await connection.getMinimumBalanceForRentExemption(layout.span)),
         space: layout.span,
         programId,
       })
