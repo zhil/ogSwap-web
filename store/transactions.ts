@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash'
+import Vue from 'vue'
 import { Commit, GetterTree, ActionTree } from 'vuex'
 import { Chains } from '~/components/constants'
 import { TokenAmount } from '~/utils/safe-math'
@@ -41,10 +42,10 @@ export const mutations = {
     { txnIndex, body }: { txnIndex: number; body: Transaction }
   ) {
     // merging both of the bodies
-    state.transactions[txnIndex] = {
+    Vue.set(state.transactions, txnIndex, {
       ...state.transactions[txnIndex],
       ...body,
-    }
+    })
   },
   setPreview(
     state: State,
@@ -65,6 +66,9 @@ export const mutations = {
 export const getters: GetterTree<State, any> = {
   getTransactionHistory(state: State) {
     return state.transactions
+  },
+  getTransaction: (state: State) => (id: number) => {
+    return state.transactions[id];
   },
   getPreview(state: State) {
     return state.preview

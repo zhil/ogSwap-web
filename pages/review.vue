@@ -144,15 +144,15 @@ export default Vue.extend({
       this.processing = true;
       const txnId = await this.$store.dispatch("transactions/startSwap")
       console.log(txnId);
-      const txn = await this.$web3.makeSwap(this.fromToken.type, {
+      const [txn, gtonAmount] = await this.$web3.makeSwap(this.fromToken.type, {
         destination: chainToName[this.toToken.chain],
         userAddress: this.preview.fromAddress,
         addressTo: this.preview.toAddress,
         value: this.preview.amountFrom,
-        chainId: this.preview.chainFrom
+        chainId: this.preview.chainFrom,
       } as RelaySwapData).call(this)
       // @ts-ignore
-      this.$store.commit("transactions/update", {txnIndex: txnId, body: {firstTxnHash: txn.transactionHash}})
+      this.$store.commit("transactions/update", {txnIndex: txnId, body: {firstTxnHash: txn.transactionHash, gtonAmount}})
     },
   }
 })

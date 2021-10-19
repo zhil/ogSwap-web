@@ -116,10 +116,6 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
-    txn: {
-      type: Object as PropType<Transaction>,
-      default: emptyPreview,
-    },
     txnindex: {
       type: Number,
       default: 0,
@@ -137,6 +133,9 @@ export default Vue.extend({
     fromAddress(): string {
       return relayAddresses[this.txn.chainTo].toLowerCase()
     },
+    txn(): Transaction {
+      return this.$store.getters['transactions/getTransaction'](this.txnindex)
+    }
   },
   methods: {
     async watchEvm() {
