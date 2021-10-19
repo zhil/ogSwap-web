@@ -13,7 +13,7 @@ export type Transaction = {
   lastBlock: number //might not necessary
   chainFrom: Chains
   chainTo: Chains
-  gtonAmount?: string
+  gtonAmount: string | null
 }
 
 export const emptyPreview = {
@@ -27,5 +27,6 @@ export const emptyPreview = {
   fromAddress: "",
   toAddress: "",
   amountFrom: 0,
-  amountTo: 0
+  amountTo: 0,
+  gtonAmount: null
 }

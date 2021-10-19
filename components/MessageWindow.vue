@@ -95,11 +95,11 @@
 import { Transaction, emptyPreview } from '~/utils/transactions'
 import Vue, { PropType } from 'vue'
 import { Chains, chainProviderUrls } from './constants'
-import {relayAddresses} from "~/web3/constants"
-import {Web3Invoker} from "~/web3/metamask"
-import _ from "lodash";
+import { relayAddresses } from '~/web3/constants'
+import { Web3Invoker } from '~/web3/metamask'
+import _ from 'lodash'
 
-const invoker = new Web3Invoker();
+const invoker = new Web3Invoker()
 const serviceUrl = ''
 export default Vue.extend({
   data() {
@@ -131,36 +131,47 @@ export default Vue.extend({
         ? 'Transaction is completed'
         : 'Transaction is processing'
     },
+    nodeUrl(): string {
+      return chainProviderUrls[this.txn.chainTo]
+    },
+    fromAddress(): string {
+      return relayAddresses[this.txn.chainTo].toLowerCase()
+    },
   },
   methods: {
     async watchEvm() {
-      const nodeUrl = chainProviderUrls[this.txn.chainTo];
-      const balance = await invoker.getChainBalance(
-        nodeUrl,
-        this.txn.toAddress
-      );;
+      const address = this.txn.toAddress
+      const balance = await invoker.getChainBalance(this.nodeUrl, address)
       if (balance <= this.txn.lastBalance) {
-        this.$store.commit("transactions/update", {txnindex: this.txnindex, body: {lastBalance: balance}})
-        return;
+        this.$store.commit('transactions/update', {
+          txnindex: this.txnindex,
+          body: { lastBalance: balance },
+        })
+        return
       }
-      const fromAddress = relayAddresses[
-        this.txn.chainTo
-      ].toLowerCase();
+
       const { hash, block } = await invoker.checkForTransaction(
         this.txn.lastBlock,
-        nodeUrl,
-        this.txn.toAddress,
-        fromAddress
-      );
+        this.nodeUrl,
+        address,
+        this.fromAddress
+      )
       if (_.isNil(hash)) {
-        if (!_.isNil(this.watcher)) clearInterval(this.watcher);
+        this.$store.commit('transactions/update', {
+          txnindex: this.txnindex,
+          body: { secondTxnHash: hash },
+        })
+        if (!_.isNil(this.watcher)) clearInterval(this.watcher)
       } else {
-        this.txn.lastBlock = block;
+        this.$store.commit('transactions/update', {
+          txnindex: this.txnindex,
+          body: { lastBlock: block },
+        })
       }
     },
     async watchSol() {
-      if(!this.txn.gtonAmount) return;
-      const res = await fetch(serviceUrl+this.txn.gtonAmount);
+      if (!this.txn.gtonAmount) return
+      const res = await fetch(serviceUrl + this.txn.gtonAmount)
       //...
     },
   },

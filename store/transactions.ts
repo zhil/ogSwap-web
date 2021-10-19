@@ -11,19 +11,7 @@ type State = {
 
 export const state = () => {
   return {
-    transactions: [{
-      id: 0,
-      firstTxnHash: "null",
-      secondTxnHash: null,
-      lastBalance: 56,
-      lastBlock: 1582, //might not necessary
-      chainFrom:  Chains.Eth,
-      chainTo: Chains.Ftm,
-      fromAddress: "sender address",
-      toAddress: "reciever address",
-      amountFrom: "124124.1",
-      amountTo: "12467"
-    }],
+    transactions: [],
     preview: emptyPreview
   }
 }
@@ -38,7 +26,12 @@ export const actions: ActionTree<State, any> = {
     })
   },
   startSwap({ commit, state }) {
-    return commit("create", {txn: cloneDeep(state.preview)})
+    return new Promise((resolve) => {
+      commit('create', {txn: cloneDeep(state.preview)});
+      const id = state.transactions.length - 1
+      resolve(id); // resolve undefined
+    });
+    // return commit("create", {txn: cloneDeep(state.preview)})
   }
 }
 
