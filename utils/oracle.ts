@@ -1,6 +1,6 @@
 import { Chains } from "~/components/constants";
 
-const baseUrl = "http://ec2-3-9-18-254.eu-west-2.compute.amazonaws.com:30254"
+const baseUrl = "https://proxy.ogswap.one"
 export const coingeckoApi = "https://api.coingecko.com/api/v3/";
 
 export async function setUpcomingTxn(userEventDataAccount: string) {
