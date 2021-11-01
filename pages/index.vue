@@ -390,8 +390,8 @@
           </button>
 
           <div class="mt-[36px] md:mt-0 md:ml-[28px]">
-            <nuxt-link
-              to="/"
+            <a
+              href="#"
               class="
                 flex
                 justify-center
@@ -416,9 +416,11 @@
                 <icon name="sogs" />
               </span>
               <span>$OGS waitlist</span>
-            </nuxt-link>
+            </a>
 
-            <button
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSc0IDkJEaLnlECF7duJPhwKoRMGlKAiwoJJRJzJQKnfnJZyhQ/viewform"
+              target="_blank"
               class="
                 inline-flex
                 text-lg
@@ -433,6 +435,7 @@
             >
               <span
                 class="
+                  text-center
                   p-[14px]
                   pb-[21px]
                   min-w-[288px]
@@ -443,7 +446,7 @@
               >
                 Sign up
               </span>
-            </button>
+            </a>
           </div>
         </div>
       </div>

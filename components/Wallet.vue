@@ -60,9 +60,9 @@ export default Vue.extend({
       return String(this.currentWallet.wallet.label)
     },
     currentAddress(): string | null {
-      if (!this.currentWallet) return null
-      let address = this.$store.getters['wallet/walletByName'](this.val).address
-      return `${address.slice(0, 4)}...${address.slice(38)}`
+      if (!this.currentWallet) return null;
+      const address = this.currentWallet.address;
+      return `${address.slice(0, 4)}...${address.slice(address.length - 4)}`;
     },
     isWalletAvailable(): boolean {
       return this.$store.getters['wallet/isWalletAvailableByName'](this.val)

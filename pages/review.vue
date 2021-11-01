@@ -65,7 +65,7 @@
           <field-label>Send</field-label>
           <div class="relative">
             <coin-item class="absolute left-[12px] top-1/2 -translate-y-1/2" :label="fromToken.title" :img="fromToken.img"/>
-            <field-input readonly :value="preview.amountFrom" class="text-right rounded-[10px] text-[18px]" />
+            <field-input readonly :value="Number(preview.amountFrom).toFixed(4)" class="text-right rounded-[10px] text-[18px]" />
           </div>
         </div>
 
@@ -78,7 +78,7 @@
           <field-label>Receive</field-label>
           <div class="relative">
             <coin-item class="absolute left-[12px] top-1/2 -translate-y-1/2" :label="toToken.title" :img="toToken.img"/>
-            <field-input readonly :value="preview.amountTo" class="text-right rounded-[10px] text-[18px]" />
+            <field-input readonly :value="Number(preview.amountTo).toFixed(4)" class="text-right rounded-[10px] text-[18px]" />
             <!-- <field-input readonly value="10.0000 | $10,00.3469" class="text-right rounded-[10px] text-[18px]" /> -->
           </div>
         </div>
@@ -100,7 +100,7 @@
         </div>
       </div>
 
-      <btn class="mt-4" block @click="makeSwap"> Swap </btn>
+      <btn class="mt-4" block :disabled="processing" @click="makeSwap"> Swap </btn>
     </angle-card>
   </div>
 </template>
@@ -126,6 +126,7 @@ export default Vue.extend({
     address: '',
     amount: '0',
     connected: false,
+    processing: false
   }),
   computed: {
     isError(): boolean {
@@ -149,6 +150,7 @@ export default Vue.extend({
   },
   methods: {
     async makeSwap() {
+      this.processing = true;
       const txnId = await this.$web3.makeSwap(this.fromToken.type, {
         destination: chainToName[this.toToken.chain],
         userAddress: this.preview.fromAddress,

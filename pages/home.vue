@@ -34,8 +34,11 @@
           </div>
           <div class="px-[6px] flex-grow">
             <field-label class="text-right">
-              <field-error-text v-show="isError" class="float-left">
+              <field-error-text v-show="isError && !isLimit" class="float-left">
                 Insufficient balance
+              </field-error-text>
+              <field-error-text v-show="isLimit" class="float-left">
+                Amount is over the limit
               </field-error-text>
               <span class="font-normal">Balance:</span>
               {{ currentChainTokenBalance }} {{ currentChainTokenName }}
@@ -44,6 +47,7 @@
               <label class="block">
                 <field-input
                   v-model="amount"
+                  placeholder="0"
                   :error="isError"
                   size="large"
                   class="font-medium pb-[22px]"
@@ -78,8 +82,15 @@
             <field-label>From address</field-label>
             <label class="relative block">
               <img
+                v-show="!isFromSolana"
                 class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
                 src="~/assets/img/icons/metamask.svg"
+                alt=""
+              />
+              <img
+                v-show="isFromSolana"
+                class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
+                src="~/assets/img/icons/phantom.svg"
                 alt=""
               />
               <field-input
@@ -159,7 +170,7 @@
         <div class="-mx-[6px] flex mb-[14px]">
           <div class="px-[6px] w-[154px]">
             <field-label>Receive</field-label>
-            <field-dropdown size="large" block :error="isError">
+            <field-dropdown size="large" block>
               <template #default>
                 <coin-item
                   :label="currentTokenReceive.title"
@@ -188,6 +199,7 @@
               <label class="block">
                 <field-input
                   v-model="amountReceive"
+                  placeholder="0"
                   size="large"
                   class="font-medium pb-[22px]"
                   type="number"
@@ -195,7 +207,7 @@
                 />
               </label>
               <div class="absolute left-[12px] top-[31px] text-xs">
-                ${{ toTokenPrice }}
+                ~ ${{ toTokenPrice }}
               </div>
             </div>
           </div>
@@ -206,8 +218,15 @@
             <field-label>To address</field-label>
             <label class="relative block">
               <img
+                v-show="!isToSolana"
                 class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
                 src="~/assets/img/icons/metamask.svg"
+                alt=""
+              />
+              <img
+                v-show="isToSolana"
+                class="w-[24px] h-[24px] left-[12px] top-[9px] absolute"
+                src="~/assets/img/icons/phantom.svg"
                 alt=""
               />
               <field-input
@@ -217,7 +236,12 @@
               />
             </label>
           </div>
-          <div class="px-[6px] w-[162px] flex items-end">
+          <div
+            class="px-[6px] w-[162px] flex items-end"
+            v-show="
+              isFromSolana === isToSolana || !isFromSolana === !isToSolana
+            "
+          >
             <btn variant="blood" block @click="addressTo = addressFrom">
               Use the same address
             </btn>
@@ -228,7 +252,7 @@
       <btn
         class="mt-4"
         block
-        :disabled="isError || Number(amount || 0) === 0"
+        :disabled="isError || Number(amount || 0) === 0 || !isValidChain"
         @click="switchToPreview()"
       >
         Next
@@ -248,13 +272,13 @@ import {
   RelayToken,
   Chains,
 } from '~/components/constants'
-import { getSwapOutAmount, GTON, NATIVE_SOL } from '~/utils/tokens'
 import { WalletBody } from '~/store/types'
 import { getTokenById, tokenPrices } from '~/utils/oracle'
-import { EvmChains, WalletProvider, ChainTypes } from '~/components/utils'
+import { WalletProvider, ChainTypes } from '~/components/utils'
 import { PriceData } from '~/utils/reserves'
 import { Transaction } from '~/utils/transactions'
 import { availableChains } from '~/web3/evm_chain'
+import {limits} from "~/components/constants";
 import {
   BSC_PROVIDER_URL,
   FANTOM_PROVIDER_URL,
@@ -264,7 +288,6 @@ import {
   AVAX_PROVIDER_URL,
   XDAI_PROVIDER_URL,
 } from '~/web3/constants'
-import { gtonPoolInfo } from '~/utils/constants'
 const chainToTokenName: { [key in Chains]: string } = {
   [Chains.Eth]: 'ETH',
   [Chains.Pol]: 'MATIC',
@@ -310,7 +333,7 @@ export default Vue.extend({
   computed: {
     fromTokenPrice(): string {
       if (!Number(this.amount)) return '0'
-      return (Number(this.amount) * this.prices[this.sendTokenChain]).toFixed(2)
+      return (Number(this.amount) * this.prices[this.sendTokenChain]).toFixed(4)
       // if (!this.amount || this.reservesFrom == null) return '0'
       // const currentChainTokenPrice = Number(this.reservesFrom.dexNativePrice)
       // return (Number(this.amount) * currentChainTokenPrice).toFixed(2)
@@ -319,7 +342,7 @@ export default Vue.extend({
       if (!Number(this.amountReceive)) return '0'
       return (
         Number(this.amountReceive) * this.prices[this.receiveTokenChain]
-      ).toFixed(2)
+      ).toFixed(4)
       // if (!this.amountReceive || this.reservesTo == null) return '0'
       // const currentChainTokenPrice = Number(this.reservesTo.dexNativePrice)
       // return (Number(this.amountReceive) * currentChainTokenPrice).toFixed(2)
@@ -343,7 +366,17 @@ export default Vue.extend({
       return chainNames[this.sendTokenChain]
     },
     isError(): boolean {
-      return Number(this.amount || 0) > 1000 || Number(this.amount || 0) < 0
+      return Number(this.amount || 0) > Number(this.currentChainTokenBalance) || Number(this.amount || 0) < 0 
+    },
+    isLimit(): boolean {
+      return Number(this.amount) > limits[this.sendTokenChain];
+    },
+    isValidChain(): boolean {
+      if(this.isFromSolana) {
+        return this.isPhantomAvailable;
+      } else {
+        return this.isMetamaskAvailable && this.sendTokenChain == this.currentChain
+      }
     },
     currentTokenSend(): RelayToken {
       return originTokens[this.sendTokenIndex]
@@ -392,6 +425,7 @@ export default Vue.extend({
   },
   watch: {
     async metamaskWallet() {
+      await this.setChain()
       await this.setMMBalances()
     },
     async phantomWallet() {
@@ -409,33 +443,50 @@ export default Vue.extend({
       if (this.phantomWallet) await this.setPhBalance()
     },
     async setPhBalance() {
-      this.balances[Chains.Sol] = new TokenAmount(
+      if (!this.phantomWallet) return
+      const amount = new TokenAmount(
         await invoker.getSolBalance(this.phantomWallet.address),
         9
       )
+      this.$set(this.balances, Chains.Sol, amount)
     },
     async setMMBalances() {
+      if (!this.metamaskWallet) return
       const address = this.metamaskWallet.address
-      this.balances[Chains.Eth] = new TokenAmount(
-        await invoker.getChainBalance(MAINNET_INFURA_URL, address)
+      this.$set(
+        this.balances,
+        Chains.Eth,
+        new TokenAmount(
+          await invoker.getChainBalance(MAINNET_INFURA_URL, address)
+        )
       )
-      this.balances[Chains.Pol] = new TokenAmount(
-        await invoker.getChainBalance(POLYGON_PROVIDER_URL, address)
+      this.$set(
+        this.balances,
+        Chains.Pol,
+        new TokenAmount(
+          await invoker.getChainBalance(POLYGON_PROVIDER_URL, address)
+        )
       )
-      this.balances[Chains.Ftm] = new TokenAmount(
-        await invoker.getChainBalance(FANTOM_PROVIDER_URL, address)
+      this.$set(
+        this.balances,
+        Chains.Ftm,
+        new TokenAmount(
+          await invoker.getChainBalance(FANTOM_PROVIDER_URL, address)
+        )
       )
-      this.balances[Chains.Bsc] = new TokenAmount(
-        await invoker.getChainBalance(BSC_PROVIDER_URL, address)
+      this.$set(
+        this.balances,
+        Chains.Bsc,
+        new TokenAmount(
+          await invoker.getChainBalance(BSC_PROVIDER_URL, address)
+        )
       )
-      this.balances[Chains.Xdai] = new TokenAmount(
-        await invoker.getChainBalance(XDAI_PROVIDER_URL, address)
-      )
-      this.balances[Chains.Heco] = new TokenAmount(
-        await invoker.getChainBalance(HECO_PROVIDER_URL, address)
-      )
-      this.balances[Chains.Avax] = new TokenAmount(
-        await invoker.getChainBalance(AVAX_PROVIDER_URL, address)
+      this.$set(
+        this.balances,
+        Chains.Xdai,
+        new TokenAmount(
+          await invoker.getChainBalance(XDAI_PROVIDER_URL, address)
+        )
       )
     },
     switchToPreview() {
@@ -458,28 +509,28 @@ export default Vue.extend({
     setReceived(index: number, chain: any) {
       this.receiveTokenChain = chain
       this.receiveTokenIndex = index
-      this.amountReceive = '0'
+      this.inputChange()
     },
     setSend(index: number, chain: any) {
-      if (this.sendTokenChain == chain) {
+      if (this.receiveTokenChain == chain) {
         //@ts-ignore
-        this.sendTokenIndex = 137 == Number(chain) ? Chains.Ftm : Chains.Pol
+        this.receiveTokenChain = 137 == Number(chain) ? Chains.Ftm : Chains.Pol
         this.receiveTokenIndex = 137 == Number(chain) ? 1 : 0
       }
       this.sendTokenChain = chain
       this.sendTokenIndex = index
-      this.amountReceive = '0'
+      this.inputChange()
     },
     inputChange() {
       if (!this.amount) {
-        this.amountReceive = '0'
+        this.amountReceive = '0.0000'
         return
       }
       const currentPrice =
         Number(this.amount) * this.prices[this.sendTokenChain]
       this.amountReceive = (
         currentPrice / this.prices[this.receiveTokenChain]
-      ).toFixed(2)
+      ).toFixed(4)
       // let gtonAmount
       // if (this.isFromSolana) {
       //   gtonAmount = getSwapOutAmount(

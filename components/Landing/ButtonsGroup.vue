@@ -3,7 +3,8 @@
     class="flex flex-col items-center md:flex-row md:items-end"
     :class="{ 'justify-end': isRight }"
   >
-    <button
+    <a
+      href="/home"
       class="
         inline-flex
         text-lg
@@ -18,6 +19,7 @@
     >
       <span
         class="
+          text-center
           p-[14px]
           pb-[21px]
           min-w-[288px]
@@ -28,14 +30,14 @@
       >
         Try
       </span>
-    </button>
+    </a>
 
     <div
       class="mt-[36px] md:mt-0"
       :class="isRight ? 'md:ml-[28px]' : 'md:ml-[100px]'"
     >
-      <nuxt-link
-        to="/"
+      <a
+        href="#"
         class="flex justify-center items-center mb-[13px] text-sm md:text-lg"
       >
         <span
@@ -53,9 +55,11 @@
           <icon name="sogs" />
         </span>
         <span>$OGS waitlist</span>
-      </nuxt-link>
+      </a>
 
-      <button
+      <a
+        href="https://docs.google.com/forms/d/e/1FAIpQLSc0IDkJEaLnlECF7duJPhwKoRMGlKAiwoJJRJzJQKnfnJZyhQ/viewform"
+        target="_blank"
         class="
           inline-flex
           text-lg
@@ -70,6 +74,7 @@
       >
         <span
           class="
+            text-center
             p-[14px]
             pb-[21px]
             min-w-[288px]
@@ -80,7 +85,7 @@
         >
           Sign up
         </span>
-      </button>
+      </a>
     </div>
   </div>
 </template>
