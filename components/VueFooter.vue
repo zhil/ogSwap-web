@@ -3,7 +3,7 @@
 
     <div class="container-1440 flex flex-col sm:flex-row justify-between items-center font-heading">
       <div class="text-[13px] font-poppins font-light order-3 sm:order-1">
-        © 2021 OGSwap
+        © 2021 OGSwap | info@ogswap.one
       </div>
       <div class="flex flex-col sm:flex-row order-2 mb-2 sm:mb-0">
         <div v-for="(social, socialKey) in socials" :key="socialKey" class="text-3xl sm:text-2xl px-5 mb-4 sm:mb-0">
