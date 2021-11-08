@@ -3,7 +3,7 @@ const mainTitle = 'OG Swap'
 const shortDescription =
   'Authentic multichain swaps of native tokens via $GTON as a relay'
 
-const url = 'https://mesh.susy.one'
+const url = 'https://ogswap.one'
 
 const previewImagePath = url + '/preview.jpg'
 
@@ -21,7 +21,6 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: shortDescription },
-      { name: 'format-detection', content: 'telephone=no' },
       {
         name: 'keywords',
         content:
@@ -48,7 +47,7 @@ export default {
         property: 'twitter:site',
       },
       {
-        content: mainTitle,
+        content: shortDescription,
         property: 'twitter:title',
       },
       {
@@ -101,7 +100,11 @@ export default {
   css: ['./assets/css/app.pcss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['@/plugins/web3.ts', {src: "~/plugins/facebook.js", mode: "client"}],
+  plugins: [
+    '@/plugins/web3.ts',
+    { src: '~/plugins/facebook.js', mode: 'client' },
+    { src: '~/plugins/gtag.ts', mode: 'client' },
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -155,11 +158,11 @@ export default {
         autoprefixer: {},
       },
     },
-    extend (config, { isDev, isClient }) {
+    extend(config, { isDev, isClient }) {
       config.node = {
-         fs: 'empty'
-       }
-   }
+        fs: 'empty',
+      }
+    },
   },
 
   tailwindcss: {
